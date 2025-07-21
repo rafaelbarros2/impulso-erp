@@ -1,19 +1,22 @@
-<aside class="flex flex-col p-4 bg-white border-r border-slate-200">
+<aside class="flex flex-col p-4 bg-white border-r border-slate-200 transition-all duration-300 ease-in-out"
+       [style.width.px]="isCollapsed ? 88 : 260">
   <div class="flex items-center mb-10 min-h-[40px]" [ngClass]="isCollapsed ? 'justify-center' : 'justify-between'">
     <div *ngIf="!isCollapsed" class="text-2xl font-bold text-teal-500">
       <span class="font-normal text-slate-800">Meu</span>ERP
     </div>
-    <button (click)="toggle()" class="p-2 rounded-md text-slate-500 hover:bg-slate-100 hover:text-teal-500" [innerHTML]="isCollapsed ? iconMenu : iconX"></button>
+    <button (click)="toggle()" class="p-2 rounded-md text-slate-500 hover:bg-slate-100 hover:text-teal-500">
+      <div class="transition-transform duration-300" [class.rotate-45]="!isCollapsed">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </div>
+    </button>
   </div>
   
   <ul class="flex-grow space-y-2">
-    <!-- Itens do Menu -->
-    <li class="p-2 rounded-md bg-teal-50 text-teal-600 font-semibold">
-      <a href="#" class="flex items-center gap-3">
-        <i class="pi pi-cog"></i>
+    <li class="rounded-md bg-teal-50">
+      <a href="#" class="flex items-center gap-3 p-3 font-semibold text-teal-600">
+        <i class="pi pi-cog text-xl"></i>
         <span *ngIf="!isCollapsed">Configurações</span>
       </a>
     </li>
-    <!-- Outros itens virão aqui -->
   </ul>
 </aside>

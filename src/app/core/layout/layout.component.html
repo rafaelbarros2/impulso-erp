@@ -1,10 +1,19 @@
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-screen bg-slate-100">
   <app-top-bar></app-top-bar>
-  <div class="grid flex-grow w-full transition-all duration-300 ease-in-out" 
-       [ngClass]="isSidebarCollapsed ? 'grid-cols-[88px_1fr]' : 'grid-cols-[260px_1fr]'">
-    <app-sidebar [isCollapsed]="isSidebarCollapsed" (onToggle)="toggleSidebar()"></app-sidebar>
-    <main class="flex flex-col overflow-y-auto bg-slate-100">
+  <div class="flex flex-grow overflow-hidden">
+    <!-- Sidebar para Desktop -->
+    <app-sidebar 
+      class="hidden md:flex"
+      [isCollapsed]="isSidebarCollapsed" 
+      (onToggle)="toggleSidebar()">
+    </app-sidebar>
+    
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow overflow-y-auto">
       <router-outlet></router-outlet>
     </main>
   </div>
+  
+  <!-- Bottom Nav para Mobile -->
+  <app-bottom-nav class="md:hidden"></app-bottom-nav>
 </div>
