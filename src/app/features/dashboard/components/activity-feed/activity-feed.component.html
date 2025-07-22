@@ -1,0 +1,16 @@
+<div class="p-6 bg-white border rounded-lg shadow-sm border-slate-200 h-[400px] flex flex-col">
+  <h3 class="mb-4 text-lg font-semibold text-slate-800">Atividade Recente</h3>
+  <div class="flex-1 overflow-y-auto">
+    <ul class="space-y-4">
+      <li *ngFor="let activity of activities" class="flex items-start gap-4">
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-teal-50 text-teal-500 flex-shrink-0">
+          <i class="pi {{ activity.icon }}"></i>
+        </div>
+        <div class="min-w-0">
+          <p class="font-medium text-slate-700">{{ activity.title }}</p>
+          <p class="text-sm text-slate-500">{{ activity.subtitle }}</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
