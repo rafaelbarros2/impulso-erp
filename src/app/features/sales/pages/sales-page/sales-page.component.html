@@ -1,0 +1,98 @@
+<div class="p-4 md:p-8">
+  <!-- Cabeçalho -->
+  <header class="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Vendas</h1>
+      <p class="text-slate-500">Consulte e gira o histórico de vendas.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-button label="Nova Venda" icon="pi pi-plus" styleClass="w-full md:w-auto"></p-button>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+<div class="p-4 mb-6 bg-white border rounded-lg shadow-sm border-slate-200">
+  <div class="flex flex-col gap-4 md:flex-row md:items-end">
+    <div class="w-full md:w-64">
+      <label class="block mb-2 text-sm font-medium text-slate-700">Buscar</label>
+      <div class="relative w-full">
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Buscar por cliente ou ID..." 
+          class="w-full h-11 pl-4 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()">
+        <i class="pi pi-search absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+      </div>
+    </div>
+    <div class="w-full md:w-64">
+      <label class="block mb-2 text-sm font-medium text-slate-700">Status</label>
+      <p-dropdown 
+        [options]="statusOptions" 
+        placeholder="Todos os Status" 
+        styleClass="w-full h-11"
+        [(ngModel)]="selectedStatus"
+        (onChange)="onStatusChange()">
+      </p-dropdown>
+    </div>
+  </div>
+</div>
+
+  <!-- Lista de Vendas para Mobile (Cards) -->
+  <div class="grid grid-cols-1 gap-4 md:hidden">
+    <div *ngFor="let sale of salesData" class="p-4 bg-white border rounded-lg shadow-sm border-slate-200">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="font-bold text-slate-800">{{ sale.id }}</p>
+          <p class="text-sm text-slate-500">{{ sale.customer }}</p>
+        </div>
+        <span [ngClass]="getStatusClass(sale.status)">
+          <i [class]="getStatusIcon(sale.status)" class="mr-1"></i>
+          {{ sale.status }}
+        </span>
+      </div>
+      <div class="flex items-end justify-between pt-3 mt-3 border-t border-slate-100">
+        <p class="text-sm text-slate-500">{{ sale.date }}</p>
+        <p class="text-lg font-bold text-slate-800">{{ sale.total }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de Vendas para Desktop -->
+  <div class="hidden overflow-hidden bg-white border rounded-lg shadow-sm border-slate-200 md:block">
+    <p-table 
+      [value]="salesData" 
+      [tableStyle]="{'min-width': '50rem'}" 
+      styleClass="p-datatable-striped"
+      [paginator]="true"
+      [rows]="5"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} vendas"
+      [rowsPerPageOptions]="[5, 10, 20]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">ID da Venda <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="customer">Cliente <p-sortIcon field="customer"></p-sortIcon></th>
+          <th pSortableColumn="date">Data <p-sortIcon field="date"></p-sortIcon></th>
+          <th>Status</th>
+          <th pSortableColumn="totalValue" class="text-right">Total <p-sortIcon field="totalValue"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-sale>
+        <tr>
+          <td>{{ sale.id }}</td>
+          <td>{{ sale.customer }}</td>
+          <td>{{ sale.date }}</td>
+          <td>
+            <span [ngClass]="getStatusClass(sale.status)">
+              <i [class]="getStatusIcon(sale.status)" class="mr-1"></i>
+              {{ sale.status }}
+            </span>
+          </td>
+          <td class="text-right font-semibold">{{ sale.total }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

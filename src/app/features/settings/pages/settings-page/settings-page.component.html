@@ -4,15 +4,21 @@
     <p class="text-slate-500">Gira as informações da sua empresa, utilizadores e permissões.</p>
   </div>
 
-  <p-tabView>
+  <p-tabView styleClass="p-datatable-gridlines">
     <p-tabPanel header="Empresa">
-      <app-company-settings></app-company-settings>
+      <ng-template pTemplate="content">
+        <app-company-settings></app-company-settings>
+      </ng-template>
     </p-tabPanel>
     <p-tabPanel header="Utilizadores">
-      <p>Conteúdo da aba de Utilizadores.</p>
+      <ng-template pTemplate="content">
+        <p>Aqui você poderá gerir os utilizadores do sistema.</p>
+      </ng-template>
     </p-tabPanel>
     <p-tabPanel header="Permissões">
-      <p>Conteúdo da aba de Permissões.</p>
+      <ng-template pTemplate="content">
+        <p>Aqui você poderá definir os perfis de acesso (Gerente, Vendedor, etc.).</p>
+      </ng-template>
     </p-tabPanel>
   </p-tabView>
 </div>
