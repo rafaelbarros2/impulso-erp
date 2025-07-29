@@ -1,0 +1,106 @@
+<div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Gestão de Clientes</h2>
+    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto" style="text-align: end;">
+      <span class="p-input-icon-left w-full sm:w-auto">
+        <i class="pi pi-search search" ></i>
+        <input pInputText type="text" style="position: relative; bottom: 1.5rem;" [(ngModel)]="globalFilter" (input)="dt.filterGlobal(globalFilter, 'contains')" placeholder="Buscar cliente..." class="w-full rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+      </span>
+      <p-button
+        label="Adicionar Novo Cliente"
+        icon="pi pi-plus"
+        styleClass="p-button-primary w-full sm:w-auto rounded-lg shadow-md"
+        (onClick)="onAddNewClient()"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <p-table
+      #dt
+      [value]="clients"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [globalFilterFields]="['name', 'cpfCnpj', 'phone', 'email', 'status']"
+      [selection]="selectedClients"
+      [(selection)]="selectedClients"
+      [rowHover]="true"
+      dataKey="id"
+      styleClass="p-datatable-striped p-datatable-gridlines"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-t-xl">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3 sm:mb-0">Lista Completa de Clientes</h3>
+          <p-button
+            *ngIf="selectedClients.length > 0"
+            label="Excluir Selecionados"
+            icon="pi pi-trash"
+            styleClass="p-button-danger p-button-sm rounded-lg shadow-sm"
+            (onClick)="deleteSelectedClients($event)"
+          ></p-button>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="name" class="text-left">Nome <p-sortIcon field="name"></p-sortIcon></th>
+          <th class="hidden sm:table-cell text-left">CPF/CNPJ</th>
+          <th class="hidden md:table-cell text-left">Telefone</th>
+          <th class="hidden lg:table-cell text-left">Email</th>
+          <th pSortableColumn="status" class="hidden xl:table-cell text-left">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="client"></p-tableCheckbox>
+          </td>
+          <td class="font-medium text-gray-900">{{ client.name }}</td>
+          <td class="hidden sm:table-cell text-gray-700">{{ client.cpfCnpj }}</td>
+          <td class="hidden md:table-cell text-gray-700">{{ client.phone }}</td>
+          <td class="hidden lg:table-cell text-gray-700">{{ client.email }}</td>
+          <td class="hidden xl:table-cell">
+            <p-tag [value]="client.status" [severity]="getSeverity(client.status)"></p-tag>
+          </td>
+          <td class="text-center">
+            <p-button
+              icon="pi pi-pencil"
+              styleClass="p-button-text p-button-rounded p-button-sm text-blue-600 hover:bg-blue-100"
+              (onClick)="onEditClient(client)"
+              pTooltip="Editar" tooltipPosition="top"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-text p-button-rounded p-button-sm text-red-600 hover:bg-red-100 ml-1"
+              (onClick)="onDeleteClient($event, client)"
+              pTooltip="Excluir" tooltipPosition="top"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-5 text-gray-500">Nenhum cliente encontrado.</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary">
+        <div class="flex items-center justify-end p-4 bg-gray-50 rounded-b-xl">
+          Total de {{ clients ? clients.length : 0 }} clientes.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

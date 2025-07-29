@@ -1,0 +1,181 @@
+// Correções gerais para o mobile
+@media (max-width: 640px) {
+  .p-card {
+    margin: 0 !important;
+    border-radius: 8px !important;
+    
+    .p-card-content {
+      padding: 1rem !important;
+    }
+  }
+  
+  // Ajustar inputs para mobile
+  .p-inputtext,
+  .p-inputnumber-input,
+  .p-dropdown,
+  .p-inputmask {
+    min-height: 44px; // Touch-friendly height
+    font-size: 16px; // Evita zoom no iOS
+  }
+  
+  // Melhorar spacing dos campos
+  .p-field {
+    margin-bottom: 1.5rem;
+    
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Garante que os botões sempre fiquem visíveis no mobile */
+@media (max-width: 767px) {
+  .flex-shrink-0:last-child {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #f9fafb; // bg-gray-50
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem !important;
+  }
+  
+  /* Adiciona padding bottom ao container de scroll para não sobrepor os botões */
+  .flex-1.overflow-auto {
+    padding-bottom: 120px !important;
+  }
+  
+  /* Ajusta altura do container principal */
+  .min-h-screen {
+    height: 100vh;
+    height: 100dvh; // Dynamic viewport height
+  }
+}
+
+// Container com scroll otimizado
+.flex-1.overflow-auto {
+  /* Garante scroll suave em todos os dispositivos */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  
+  @media (max-width: 767px) {
+    /* Ajusta altura considerando header e footer */
+    max-height: calc(100vh - 180px);
+  }
+}
+
+// Melhorar responsividade dos botões
+.p-button {
+  @media (max-width: 640px) {
+    padding: 12px 20px;
+    font-size: 16px;
+    min-height: 48px;
+    
+    &.w-full {
+      justify-content: center;
+    }
+  }
+}
+
+/* Estilos específicos para área de botões fixa */
+@media (max-width: 767px) {
+  .flex-shrink-0:last-child {
+    .flex {
+      padding: 0 !important;
+      margin: 0 !important;
+      
+      .p-button {
+        border-radius: 8px;
+        font-weight: 600;
+        
+        &.p-button-secondary {
+          background: #6b7280;
+          border-color: #6b7280;
+          
+          &:hover {
+            background: #4b5563;
+            border-color: #4b5563;
+          }
+        }
+        
+        &.p-button-success {
+          background: #10b981;
+          border-color: #10b981;
+          
+          &:hover {
+            background: #059669;
+            border-color: #059669;
+          }
+        }
+      }
+    }
+    margin-bottom: 5rem;
+  }
+}
+
+// Correção para PrimeNG dropdowns
+::ng-deep {
+  .p-dropdown-panel {
+    @media (max-width: 640px) {
+      max-height: 300px;
+      width: calc(100vw - 2rem) !important;
+      left: 1rem !important;
+      right: 1rem !important;
+    }
+  }
+  
+  // Ajustar máscaras de input
+  .p-inputmask {
+    width: 100% !important;
+    
+    input {
+      width: 100% !important;
+    }
+  }
+  
+  // Melhorar área do textarea
+  .p-inputtextarea {
+    width: 100% !important;
+    resize: vertical;
+    min-height: 80px;
+    
+    @media (max-width: 640px) {
+      min-height: 100px;
+    }
+  }
+}
+
+// Ajustes específicos para validação
+.ng-invalid.ng-dirty {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444 !important;
+}
+
+.p-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+// Melhorar visual dos labels obrigatórios
+label .text-red-500 {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+// Responsividade do grid
+@media (max-width: 768px) {
+  .grid.md\\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .grid.sm\\:grid-cols-2 {
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  
+}

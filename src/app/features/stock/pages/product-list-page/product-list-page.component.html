@@ -1,0 +1,111 @@
+<div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+  <p-toast></p-toast> <!-- Componente para exibir mensagens -->
+  <p-confirmDialog></p-confirmDialog> <!-- Componente para diálogos de confirmação -->
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Gestão de Produtos</h2>
+    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+      <span class="p-input-icon-left w-full sm:w-auto">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" [(ngModel)]="globalFilter" (input)="dt.filterGlobal(globalFilter, 'contains')" placeholder="Buscar produto..." class="w-full rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+      </span>
+      <p-button
+        label="Adicionar Novo Produto"
+        icon="pi pi-plus"
+        styleClass="p-button-primary w-full sm:w-auto rounded-lg shadow-md"
+        (onClick)="onAddNewProduct()"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <p-table
+      #dt
+      [value]="products"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} produtos"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [globalFilterFields]="['name', 'sku', 'category', 'status']"
+      [selection]="selectedProducts"
+      [(selection)]="selectedProducts"
+      [rowHover]="true"
+      dataKey="id"
+      styleClass="p-datatable-striped p-datatable-gridlines"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-t-xl">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3 sm:mb-0">Lista Completa de Produtos</h3>
+          <p-button
+            *ngIf="selectedProducts.length > 0"
+            label="Excluir Selecionados"
+            icon="pi pi-trash"
+            styleClass="p-button-danger p-button-sm rounded-lg shadow-sm"
+            (onClick)="deleteSelectedProducts($event)"
+          ></p-button>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="name" class="text-left">Produto <p-sortIcon field="name"></p-sortIcon></th>
+          <th class="hidden sm:table-cell text-left">SKU</th>
+          <th pSortableColumn="category" class="hidden md:table-cell text-left">Categoria <p-sortIcon field="category"></p-sortIcon></th>
+          <th pSortableColumn="price" class="text-left">Preço <p-sortIcon field="price"></p-sortIcon></th>
+          <th pSortableColumn="stock" class="text-left">Estoque <p-sortIcon field="stock"></p-sortIcon></th>
+          <th pSortableColumn="status" class="hidden lg:table-cell text-left">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-product>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+          </td>
+          <td class="flex items-center">
+            <img [src]="product.imageUrl" [alt]="product.name" class="w-12 h-12 rounded-lg object-cover mr-3 shadow-sm" />
+            <span class="font-medium text-gray-900">{{ product.name }}</span>
+          </td>
+          <td class="hidden sm:table-cell text-gray-700">{{ product.sku }}</td>
+          <td class="hidden md:table-cell text-gray-700">{{ product.category }}</td>
+          <td class="text-gray-700">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</td>
+          <td class="text-gray-700">{{ product.stock }}</td>
+          <td class="hidden lg:table-cell">
+            <p-tag [value]="product.status" [severity]="getSeverity(product.status)"></p-tag>
+          </td>
+          <td class="text-center">
+            <p-button
+              icon="pi pi-pencil"
+              styleClass="p-button-text p-button-rounded p-button-sm text-blue-600 hover:bg-blue-100"
+              (onClick)="onEditProduct(product)"
+              pTooltip="Editar" tooltipPosition="top"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-text p-button-rounded p-button-sm text-red-600 hover:bg-red-100 ml-1"
+              (onClick)="onDeleteProduct($event, product)"
+              pTooltip="Excluir" tooltipPosition="top"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center py-5 text-gray-500">Nenhum produto encontrado.</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary">
+        <div class="flex items-center justify-end p-4 bg-gray-50 rounded-b-xl">
+          Total de {{ products ? products.length : 0 }} produtos.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

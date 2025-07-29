@@ -13,6 +13,14 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardPageComponent },
       { path: 'settings', component: SettingsPageComponent },
       { path: 'sales', component: SalesPageComponent },
+            {
+        path: 'stock', // Nova rota para o módulo de estoque
+        loadChildren: () => import('./features/stock/stock.routes').then(m => m.STOCK_ROUTES)
+      }, {
+        path: 'clients', // Nova rota para o módulo de clientes
+        loadChildren: () => import('./features/clients/clients.routes').then(m => m.CLIENTS_ROUTES)
+      },
     ]
   },
 ];
+

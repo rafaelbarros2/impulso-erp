@@ -1,0 +1,217 @@
+// Estilos específicos para correção do mobile
+.upload-mobile {
+  width: 100% !important;
+  
+  // Correção para o componente p-fileUpload no mobile
+  ::ng-deep {
+    .p-fileupload {
+      width: 100% !important;
+      
+      .p-fileupload-buttonbar {
+        width: 100% !important;
+        flex-wrap: wrap;
+        gap: 8px;
+        
+        .p-fileupload-choose {
+          flex: 1;
+          min-width: 120px;
+          font-size: 14px;
+          padding: 8px 12px;
+          
+          @media (max-width: 640px) {
+            width: 100%;
+            margin-bottom: 8px;
+          }
+        }
+        
+        .p-fileupload-upload,
+        .p-fileupload-cancel {
+          flex: 0 0 auto;
+          font-size: 14px;
+          padding: 8px 12px;
+          
+          @media (max-width: 640px) {
+            flex: 1;
+            min-width: 80px;
+          }
+        }
+      }
+      
+      .p-fileupload-content {
+        width: 100% !important;
+        overflow: hidden;
+        
+        .p-fileupload-files {
+          width: 100% !important;
+          
+          .p-fileupload-row {
+            flex-wrap: wrap;
+            align-items: flex-start;
+            
+            @media (max-width: 640px) {
+              flex-direction: column;
+              align-items: stretch;
+            }
+            
+            .p-fileupload-filename {
+              word-break: break-all;
+              flex: 1;
+              min-width: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Correções gerais para o mobile
+@media (max-width: 640px) {
+  .p-card {
+    margin: 0 !important;
+    border-radius: 8px !important;
+    
+    .p-card-content {
+      padding: 1rem !important;
+    }
+  }
+  
+  // Ajustar inputs para mobile
+  .p-inputtext,
+  .p-inputnumber-input,
+  .p-dropdown,
+  .p-multiselect {
+    min-height: 44px; // Touch-friendly height
+    font-size: 16px; // Evita zoom no iOS
+  }
+  
+  // Melhorar spacing dos campos
+  .p-field {
+    margin-bottom: 1.5rem;
+    
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+  }
+  
+  // Ajustar preview de imagem
+  .max-w-xs {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Garante que os botões sempre fiquem visíveis no mobile */
+@media (max-width: 767px) {
+  .flex-shrink-0:last-child {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Adiciona padding bottom ao container de scroll para não sobrepor os botões */
+  .flex-1.overflow-auto {
+    padding-bottom: 100px !important;
+  }
+  
+  /* Ajusta altura do container principal */
+  .fixed.inset-0 {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height */
+  }
+}
+
+// Estrutura principal para mobile com altura fixa
+.fixed.inset-0 {
+  @media (min-width: 768px) {
+    position: relative !important;
+    inset: auto !important;
+    min-height: 100vh;
+  }
+}
+
+// Container com scroll otimizado
+.flex-1.overflow-auto {
+  /* Garante scroll suave em todos os dispositivos */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  
+  @media (max-width: 767px) {
+    /* Ajusta altura considerando header e footer */
+    max-height: calc(100vh - 160px);
+  }
+}
+
+// Melhorar responsividade dos botões
+.p-button {
+  @media (max-width: 640px) {
+    padding: 12px 20px;
+    font-size: 16px;
+    min-height: 48px;
+    
+    &.w-full {
+      justify-content: center;
+    }
+  }
+}
+
+/* Estilos específicos para área de botões fixa */
+@media (max-width: 767px) {
+  .flex-shrink-0:last-child {
+    .flex {
+      padding: 0 !important;
+      margin: 0 !important;
+      
+      .p-button {
+        border-radius: 8px;
+        font-weight: 600;
+        
+        &.p-button-secondary {
+          background: #6b7280;
+          border-color: #6b7280;
+          
+          &:hover {
+            background: #4b5563;
+            border-color: #4b5563;
+          }
+        }
+        
+        &.p-button-success {
+          background: #10b981;
+          border-color: #10b981;
+          
+          &:hover {
+            background: #059669;
+            border-color: #059669;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Correção para PrimeNG dropdowns e multiselects
+::ng-deep {
+  .p-dropdown-panel,
+  .p-multiselect-panel {
+    @media (max-width: 640px) {
+      max-height: 300px;
+      width: calc(100vw - 2rem) !important;
+      left: 1rem !important;
+      right: 1rem !important;
+    }
+  }
+  
+  .p-multiselect-token {
+    @media (max-width: 640px) {
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+  }
+}

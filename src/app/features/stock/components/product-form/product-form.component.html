@@ -1,0 +1,175 @@
+<div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen flex flex-col">
+  <p-toast></p-toast> <!-- Componente para exibir mensagens -->
+
+  <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">{{ pageTitle }}</h2>
+
+  <!-- Container principal com scroll otimizado -->
+  <div class="flex-1 overflow-auto">
+    <p-card class="rounded-xl shadow-lg mb-4">
+      <form [formGroup]="productForm" (ngSubmit)="onSaveProduct()" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+
+        <!-- Coluna Esquerda (Mobile: topo, Desktop: esquerda) -->
+        <div class="col-span-1 flex flex-col gap-6">
+          <!-- Nome do Produto -->
+          <div class="p-field">
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nome do Produto <span class="text-red-500">*</span></label>
+            <input id="name" type="text" pInputText formControlName="name" class="w-full rounded-lg shadow-sm"
+                   [ngClass]="{'ng-invalid ng-dirty': productForm.get('name')?.invalid && productForm.get('name')?.touched}" />
+            <small *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="p-error block mt-1">
+              Nome do produto é obrigatório.
+            </small>
+          </div>
+
+          <!-- Descrição -->
+          <div class="p-field">
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+            <textarea id="description" pInputTextarea formControlName="description" rows="3" class="w-full rounded-lg shadow-sm"></textarea>
+          </div>
+
+          <!-- SKU/Código de Barras -->
+          <div class="p-field">
+            <label for="sku" class="block text-sm font-medium text-gray-700 mb-2">SKU / Código de Barras <span class="text-red-500">*</span></label>
+            <input id="sku" type="text" pInputText formControlName="sku" class="w-full rounded-lg shadow-sm"
+                   [ngClass]="{'ng-invalid ng-dirty': productForm.get('sku')?.invalid && productForm.get('sku')?.touched}" />
+            <small *ngIf="productForm.get('sku')?.invalid && productForm.get('sku')?.touched" class="p-error block mt-1">
+              SKU é obrigatório.
+            </small>
+          </div>
+
+          <!-- Categoria -->
+          <div class="p-field">
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Categoria <span class="text-red-500">*</span></label>
+            <p-dropdown id="category" [options]="categories" formControlName="category" optionLabel="name" placeholder="Selecione uma Categoria"
+                        [filter]="true" filterBy="name" class="w-full" [style]="{'width': '100%'}"
+                        [ngClass]="{'ng-invalid ng-dirty': productForm.get('category')?.invalid && productForm.get('category')?.touched}"></p-dropdown>
+            <small *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched" class="p-error block mt-1">
+              Categoria é obrigatória.
+            </small>
+          </div>
+
+          <!-- Preço de Custo e Venda -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-field">
+              <label for="priceCost" class="block text-sm font-medium text-gray-700 mb-2">Preço de Custo <span class="text-red-500">*</span></label>
+              <p-inputNumber id="priceCost" formControlName="priceCost" mode="currency" currency="BRL" locale="pt-BR"
+                             [min]="0" class="w-full" inputStyleClass="w-full rounded-lg shadow-sm"
+                             [ngClass]="{'ng-invalid ng-dirty': productForm.get('priceCost')?.invalid && productForm.get('priceCost')?.touched}"></p-inputNumber>
+              <small *ngIf="productForm.get('priceCost')?.invalid && productForm.get('priceCost')?.touched" class="p-error block mt-1">
+                Preço de custo é obrigatório e deve ser um número válido.
+              </small>
+            </div>
+            <div class="p-field">
+              <label for="priceSale" class="block text-sm font-medium text-gray-700 mb-2">Preço de Venda <span class="text-red-500">*</span></label>
+              <p-inputNumber id="priceSale" formControlName="priceSale" mode="currency" currency="BRL" locale="pt-BR"
+                             [min]="0" class="w-full" inputStyleClass="w-full rounded-lg shadow-sm"
+                             [ngClass]="{'ng-invalid ng-dirty': productForm.get('priceSale')?.invalid && productForm.get('priceSale')?.touched}"></p-inputNumber>
+              <small *ngIf="productForm.get('priceSale')?.invalid && productForm.get('priceSale')?.touched" class="p-error block mt-1">
+                Preço de venda é obrigatório e deve ser um número válido.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita (Mobile: abaixo, Desktop: direita) -->
+        <div class="col-span-1 flex flex-col gap-6">
+          <!-- Estoque Atual e Estoque Mínimo -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-field">
+              <label for="stockQuantity" class="block text-sm font-medium text-gray-700 mb-2">Estoque Atual <span class="text-red-500">*</span></label>
+              <p-inputNumber id="stockQuantity" formControlName="stockQuantity" [min]="0" class="w-full" inputStyleClass="w-full rounded-lg shadow-sm"
+                             [ngClass]="{'ng-invalid ng-dirty': productForm.get('stockQuantity')?.invalid && productForm.get('stockQuantity')?.touched}"></p-inputNumber>
+              <small *ngIf="productForm.get('stockQuantity')?.invalid && productForm.get('stockQuantity')?.touched" class="p-error block mt-1">
+                Estoque atual é obrigatório e deve ser um número válido.
+              </small>
+            </div>
+            <div class="p-field">
+              <label for="minStock" class="block text-sm font-medium text-gray-700 mb-2">Estoque Mínimo <span class="text-red-500">*</span></label>
+              <p-inputNumber id="minStock" formControlName="minStock" [min]="0" class="w-full" inputStyleClass="w-full rounded-lg shadow-sm"
+                             [ngClass]="{'ng-invalid ng-dirty': productForm.get('minStock')?.invalid && productForm.get('minStock')?.touched}"></p-inputNumber>
+              <small *ngIf="productForm.get('minStock')?.invalid && productForm.get('minStock')?.touched" class="p-error block mt-1">
+                Estoque mínimo é obrigatório e deve ser um número válido.
+              </small>
+            </div>
+          </div>
+
+          <!-- Imagem do Produto (URL para MVP) -->
+          <div class="p-field">
+            <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-2">URL da Imagem Principal</label>
+            <input id="imageUrl" type="text" pInputText formControlName="imageUrl" class="w-full rounded-lg shadow-sm" />
+            <small class="block mt-1 text-gray-500">Para MVP, insira uma URL de imagem. Em produção, use upload de arquivos.</small>
+            <div *ngIf="productForm.get('imageUrl')?.value" class="mt-4 flex justify-center">
+              <img [src]="productForm.get('imageUrl')?.value" alt="Pré-visualização do Produto" class="max-w-xs max-h-48 object-contain rounded-lg shadow-md" />
+            </div>
+          </div>
+
+          <!-- Upload de Imagem (Corrigido para Mobile) -->
+          <div class="p-field">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Upload de Imagens</label>
+            <div class="w-full">
+              <p-fileUpload 
+                name="productImage[]" 
+                customUpload="true" 
+                (uploadHandler)="onUpload($event)"
+                accept="image/*" 
+                [maxFileSize]="1000000" 
+                chooseLabel="Escolher Imagem" 
+                uploadLabel="Upload" 
+                cancelLabel="Cancelar"
+                [auto]="false"
+                [style]="{'width': '100%'}"
+                styleClass="upload-mobile">
+                <ng-template pTemplate="content">
+                  <ul *ngIf="false"> <!-- Escondido para MVP, apenas para visualização de estrutura -->
+                    <li>Item 1</li>
+                    <li>Item 2</li>
+                  </ul>
+                </ng-template>
+              </p-fileUpload>
+            </div>
+            <small class="block mt-1 text-gray-500">Funcionalidade de upload real será implementada em fases futuras.</small>
+          </div>
+
+          <!-- Variações (Tamanhos e Cores - Simplificado para MVP) -->
+          <div class="p-field">
+            <label for="selectedSizes" class="block text-sm font-medium text-gray-700 mb-2">Tamanhos Disponíveis</label>
+            <p-multiSelect id="selectedSizes" [options]="sizes" formControlName="selectedSizes" optionLabel="name"
+                           placeholder="Selecione os Tamanhos" class="w-full" [style]="{'width': '100%'}"></p-multiSelect>
+          </div>
+
+          <div class="p-field">
+            <label for="selectedColors" class="block text-sm font-medium text-gray-700 mb-2">Cores Disponíveis</label>
+            <p-multiSelect id="selectedColors" [options]="colors" formControlName="selectedColors" optionLabel="name"
+                           placeholder="Selecione as Cores" class="w-full" [style]="{'width': '100%'}">
+              <ng-template let-color pTemplate="item">
+                <div class="flex items-center">
+                  <div class="w-4 h-4 rounded-full mr-2 border border-gray-300" [style.background-color]="color.hex"></div>
+                  <div>{{ color.name }}</div>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+      </form>
+    </p-card>
+  </div>
+
+  <!-- Botões de Ação - Fixos na parte inferior -->
+  <div class="flex-shrink-0 bg-gray-50 pt-4 pb-4">
+    <div class="flex flex-col sm:flex-row justify-end gap-3">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        styleClass="p-button-secondary w-full sm:w-auto rounded-lg shadow-md"
+        (onClick)="onCancel()"
+        type="button"
+      ></p-button>
+      <p-button
+        [label]="isEditMode ? 'Atualizar Produto' : 'Salvar Produto'"
+        icon="pi pi-check"
+        styleClass="p-button-success w-full sm:w-auto rounded-lg shadow-md"
+        (onClick)="onSaveProduct()"
+        type="button"
+      ></p-button>
+    </div>
+  </div>
+</div>
