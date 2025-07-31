@@ -1,0 +1,355 @@
+<div class="storefront-container" [ngClass]="getLayoutClasses()">
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Header da Loja -->
+  <header class="store-header">
+    <div class="header-content">
+      <h1 class="store-title">FashionERP Store</h1>
+      
+      <div class="header-controls">
+        <!-- Theme Selector -->
+        <div class="theme-selector">
+          <span class="theme-label">Tema:</span>
+          <p-dropdown
+            [options]="availableThemes"
+            [(ngModel)]="selectedTheme"
+            optionLabel="name"
+            placeholder="Selecionar Tema"
+            (onChange)="onThemeChange($event)"
+            styleClass="theme-dropdown"
+          ></p-dropdown>
+        </div>
+
+        <!-- Layout Switcher -->
+        <div class="layout-switcher">
+          <button 
+            class="layout-btn" 
+            [class.active]="currentLayout === 'grid'"
+            (click)="switchLayout('grid')" 
+            title="Visualização em Grade"
+            type="button"
+          >
+            <i class="pi pi-th-large"></i>
+          </button>
+          <button 
+            class="layout-btn" 
+            [class.active]="currentLayout === 'list'"
+            (click)="switchLayout('list')" 
+            title="Visualização em Lista"
+            type="button"
+          >
+            <i class="pi pi-list"></i>
+          </button>
+        </div>
+
+        <!-- Mini Cart -->
+        <div class="cart-wrapper" (click)="toggleMiniCart()">
+          <i class="pi pi-shopping-cart cart-icon"></i>
+          <span class="cart-count" *ngIf="getCartItemCount() > 0">
+            {{ getCartItemCount() }}
+          </span>
+          
+          <!-- Mini Cart Dropdown -->
+          <div class="mini-cart" [class.show]="showMiniCart" (click)="$event.stopPropagation()">
+            <div class="mini-cart-header">
+              <i class="pi pi-shopping-cart mr-2"></i>
+              Carrinho de Compras
+            </div>
+            
+            <div class="mini-cart-items" *ngIf="cartItems.length > 0; else emptyCart">
+              <div class="mini-cart-item" *ngFor="let item of cartItems">
+                <img [src]="item.product.imageUrl" [alt]="item.product.name" class="mini-cart-image">
+                <div class="mini-cart-info">
+                  <div class="mini-cart-name">{{ item.product.name }}</div>
+                  <div class="mini-cart-price">
+                    {{ item.product.price | currency:'BRL':'symbol':'1.2-2':'pt' }} x {{ item.quantity }}
+                  </div>
+                </div>
+                <button 
+                  class="mini-cart-remove" 
+                  (click)="removeFromCart(item.product.id)"
+                  title="Remover item"
+                  type="button"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <ng-template #emptyCart>
+              <div class="mini-cart-empty">
+                <i class="pi pi-shopping-cart"></i>
+                <p>Seu carrinho está vazio</p>
+              </div>
+            </ng-template>
+            
+            <div class="mini-cart-footer" *ngIf="cartItems.length > 0">
+              <div class="mini-cart-total">
+                <span>Total:</span>
+                <span class="total-amount">{{ cartTotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+              </div>
+              <button class="checkout-btn" (click)="proceedToCheckout()" type="button">
+                <i class="pi pi-credit-card mr-2"></i>
+                Finalizar Compra
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner Grid (Tradicional) -->
+  <section class="hero-banner hero-grid" *ngIf="currentLayout === 'grid'">
+    <div class="banner-content">
+      <h2>{{ getHeroBannerData().title }}</h2>
+      <p>{{ getHeroBannerData().subtitle }}</p>
+      <div class="hero-grid-actions">
+        <button class="shop-now-btn" type="button">
+          <i class="pi pi-shopping-bag mr-2"></i>
+          {{ getHeroBannerData().buttonText }}
+        </button>
+        <button class="scroll-to-products-btn grid-scroll-btn" (click)="scrollToProducts()" type="button">
+          <i class="pi pi-arrow-down mr-2"></i>
+          Ver Produtos
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Banner List (Premium/Minimalista) -->
+  <section class="hero-banner hero-list" *ngIf="currentLayout === 'list'">
+    <div class="hero-list-content">
+      <div class="hero-text-section">
+        <div class="hero-category">{{ getHeroBannerData().category }}</div>
+        <h2 class="hero-title-premium">{{ getHeroBannerData().title }}</h2>
+        <p class="hero-description-premium">{{ getHeroBannerData().description }}</p>
+        <div class="hero-actions-premium">
+          <button class="btn-primary-premium" type="button">
+            {{ getHeroBannerData().primaryButton }}
+          </button>
+          <button class="btn-secondary-premium" type="button">
+            {{ getHeroBannerData().secondaryButton }}
+          </button>
+          <button class="scroll-to-products-btn" (click)="scrollToProducts()" type="button">
+            <i class="pi pi-arrow-down"></i>
+            Ver Produtos
+          </button>
+        </div>
+      </div>
+      <div class="hero-image-section">
+        <div class="hero-image-container">
+          <img 
+            src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=500&h=600" 
+            alt="Modelo Fashion" 
+            class="hero-model-image"
+          >
+          <div class="hero-badge">
+            <span class="badge-text">NOVO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Indicador de Scroll -->
+    <div class="scroll-indicator" (click)="scrollToProducts()">
+      <i class="pi pi-chevron-down" title="Ver produtos abaixo"></i>
+    </div>
+  </section>
+
+  <!-- Seção de Produtos -->
+  <main class="products-section" id="products-section">
+    <h3 class="section-title">{{ getSectionTitle() }}</h3>
+    
+    <!-- Grid Layout -->
+    <div class="product-grid" *ngIf="currentLayout === 'grid'">
+      <p-card 
+        *ngFor="let product of products; trackBy: trackByProductId" 
+        class="product-card" 
+        [ngClass]="(currentTheme$ | async)?.cardStyle"
+      >
+        <ng-template pTemplate="header">
+          <div class="product-image-container">
+            <img 
+              [src]="product.imageUrl" 
+              [alt]="'Imagem do produto ' + product.name" 
+              class="product-image" 
+              (error)="onImageError($event)"
+              loading="lazy"
+            >
+            <!-- Badge de produto novo -->
+            <div class="product-badge" *ngIf="product.isNew">
+              <span>NOVO</span>
+            </div>
+            <!-- Badge de estoque baixo -->
+            <div class="stock-badge low-stock" *ngIf="isLowStock(product) && !isOutOfStock(product)">
+              <span>Últimas peças</span>
+            </div>
+            <!-- Badge de fora de estoque -->
+            <div class="stock-badge out-of-stock" *ngIf="isOutOfStock(product)">
+              <span>Esgotado</span>
+            </div>
+          </div>
+        </ng-template>
+        
+        <div class="product-info">
+          <h4 class="product-name">{{ product.name }}</h4>
+          <p class="product-description">{{ product.description }}</p>
+          <div class="product-price">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</div>
+          <button 
+            class="add-to-cart-btn" 
+            (click)="addToCart(product)"
+            [disabled]="isOutOfStock(product)"
+            type="button"
+          >
+            <i class="pi pi-shopping-cart mr-2"></i>
+            {{ isOutOfStock(product) ? 'Esgotado' : 'Adicionar ao Carrinho' }}
+          </button>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- List Layout -->
+    <div class="product-list" *ngIf="currentLayout === 'list'">
+      <div 
+        class="product-list-item" 
+        *ngFor="let product of products; trackBy: trackByProductId"
+        [ngClass]="(currentTheme$ | async)?.cardStyle"
+      >
+        <div class="product-list-image-container">
+          <img 
+            [src]="product.imageUrl" 
+            [alt]="'Imagem do produto ' + product.name" 
+            class="product-list-image" 
+            (error)="onImageError($event)"
+            loading="lazy"
+          >
+          <!-- Badges para lista -->
+          <div class="product-badges">
+            <span class="badge badge-new" *ngIf="product.isNew">NOVO</span>
+            <span class="badge badge-low-stock" *ngIf="isLowStock(product) && !isOutOfStock(product)">Últimas peças</span>
+            <span class="badge badge-out-of-stock" *ngIf="isOutOfStock(product)">Esgotado</span>
+          </div>
+        </div>
+        
+        <div class="product-list-content">
+          <div class="product-list-header">
+            <div>
+              <h4 class="product-list-name">{{ product.name }}</h4>
+              <div class="product-list-price">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</div>
+            </div>
+          </div>
+          
+          <p class="product-list-description">{{ product.fullDescription || product.description }}</p>
+          
+          <div class="product-list-actions">
+            <button 
+              class="quick-view-btn" 
+              (click)="openQuickView(product)"
+              type="button"
+            >
+              <i class="pi pi-eye mr-2"></i>
+              Visualização Rápida
+            </button>
+            <button 
+              class="add-to-cart-list-btn" 
+              (click)="addToCart(product)"
+              [disabled]="isOutOfStock(product)"
+              type="button"
+            >
+              <i class="pi pi-shopping-cart mr-2"></i>
+              {{ isOutOfStock(product) ? 'Esgotado' : 'Adicionar ao Carrinho' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer da Loja -->
+  <footer class="store-footer">
+    <div class="footer-content">
+      <p>&copy; 2025 FashionERP Store. Todos os direitos reservados.</p>
+      <div class="social-links">
+        <a href="#" class="social-icon" aria-label="Seguir no Facebook">
+          <i class="pi pi-facebook"></i>
+        </a>
+        <a href="#" class="social-icon" aria-label="Seguir no Instagram">
+          <i class="pi pi-instagram"></i>
+        </a>
+        <a href="#" class="social-icon" aria-label="Seguir no Twitter">
+          <i class="pi pi-twitter"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Quick View Modal -->
+<p-dialog 
+  [(visible)]="showQuickView" 
+  [modal]="true" 
+  [closable]="true"
+  [dismissableMask]="true"
+  styleClass="quick-view-dialog"
+  header="Visualização Rápida"
+  [style]="{width: '90vw', maxWidth: '600px'}"
+>
+  <div class="quick-view-content" *ngIf="quickViewProduct">
+    <div class="quick-view-image">
+      <img 
+        [src]="quickViewProduct.imageUrl" 
+        [alt]="quickViewProduct.name" 
+        class="modal-product-image"
+      >
+    </div>
+    
+    <div class="quick-view-info">
+      <h3 class="modal-product-name">{{ quickViewProduct.name }}</h3>
+      <div class="modal-product-price">
+        {{ quickViewProduct.price | currency:'BRL':'symbol':'1.2-2':'pt' }}
+      </div>
+      
+      <div class="product-details">
+        <p class="modal-product-description">
+          {{ quickViewProduct.fullDescription || quickViewProduct.description }}
+        </p>
+        
+        <div class="product-meta">
+          <div class="meta-item">
+            <strong>Categoria:</strong> {{ quickViewProduct.category }}
+          </div>
+          <div class="meta-item" *ngIf="quickViewProduct.stock">
+            <strong>Disponível:</strong> 
+            <span [ngClass]="{
+              'text-green-600': quickViewProduct.stock > 5,
+              'text-yellow-600': quickViewProduct.stock <= 5 && quickViewProduct.stock > 0,
+              'text-red-600': quickViewProduct.stock === 0
+            }">
+              {{ quickViewProduct.stock }} unidade(s)
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button 
+          class="modal-add-cart-btn" 
+          (click)="addToCartFromQuickView()"
+          [disabled]="isOutOfStock(quickViewProduct)"
+          type="button"
+        >
+          <i class="pi pi-shopping-cart mr-2"></i>
+          {{ isOutOfStock(quickViewProduct) ? 'Produto Esgotado' : 'Adicionar ao Carrinho' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Overlay para fechar mini cart ao clicar fora -->
+<div 
+  class="mini-cart-overlay" 
+  *ngIf="showMiniCart" 
+  (click)="showMiniCart = false"
+></div>

@@ -1,0 +1,110 @@
+<div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen flex flex-col">
+  <p-toast></p-toast>
+
+  <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">{{ pageTitle }}</h2>
+
+  <p-card class="rounded-xl shadow-lg flex-grow overflow-auto">
+    <form [formGroup]="onlineProductForm" (ngSubmit)="onSaveOnlineProduct()" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+
+      <!-- Coluna Esquerda -->
+      <div class="col-span-1 flex flex-col gap-6">
+        <!-- Seleção de Produto Base (apenas em modo de criação) -->
+        <div class="p-field" *ngIf="!isEditMode">
+          <label for="baseProduct" class="block text-sm font-medium text-gray-700 mb-2">Produto do Estoque <span class="text-red-500">*</span></label>
+          <p-dropdown id="baseProduct" [options]="availableBaseProducts" formControlName="baseProduct" optionLabel="name" placeholder="Selecione um Produto"
+                      [filter]="true" filterBy="name" class="w-full" [style]="{'width': '100%'}"
+                      [ngClass]="{'ng-invalid ng-dirty': onlineProductForm.get('baseProduct')?.invalid && onlineProductForm.get('baseProduct')?.touched}"></p-dropdown>
+          <small *ngIf="onlineProductForm.get('baseProduct')?.invalid && onlineProductForm.get('baseProduct')?.touched" class="p-error block mt-1">
+            Selecione um produto base.
+          </small>
+        </div>
+
+        <!-- Preço Online -->
+        <div class="p-field">
+          <label for="onlinePrice" class="block text-sm font-medium text-gray-700 mb-2">Preço Online <span class="text-red-500">*</span></label>
+          <p-inputNumber id="onlinePrice" formControlName="onlinePrice" mode="currency" currency="BRL" locale="pt-BR"
+                         [min]="0.01" class="w-full" inputStyleClass="w-full rounded-lg shadow-sm"
+                         [ngClass]="{'ng-invalid ng-dirty': onlineProductForm.get('onlinePrice')?.invalid && onlineProductForm.get('onlinePrice')?.touched}"></p-inputNumber>
+          <small *ngIf="onlineProductForm.get('onlinePrice')?.invalid && onlineProductForm.get('onlinePrice')?.touched" class="p-error block mt-1">
+            Preço online é obrigatório e deve ser maior que zero.
+          </small>
+        </div>
+
+        <!-- Descrição Online -->
+        <div class="p-field">
+          <label for="onlineDescription" class="block text-sm font-medium text-gray-700 mb-2">Descrição Online</label>
+          <textarea id="onlineDescription" pInputTextarea formControlName="onlineDescription" rows="5" class="w-full rounded-lg shadow-sm"></textarea>
+          <small class="block mt-1 text-gray-500">
+            Descrição detalhada para a página do produto na loja online.
+          </small>
+        </div>
+      </div>
+
+      <!-- Coluna Direita -->
+      <div class="col-span-1 flex flex-col gap-6">
+        <!-- SEO Título -->
+        <div class="p-field">
+          <label for="seoTitle" class="block text-sm font-medium text-gray-700 mb-2">SEO Título</label>
+          <input id="seoTitle" type="text" pInputText formControlName="seoTitle" class="w-full rounded-lg shadow-sm" />
+          <small class="block mt-1 text-gray-500">
+            Título otimizado para motores de busca (Google, etc.).
+          </small>
+        </div>
+
+        <!-- SEO Descrição -->
+        <div class="p-field">
+          <label for="seoDescription" class="block text-sm font-medium text-gray-700 mb-2">SEO Descrição</label>
+          <textarea id="seoDescription" pInputTextarea formControlName="seoDescription" rows="3" class="w-full rounded-lg shadow-sm"></textarea>
+          <small class="block mt-1 text-gray-500">
+            Pequena descrição para aparecer nos resultados de busca.
+          </small>
+        </div>
+
+        <!-- Visibilidade Online -->
+        <div class="p-field flex items-center justify-between">
+          <label for="isVisibleOnline" class="block text-sm font-medium text-gray-700">Visível na Loja Online?</label>
+          <p-toggleButton
+            id="isVisibleOnline"
+            formControlName="isVisibleOnline"
+            onLabel="Sim"
+            offLabel="Não"
+            onIcon="pi-check"
+            offIcon="pi pi-times"
+            [style]="{'width': '6em'}"
+          ></p-toggleButton>
+        </div>
+
+        <!-- Imagem do Produto Online (URL para MVP) -->
+        <div class="p-field">
+          <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-2">URL da Imagem Online</label>
+          <input id="imageUrl" type="text" pInputText formControlName="imageUrl" class="w-full rounded-lg shadow-sm" />
+          <small class="block mt-1 text-gray-500">
+            URL da imagem principal do produto para a loja online.
+          </small>
+          <div *ngIf="onlineProductForm.get('imageUrl')?.value" class="mt-4 flex justify-center">
+            <img [src]="onlineProductForm.get('imageUrl')?.value" alt="Pré-visualização da Imagem Online" class="max-w-xs max-h-48 object-contain rounded-lg shadow-md" />
+          </div>
+        </div>
+
+        <!-- Campos adicionais para e-commerce, como tags, variações específicas online, etc. -->
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="col-span-1 md:col-span-2 flex flex-col sm:flex-row justify-end gap-3 mt-6">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          styleClass="p-button-secondary w-full sm:w-auto rounded-lg shadow-md"
+          (onClick)="onCancel()"
+          type="button"
+        ></p-button>
+        <p-button
+          [label]="isEditMode ? 'Atualizar Produto Online' : 'Salvar Produto Online'"
+          icon="pi pi-check"
+          styleClass="p-button-success w-full sm:w-auto rounded-lg shadow-md"
+          type="submit"
+        ></p-button>
+      </div>
+    </form>
+  </p-card>
+</div>

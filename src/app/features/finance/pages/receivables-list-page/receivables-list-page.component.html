@@ -1,0 +1,129 @@
+<div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Contas a Receber</h2>
+    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <p-iconfield class="p-input-icon-left w-full sm:w-auto">
+            <p-inputicon styleClass="pi pi-search" />
+            <input pInputText type="text" [(ngModel)]="globalFilter" (input)="dt.filterGlobal(globalFilter, 'contains')" 
+        placeholder="Buscar recebível..." class="w-full rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"  />
+        </p-iconfield>     
+      <!-- <span >
+        <i class="pi pi-search"></i>
+        <input />
+      </span> -->
+      <p-button
+        label="Adicionar Novo Recebível"
+        icon="pi pi-plus"
+        styleClass="p-button-primary w-full sm:w-auto rounded-lg shadow-md"
+        (onClick)="onAddNewReceivable()"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <p-table
+      #dt
+      [value]="receivables"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} recebíveis"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [globalFilterFields]="['description', 'clientName', 'status']"
+      [selection]="selectedReceivables"
+      [(selection)]="selectedReceivables"
+      [rowHover]="true"
+      dataKey="id"
+      styleClass="p-datatable-striped p-datatable-gridlines"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-t-xl">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3 sm:mb-0">Lista de Contas a Receber</h3>
+          <div class="flex items-center gap-3">
+            <p-calendar
+              [(ngModel)]="dateFilter"
+              (onSelect)="onDateFilterChange(dt)"
+              (onClearClick)="onDateFilterChange(dt)"
+              dateFormat="dd/mm/yy"
+              placeholder="Filtrar por Data"
+              [showClear]="true"
+              inputStyleClass="rounded-lg shadow-sm"
+            ></p-calendar>
+            <p-button
+              *ngIf="selectedReceivables.length > 0"
+              label="Excluir Selecionados"
+              icon="pi pi-trash"
+              styleClass="p-button-danger p-button-sm rounded-lg shadow-sm"
+              (onClick)="deleteSelectedReceivables($event)"
+            ></p-button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="description" class="text-left">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+          <th pSortableColumn="clientName" class="hidden sm:table-cell text-left">Cliente <p-sortIcon field="clientName"></p-sortIcon></th>
+          <th pSortableColumn="amount" class="text-right">Valor <p-sortIcon field="amount"></p-sortIcon></th>
+          <th pSortableColumn="dueDate" class="hidden md:table-cell text-center">Vencimento <p-sortIcon field="dueDate"></p-sortIcon></th>
+          <th pSortableColumn="status" class="text-center">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-receivable>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="receivable"></p-tableCheckbox>
+          </td>
+          <td class="font-medium text-gray-900">{{ receivable.description }}</td>
+          <td class="hidden sm:table-cell text-gray-700">{{ receivable.clientName }}</td>
+          <td class="text-right font-semibold">{{ receivable.amount | currency:'BRL':'symbol':'1.2-2':'pt' }}</td>
+          <td class="hidden md:table-cell text-center">{{ receivable.dueDate | date:'dd/MM/yyyy' }}</td>
+          <td class="text-center">
+            <p-tag [value]="receivable.status" [severity]="getSeverity(receivable.status)"></p-tag>
+          </td>
+          <td class="text-center">
+            <p-button
+              icon="pi pi-check-circle"
+              styleClass="p-button-text p-button-rounded p-button-sm text-green-600 hover:bg-green-100"
+              (onClick)="markAsReceived(receivable)"
+              pTooltip="Marcar como Recebido" tooltipPosition="top"
+              [disabled]="receivable.status === 'Recebido'"
+            ></p-button>
+            <p-button
+              icon="pi pi-pencil"
+              styleClass="p-button-text p-button-rounded p-button-sm text-blue-600 hover:bg-blue-100 ml-1"
+              (onClick)="onEditReceivable(receivable)"
+              pTooltip="Editar" tooltipPosition="top"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-text p-button-rounded p-button-sm text-red-600 hover:bg-red-100 ml-1"
+              (onClick)="onDeleteReceivable($event, receivable)"
+              pTooltip="Excluir" tooltipPosition="top"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-5 text-gray-500">Nenhuma conta a receber encontrada.</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary">
+        <div class="flex items-center justify-end p-4 bg-gray-50 rounded-b-xl">
+          Total de {{ receivables ? receivables.length : 0 }} contas a receber.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

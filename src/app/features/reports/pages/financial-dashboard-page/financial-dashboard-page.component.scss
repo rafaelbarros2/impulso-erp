@@ -1,0 +1,459 @@
+// financial-dashboard-page.component.scss - VERSÃO COMPLETA
+
+// Variáveis de cores customizadas
+:root {
+  --primary-blue: #3B82F6;
+  --primary-blue-light: #EFF6FF;
+  --success-green: #10B981;
+  --success-green-light: #ECFDF5;
+  --warning-yellow: #F59E0B;
+  --warning-yellow-light: #FFFBEB;
+  --danger-red: #EF4444;
+  --danger-red-light: #FEF2F2;
+  --purple: #8B5CF6;
+  --purple-light: #F3E8FF;
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-900: #111827;
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+// Container principal com fix de altura para scroll mobile
+.financial-dashboard-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  height: 100vh; // Força altura fixa da viewport
+  max-height: 100vh; // Evita overflow da viewport
+  overflow: hidden; // Previne scroll duplo
+  
+  // Fix específico para mobile
+  @media (max-width: 767px) {
+    min-height: 100dvh; // Usa dynamic viewport height em mobile
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+  
+  // Container do conteúdo scrollável
+  .scrollable-content {
+    height: calc(100vh - 200px); // Subtrai altura do header
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 2rem; // Garante espaço no final
+    
+    @media (max-width: 767px) {
+      // Considera navigation bar inferior (aprox 60-80px)
+      height: calc(100dvh - 280px); // Mais espaço para nav inferior
+      padding-bottom: 5rem; // Muito mais espaço no final
+      margin-bottom: 1rem; // Margem extra
+      
+      // Melhora o scroll touch em iOS
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    
+    @media (max-width: 640px) {
+      height: calc(100dvh - 300px); // Ainda mais espaço
+      padding-bottom: 6rem; // Padding generoso
+    }
+    
+    // Se há navigation fixa, ajusta mais ainda
+    @media (max-width: 480px) {
+      height: calc(100dvh - 320px);
+      padding-bottom: 7rem;
+    }
+  }
+}
+
+// Efeitos de hover nos cards
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+// Cards de métricas com glassmorphism
+.metric-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Indicadores de tendência
+.metric-trend {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+}
+
+// Texto com gradiente
+.gradient-text {
+  background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Efeito glassmorphism
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Botões de abas
+.tab-button {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-blue) 0%, #60A5FA 100%);
+  border-radius: 2px 2px 0 0;
+}
+
+// Status badges
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-paid {
+  background-color: var(--success-green-light);
+  color: var(--success-green);
+}
+
+.status-pending {
+  background-color: var(--warning-yellow-light);
+  color: var(--warning-yellow);
+}
+
+.status-received {
+  background-color: var(--success-green-light);
+  color: var(--success-green);
+}
+
+// Animação de pulso lenta
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+// Container do gráfico
+.chart-container {
+  position: relative;
+  height: 320px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  border-radius: 12px;
+  padding: 1rem;
+  
+  @media (max-width: 640px) {
+    height: 280px;
+    padding: 0.5rem;
+  }
+}
+
+// Botões de ação com efeito shimmer
+.action-button {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.action-button:hover::before {
+  left: 100%;
+}
+
+// Barras de categoria
+.category-bar {
+  height: 6px;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+// Itens de ação rápida
+.quick-action-item {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.quick-action-item:hover {
+  background: rgba(59, 130, 246, 0.05);
+  border-left-color: var(--primary-blue);
+  transform: translateX(4px);
+}
+
+// Linhas da tabela
+.table-row {
+  transition: all 0.2s ease;
+}
+
+.table-row:hover {
+  background: rgba(59, 130, 246, 0.02);
+  transform: scale(1.01);
+}
+
+// Skeleton loading
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// Animação floating
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+// Media queries específicas para mobile
+@media (max-width: 767px) {
+  // Header actions responsivo
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    > div {
+      width: 100%;
+    }
+    
+    .flex.gap-3 {
+      width: 100%;
+      flex-direction: column;
+    }
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  // SOLUÇÃO ALTERNATIVA: Se o scroll ainda não funcionar
+  // Adicione esta classe ao container principal no HTML: "safe-area-mobile"
+  .safe-area-mobile {
+    .scrollable-content {
+      height: calc(100dvh - 350px) !important; // Valor mais conservador
+      padding-bottom: 8rem !important; // Padding muito generoso
+      margin-bottom: 2rem !important;
+    }
+  }
+  
+  // Reduz espaçamentos em mobile
+  .mb-8 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .gap-6 {
+    gap: 1rem !important;
+  }
+  
+  .gap-8 {
+    gap: 1.5rem !important;
+  }
+  
+  // Ajusta altura dos cards em mobile
+  .metric-card {
+    min-height: auto;
+  }
+  
+  // Melhora a responsividade da tabela
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  // Ajusta padding dos cards
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  // Melhora a navegação por abas em mobile
+  .tab-button {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  // Ajusta tamanho dos textos em mobile
+  .text-4xl {
+    font-size: 2rem !important;
+    line-height: 2.5rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.75rem !important;
+    line-height: 2.25rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  // FORÇA o último elemento a ter espaço
+  .scrollable-content > *:last-child {
+    margin-bottom: 4rem !important;
+  }
+}
+
+// Media queries específicas para tablets
+@media (min-width: 768px) and (max-width: 1024px) {
+  .scrollable-content {
+    height: calc(100vh - 180px);
+  }
+  
+  .chart-container {
+    height: 300px;
+  }
+}
+
+// Media queries para telas grandes
+@media (min-width: 1025px) {
+  .scrollable-content {
+    height: calc(100vh - 160px);
+  }
+  
+  .chart-container {
+    height: 360px;
+  }
+  
+  // Melhora hover effects em desktop
+  .card-hover:hover {
+    transform: translateY(-6px);
+  }
+  
+  .quick-action-item:hover {
+    transform: translateX(6px);
+  }
+}
+
+// Estilos específicos para PrimeNG
+:host ::ng-deep {
+  // Customização do Toast
+  .p-toast {
+    z-index: 9999;
+  }
+  
+  .p-toast-message {
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  // Customização do Chart
+  .p-chart {
+    height: 100%;
+    
+    canvas {
+      max-height: 100% !important;
+    }
+  }
+  
+  // Customização dos Cards
+  .p-card {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    
+    .p-card-body {
+      padding: 0;
+    }
+    
+    .p-card-content {
+      padding: 0;
+    }
+  }
+}
+
+// Utilities extras
+.text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.border-gradient {
+  border: 1px solid;
+  border-image: linear-gradient(45deg, var(--primary-blue), var(--success-green)) 1;
+}
+
+// Scrollbar customizado
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+// Print styles
+@media print {
+  .financial-dashboard-container {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .scrollable-content {
+    height: auto;
+    overflow: visible;
+  }
+  
+  .action-button,
+  .tab-button {
+    display: none;
+  }
+}
