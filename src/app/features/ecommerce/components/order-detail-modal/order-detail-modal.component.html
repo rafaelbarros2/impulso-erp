@@ -1,0 +1,87 @@
+<p-dialog
+  [header]="order ? 'Pedido #' + order.orderNumber : 'Detalhes do Pedido'"
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [responsive]="true"
+  [style]="{width: '90vw', maxWidth: '700px'}"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="hideModal()"
+>
+  <div *ngIf="order" class="p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Coluna de Detalhes do Pedido -->
+      <div class="col-span-1">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Informações Gerais</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="text-gray-600">Cliente:</span>
+            <span class="font-medium text-gray-900">{{ order.clientName }}</span>
+          </div>
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="text-gray-600">Data do Pedido:</span>
+            <span class="font-medium text-gray-900">{{ order.orderDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="text-gray-600">Status Atual:</span>
+            <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+          </div>
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="text-gray-600">Total do Pedido:</span>
+            <span class="text-xl font-bold text-green-600">{{ order.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Coluna de Itens do Pedido -->
+      <div class="col-span-1">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Itens do Pedido</h3>
+        <ul class="space-y-3">
+          <li *ngFor="let item of order.items" class="flex items-center justify-between border-b pb-2">
+            <div>
+              <p class="font-medium text-gray-900">{{ item.name }}</p>
+              <p class="text-sm text-gray-500">SKU: {{ item.sku }} | Qtd: {{ item.quantity }}</p>
+            </div>
+            <span class="font-bold">{{ item.price * item.quantity | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Seção de Ações e Atualização de Status -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Atualizar Status</h3>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div class="flex-grow">
+          <p-dropdown
+            [options]="orderStatusOptions"
+            [(ngModel)]="selectedStatus"
+            placeholder="Selecione um novo status"
+            optionLabel="label"
+            class="w-full"
+            [style]="{'width': '100%'}"
+          ></p-dropdown>
+        </div>
+        <p-button
+          label="Atualizar Status"
+          icon="pi pi-save"
+          styleClass="p-button-primary w-full sm:w-auto"
+          [disabled]="!selectedStatus || selectedStatus === order.status"
+          (onClick)="updateStatus()"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Fechar"
+        icon="pi pi-times"
+        styleClass="p-button-secondary"
+        (onClick)="hideModal()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

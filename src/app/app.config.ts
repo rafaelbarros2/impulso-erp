@@ -1,10 +1,13 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config'; 
 import Lara from '@primeng/themes/lara';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt'; 
 
+registerLocaleData(localePt);
  export const appConfig: ApplicationConfig = {
    providers: [
      provideRouter(routes),
@@ -19,6 +22,7 @@ import Lara from '@primeng/themes/lara';
          }
        },
        ripple: true
-     })
+     }),
+     { provide: LOCALE_ID, useValue: 'pt-BR' }
    ]
  };

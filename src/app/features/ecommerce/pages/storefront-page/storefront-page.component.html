@@ -67,7 +67,7 @@
                 </div>
                 <button 
                   class="mini-cart-remove" 
-                  (click)="removeFromCart(item.product.id)"
+                  (click)="removeFromCart(item.product.id); $event.stopPropagation()"
                   title="Remover item"
                   type="button"
                 >
@@ -88,10 +88,10 @@
                 <span>Total:</span>
                 <span class="total-amount">{{ cartTotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
               </div>
-              <button class="checkout-btn" (click)="proceedToCheckout()" type="button">
+              <a (click)="proceedToCheckout(); $event.stopPropagation()" class="checkout-btn">
                 <i class="pi pi-credit-card mr-2"></i>
                 Finalizar Compra
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@
   </header>
 
   <!-- Hero Banner Grid (Tradicional) -->
-  <section class="hero-banner hero-grid" *ngIf="currentLayout === 'grid'">
+  <section class="hero-banner hero-grid" *ngIf="currentLayout === 'grid' && showHeroBanner">
     <div class="banner-content">
       <h2>{{ getHeroBannerData().title }}</h2>
       <p>{{ getHeroBannerData().subtitle }}</p>
@@ -118,7 +118,7 @@
   </section>
 
   <!-- Hero Banner List (Premium/Minimalista) -->
-  <section class="hero-banner hero-list" *ngIf="currentLayout === 'list'">
+  <section class="hero-banner hero-list" *ngIf="currentLayout === 'list' && showHeroBanner">
     <div class="hero-list-content">
       <div class="hero-text-section">
         <div class="hero-category">{{ getHeroBannerData().category }}</div>
@@ -159,7 +159,15 @@
 
   <!-- Seção de Produtos -->
   <main class="products-section" id="products-section">
-    <h3 class="section-title">{{ getSectionTitle() }}</h3>
+    <!-- Botão para mostrar banner novamente (só aparece quando banner está oculto) -->
+    <div class="show-banner-section" *ngIf="!showHeroBanner">
+      <button class="show-banner-btn" (click)="showHeroBannerAgain()" type="button">
+        <i class="pi pi-eye mr-2"></i>
+        Mostrar Banner Inicial
+      </button>
+    </div>
+    
+    <h3 class="section-title" [class.focused]="!showHeroBanner">{{ getSectionTitle() }}</h3>
     
     <!-- Grid Layout -->
     <div class="product-grid" *ngIf="currentLayout === 'grid'">
@@ -316,7 +324,7 @@
         </p>
         
         <div class="product-meta">
-          <div class="meta-item">
+          <div class="meta-item" *ngIf="quickViewProduct.category">
             <strong>Categoria:</strong> {{ quickViewProduct.category }}
           </div>
           <div class="meta-item" *ngIf="quickViewProduct.stock">

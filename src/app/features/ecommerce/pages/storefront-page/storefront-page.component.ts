@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
 import { CardModule } from 'primeng/card';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
+import { Router } from '@angular/router'; // 1. Importar o Router
 
 interface ProductDisplay {
   id: string;
@@ -49,14 +50,17 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
   availableThemes: StoreTheme[] = [];
   selectedTheme: StoreTheme | null = null;
   private themeSubscription: Subscription | undefined;
-
+  private justToggled = false;
   // Layout State
   currentLayout: 'grid' | 'list' = 'grid';
+  showHeroBanner: boolean = true;
   
   // Cart State
   cartItems: CartItem[] = [];
   cartTotal: number = 0;
   showMiniCart: boolean = false;
+  isFooterVisible: boolean = false;
+  private scrollListener?: () => void;
   
   // Quick View Modal State
   showQuickView: boolean = false;
@@ -150,7 +154,8 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private themeService: ThemeService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router // 2. Injetar o Router no construtor
   ) {
     this.currentTheme$ = this.themeService.currentTheme$;
   }
@@ -159,10 +164,37 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
     this.loadAvailableThemes();
     this.syncSelectedTheme();
     this.showWelcomeMessage();
+    this.initFooterVisibility();
   }
 
   ngOnDestroy(): void {
     this.themeSubscription?.unsubscribe();
+        if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+    }
+  }
+
+    private initFooterVisibility(): void {
+    // Mostrar footer após um pequeno delay inicial
+    setTimeout(() => {
+      this.isFooterVisible = true;
+    }, 1000);
+
+    // OPCIONAL: Detectar quando usuário está próximo do footer
+    this.scrollListener = () => {
+      const footer = document.querySelector('.store-footer') as HTMLElement;
+      if (footer) {
+        const footerRect = footer.getBoundingClientRect();
+        const isNearFooter = footerRect.top < window.innerHeight + 100;
+        
+        if (isNearFooter && !this.isFooterVisible) {
+          this.isFooterVisible = true;
+        }
+      }
+    };
+
+    // Adicionar listener apenas se quiser controle fino do footer
+    // window.addEventListener('scroll', this.scrollListener);
   }
 
   // ================== THEME METHODS ==================
@@ -207,6 +239,7 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
    */
   switchLayout(layout: 'grid' | 'list'): void {
     this.currentLayout = layout;
+    this.showHeroBanner = true; // Sempre mostra o banner ao trocar layout
     
     this.messageService.add({
       severity: 'info',
@@ -319,7 +352,15 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
    * Alterna visibilidade do mini carrinho
    */
   toggleMiniCart(): void {
+    console.log('🟢 toggleMiniCart chamado, showMiniCart atual:', this.showMiniCart);
     this.showMiniCart = !this.showMiniCart;
+    console.log('🟡 showMiniCart novo valor:', this.showMiniCart);
+    
+    // Flag para ignorar o próximo clique do document
+    this.justToggled = true;
+    setTimeout(() => {
+      this.justToggled = false;
+    }, 200); // 200ms para ser seguro
   }
 
   // ================== QUICK VIEW METHODS ==================
@@ -340,6 +381,9 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
     this.quickViewProduct = null;
   }
 
+  closeMiniCart(): void {
+  this.showMiniCart = false;
+}
   /**
    * Adiciona produto ao carrinho via quick view
    */
@@ -388,9 +432,12 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Retorna título da seção baseado no layout
+   * Retorna título da seção baseado no layout e estado do banner
    */
   getSectionTitle(): string {
+    if (!this.showHeroBanner) {
+      return 'Nossa Coleção Completa'; // Título especial quando banner está oculto
+    }
     return this.currentLayout === 'grid' ? 'Nossos Produtos' : 'Coleção Exclusiva';
   }
 
@@ -430,32 +477,74 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Faz scroll suave até a seção de produtos
+   * Esconde o hero banner e foca nos produtos
    */
   scrollToProducts(): void {
-    // Pequeno delay para garantir que o DOM está atualizado
+    // Animação de saída do hero banner
+    const heroElement = document.querySelector('.hero-banner') as HTMLElement;
+    if (heroElement) {
+      heroElement.classList.add('leaving');
+      
+      setTimeout(() => {
+        heroElement.classList.remove('leaving');
+      }, 500);
+    }
+    
     setTimeout(() => {
-      const productsSection = document.getElementById('products-section');
-      if (productsSection) {
-        productsSection.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
-        });
+      this.showHeroBanner = false;
+      
+      setTimeout(() => {
+        const productsSection = document.getElementById('products-section');
+        if (productsSection) {
+          productsSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          
+          // Garantir que footer seja visível após scroll
+          this.isFooterVisible = true;
+        }
         
-        // Feedback visual
         this.messageService.add({
-          severity: 'info',
-          summary: 'Produtos',
-          detail: 'Veja nossa seleção especial!',
-          life: 2000
+          severity: 'success',
+          summary: 'Modo Foco',
+          detail: 'Navegue pelos produtos com scroll livre!',
+          life: 2500
         });
-      }
-    }, 150);
+      }, 100);
+    }, 500);
   }
 
   /**
-   * Simula processo de checkout
+   * Mostra o hero banner novamente
+   */
+  showHeroBannerAgain(): void {
+    this.showHeroBanner = true;
+    
+    // Animação de entrada
+    setTimeout(() => {
+      const heroElement = document.querySelector('.hero-banner') as HTMLElement;
+      if (heroElement) {
+        heroElement.classList.add('entering');
+        
+        // Remove a classe após a animação
+        setTimeout(() => {
+          heroElement.classList.remove('entering');
+        }, 500);
+      }
+    }, 50);
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Banner Restaurado',
+      detail: 'Experiência completa ativada novamente!',
+      life: 2000
+    });
+  }
+
+  /**
+   * Lógica para finalizar a compra e navegar para o carrinho
    */
   proceedToCheckout(): void {
     if (this.cartItems.length === 0) {
@@ -468,14 +557,9 @@ export class StorefrontPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Redirecionando...',
-      detail: 'Você será redirecionado para o checkout em instantes.',
-      life: 3000
-    });
+    console.log('Finalizando compra com os seguintes itens:', this.cartItems);
 
-    // Aqui seria implementada a navegação para o checkout
-    // this.router.navigate(['/checkout']);
+    // Navega para a página do carrinho
+    this.router.navigate(['/ecommerce/checkout']);
   }
 }
