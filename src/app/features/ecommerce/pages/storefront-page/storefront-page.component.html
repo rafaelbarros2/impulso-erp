@@ -43,14 +43,15 @@
         </div>
 
         <!-- Mini Cart -->
-        <div class="cart-wrapper" (click)="toggleMiniCart()">
-          <i class="pi pi-shopping-cart cart-icon"></i>
+        <div class="cart-wrapper">
+          <!-- O clique para abrir/fechar o carrinho deve ser apenas no ícone -->
+          <i class="pi pi-shopping-cart cart-icon" (click)="toggleMiniCart()"></i>
           <span class="cart-count" *ngIf="getCartItemCount() > 0">
             {{ getCartItemCount() }}
           </span>
           
           <!-- Mini Cart Dropdown -->
-          <div class="mini-cart" [class.show]="showMiniCart" (click)="$event.stopPropagation()">
+          <div class="mini-cart" [class.show]="showMiniCart">
             <div class="mini-cart-header">
               <i class="pi pi-shopping-cart mr-2"></i>
               Carrinho de Compras
@@ -65,9 +66,10 @@
                     {{ item.product.price | currency:'BRL':'symbol':'1.2-2':'pt' }} x {{ item.quantity }}
                   </div>
                 </div>
+                <!-- O stopPropagation é removido, pois o HostListener agora controla o fechamento -->
                 <button 
                   class="mini-cart-remove" 
-                  (click)="removeFromCart(item.product.id); $event.stopPropagation()"
+                  (click)="removeFromCart(item.product.id)"
                   title="Remover item"
                   type="button"
                 >
@@ -88,7 +90,8 @@
                 <span>Total:</span>
                 <span class="total-amount">{{ cartTotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
               </div>
-              <a (click)="proceedToCheckout(); $event.stopPropagation()" class="checkout-btn">
+              <!-- O stopPropagation é removido, pois o HostListener agora controla o fechamento -->
+              <a (click)="proceedToCheckout()" class="checkout-btn">
                 <i class="pi pi-credit-card mr-2"></i>
                 Finalizar Compra
               </a>
@@ -355,9 +358,4 @@
   </div>
 </p-dialog>
 
-<!-- Overlay para fechar mini cart ao clicar fora -->
-<div 
-  class="mini-cart-overlay" 
-  *ngIf="showMiniCart" 
-  (click)="showMiniCart = false"
-></div>
+

@@ -1,57 +1,178 @@
+ <p-toast position="top-right"></p-toast>
     <div class="cart-container">
-        <div class="cart-header">
-            <h1 class="cart-title">Meu Carrinho</h1>
+      <div class="cart-header">
+        <h1 class="cart-title">Meu Carrinho</h1>
+        <p class="cart-subtitle">Revise seus itens antes de finalizar a compra</p>
+      </div>
+
+      <div class="cart-content-desktop">
+        <!-- Left Column: Cart Items -->
+        <div class="cart-items-list" *ngIf="cartData.length > 0">
+          <div class="cart-item fade-in" *ngFor="let item of cartData; let i = index">
+            <!-- Layout para desktop -->
+            <img [src]="item.image" [alt]="item.name" class="item-image hidden md:block">
+            <div class="item-info">
+              <p class="item-name">{{ item.name }}</p>
+              <p class="item-price">{{ item.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</p>
+              <p class="item-stock">
+                <i class="pi pi-check-circle text-green-500 mr-1"></i>
+                {{ item.stock }} em estoque
+              </p>
+            </div>
+            <div class="item-actions hidden md:flex">
+              <div class="qty-controls">
+                <button class="qty-button" (click)="updateQuantity(i, item.quantity - 1)" [disabled]="item.quantity <= 1">
+                  <i class="pi pi-minus"></i>
+                </button>
+                <span class="qty-display">{{ item.quantity }}</span>
+                <button class="qty-button" (click)="updateQuantity(i, item.quantity + 1)" [disabled]="item.quantity >= item.stock">
+                  <i class="pi pi-plus"></i>
+                </button>
+              </div>
+              <div class="action-buttons">
+                <button class="save-later-btn" (click)="saveForLater(item)">
+                  <i class="pi pi-heart"></i>
+                </button>
+                <button class="remove-button" (click)="removeItem(i)">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Layout específico para mobile -->
+            <div class="mobile-item-top flex md:hidden">
+              <img [src]="item.image" [alt]="item.name" class="item-image">
+              <div class="mobile-controls">
+                <div class="qty-controls">
+                  <button class="qty-button" (click)="updateQuantity(i, item.quantity - 1)" [disabled]="item.quantity <= 1">
+                    <i class="pi pi-minus"></i>
+                  </button>
+                  <span class="qty-display">{{ item.quantity }}</span>
+                  <button class="qty-button" (click)="updateQuantity(i, item.quantity + 1)" [disabled]="item.quantity >= item.stock">
+                    <i class="pi pi-plus"></i>
+                  </button>
+                </div>
+                <div class="action-buttons">
+                  <button class="save-later-btn" (click)="saveForLater(item)">
+                    <i class="pi pi-heart"></i>
+                  </button>
+                  <button class="remove-button" (click)="removeItem(i)">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Informações do item para mobile -->
+            <div class="item-info-mobile md:hidden">
+                <p class="item-name">{{ item.name }}</p>
+                <p class="item-price">{{ item.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</p>
+                <p class="item-stock">
+                    <i class="pi pi-check-circle text-green-500 mr-1"></i>
+                    {{ item.stock }} em estoque
+                </p>
+            </div>
+          </div>
         </div>
 
-        <div class="cart-content-desktop">
-            <!-- Left Column: Cart Items -->
-            <div class="cart-items-list" *ngIf="cartData.length > 0">
-                <!-- Item do carrinho 1 -->
-                <div class="cart-item" *ngFor="let item of cartData; let i = index">
-                    <img [src]="item.image" [alt]="item.name" class="item-image">
-                    <div class="item-info">
-                        <p class="item-name">{{ item.name }}</p>
-                        <p class="item-price">{{ item.price | currency:'BRL':'symbol':'1.2-2':'pt' }}</p>
-                    </div>
-                    <div class="item-actions">
-                        <button class="qty-button" (click)="updateQuantity(i, item.quantity - 1)">
-                            <i class="pi pi-minus text-gray-500"></i>
-                        </button>
-                        <span class="qty-display">{{ item.quantity }}</span>
-                        <button class="qty-button" (click)="updateQuantity(i, item.quantity + 1)">
-                            <i class="pi pi-plus text-gray-500"></i>
-                        </button>
-                        <button class="remove-button" (click)="removeItem(i)">
-                            <i class="pi pi-trash"></i>
-                        </button>
-                    </div>
-                </div>
+        <!-- Right Column: Summary -->
+        <div class="cart-summary" *ngIf="cartData.length > 0">
+          <h3 class="summary-title">Resumo do Pedido</h3>
+          
+          <div class="summary-row">
+            <span class="text-gray-600">Subtotal:</span>
+            <span class="font-semibold text-gray-800">{{ subtotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+          </div>
+          
+          <div class="summary-row">
+            <span class="text-gray-600">Desconto:</span>
+            <span class="font-semibold text-green-600">-{{ discount | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+          </div>
+          
+          <div class="summary-row" *ngIf="shippingCalculated">
+            <span class="text-gray-600">Frete:</span>
+            <span class="font-semibold text-gray-800" [ngClass]="{'text-green-600': shipping === 0}">
+                {{ shipping === 0 ? 'Grátis' : (shipping | currency:'BRL':'symbol':'1.2-2':'pt') }}
+            </span>
+          </div>
+          
+          <div class="shipping-info">
+            <i class="pi pi-truck text-blue-600"></i>
+            <p class="text-sm text-gray-700 mt-2">
+              <ng-container *ngIf="subtotal < freeShippingThreshold">
+                <strong>Frete Grátis</strong> para compras acima de {{ freeShippingThreshold | currency:'BRL':'symbol':'1.2-2':'pt' }}<br>
+                <span class="text-yellow-600 text-xs">Faltam apenas {{ (freeShippingThreshold - subtotal) | currency:'BRL':'symbol':'1.2-2':'pt' }} para o frete grátis!</span>
+              </ng-container>
+              <ng-container *ngIf="subtotal >= freeShippingThreshold">
+                <strong class="text-green-600">🎉 Parabéns!</strong> Você ganhou frete grátis!
+              </ng-container>
+            </p>
+          </div>
+          
+          <div class="discount-section">
+            <input type="text" pInputText id="discount-code" class="discount-input" placeholder="Código de desconto" [(ngModel)]="discountCode" [disabled]="discountApplied">
+            <button class="apply-discount-btn" (click)="applyDiscount()" [disabled]="discountApplied">
+              <i class="pi pi-tag mr-2"></i>
+              {{ discountApplied ? 'Desconto Aplicado' : 'Aplicar Desconto' }}
+            </button>
+          </div>
+          
+          <div class="cep-section">
+            <label class="cep-label">Calcular Frete e Prazo</label>
+            <div class="cep-input-group">
+              <input type="text" pInputText id="cep-input" class="cep-input" placeholder="00000-000" mask="99999-999" [(ngModel)]="cep" [disabled]="isCalculatingShipping">
+              <button class="calculate-shipping-btn" (click)="calculateShipping()" [disabled]="isCalculatingShipping">
+                <i class="pi pi-map-marker mr-1" [ngClass]="{'pi-spin pi-spinner': isCalculatingShipping}"></i>
+                {{ isCalculatingShipping ? 'Calculando...' : 'Calcular' }}
+              </button>
             </div>
-
-            <!-- Right Column: Summary -->
-            <div class="cart-summary" *ngIf="cartData.length > 0">
-                <div class="summary-row">
-                    <span class="text-lg text-gray-600">Subtotal:</span>
-                    <span class="text-lg font-semibold text-gray-800">{{ subtotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+            <div class="shipping-results" *ngIf="shippingOptions.length > 0">
+              <div 
+                *ngFor="let option of shippingOptions"
+                class="shipping-option"
+                [ngClass]="{'selected': option.price === shipping}"
+                (click)="selectShipping(option.price)"
+              >
+                <div class="shipping-info-line">
+                  <span class="shipping-type">{{ option.type }}</span>
+                  <span class="shipping-price" [ngClass]="{'text-green-600': option.price === 0}">
+                    {{ option.price === 0 ? 'Grátis' : (option.price | currency:'BRL':'symbol':'1.2-2':'pt') }}
+                  </span>
                 </div>
-                <div class="summary-row">
-                    <span class="text-lg text-gray-600">Desconto:</span>
-                    <input type="text" placeholder="Código de desconto" class="w-48 text-right border rounded-md px-2 py-1">
-                </div>
-                <div class="summary-row">
-                    <span class="text-xl font-bold text-gray-800">Total:</span>
-                    <span class="text-2xl font-bold text-green-600">{{ total | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
-                </div>
-                <button class="continue-shopping-button">Continuar Comprando</button>
-                <button class="checkout-button">Finalizar Compra</button>
+                <span class="shipping-time">Receba em {{ option.days }}</span>
+              </div>
             </div>
-
-            <!-- Empty Cart State -->
-            <div class="empty-cart-state" *ngIf="cartData.length === 0">
-                <i class="pi pi-shopping-cart text-5xl text-gray-400 mb-4"></i>
-                <h2 class="text-2xl font-semibold text-gray-700 mb-2">Seu carrinho está vazio</h2>
-                <p class="text-gray-500">Adicione produtos para continuar.</p>
-                <button class="continue-shopping-button mt-6">Explorar Produtos</button>
+          </div>
+          
+          <div class="summary-row total">
+            <span class="text-xl font-bold text-gray-800">Total:</span>
+            <div>
+              <span class="text-2xl font-bold text-green-600">{{ total | currency:'BRL':'symbol':'1.2-2':'pt' }}</span>
+              <span class="savings-badge" *ngIf="discount > 0">
+                Você economiza {{ discount | currency:'BRL':'symbol':'1.2-2':'pt' }}
+              </span>
             </div>
+          </div>
+          
+          <button class="continue-shopping-button" (click)="continueShopping()">
+            <i class="pi pi-arrow-left mr-2"></i>
+            Continuar Comprando
+          </button>
+          
+          <button class="checkout-button" (click)="proceedToCheckout()">
+            <i class="pi pi-credit-card mr-2"></i>
+            Finalizar Compra
+          </button>
         </div>
+
+        <!-- Empty Cart State -->
+        <div class="empty-cart" *ngIf="cartData.length === 0">
+          <i class="pi pi-shopping-cart text-5xl text-gray-400 mb-4"></i>
+          <h2 class="text-2xl font-semibold text-gray-700 mb-2">Seu carrinho está vazio</h2>
+          <p class="text-gray-500">Adicione produtos para continuar.</p>
+          <button class="continue-shopping-button mt-6" (click)="continueShopping()">
+            <i class="pi pi-shopping-bag mr-2"></i>
+            Explorar Produtos
+          </button>
+        </div>
+      </div>
     </div>
