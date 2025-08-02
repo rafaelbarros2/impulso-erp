@@ -1,0 +1,231 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <h1 class="checkout-title">Finalizar Compra</h1>
+    <p class="text-gray-500">Preencha os dados abaixo para concluir seu pedido</p>
+  </div>
+
+  <div class="checkout-content">
+    <!-- Left Column: Forms -->
+    <div class="checkout-form">
+      <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
+        <!-- Seção: Informações de Entrega -->
+        <h3 class="section-title">Informações de Entrega</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="name">Nome Completo</label>
+            <input 
+              pInputText 
+               
+              type="text" 
+              id="name" 
+              formControlName="name"
+              placeholder="Seu nome completo"
+              [class.p-invalid]="checkoutForm.get('name')?.invalid && checkoutForm.get('name')?.touched">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input 
+              pInputText 
+               
+              type="email" 
+              id="email" 
+              formControlName="email"
+              placeholder="seu.email@exemplo.com"
+              [class.p-invalid]="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="cep">CEP</label>
+            <p-inputMask 
+               
+              mask="99999-999" 
+              formControlName="cep"
+              placeholder="00000-000"
+              (onComplete)="onCepChange()"
+              [class.p-invalid]="checkoutForm.get('cep')?.invalid && checkoutForm.get('cep')?.touched">
+            </p-inputMask>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="address">Endereço</label>
+            <input 
+              pInputText 
+               
+              type="text" 
+              id="address" 
+              formControlName="address"
+              placeholder="Rua, Av., etc."
+              [class.p-invalid]="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="number">Número</label>
+            <input 
+              pInputText 
+               
+              type="text" 
+              id="number" 
+              formControlName="number"
+              placeholder="123"
+              [class.p-invalid]="checkoutForm.get('number')?.invalid && checkoutForm.get('number')?.touched">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="complement">Complemento (Opcional)</label>
+            <input 
+              pInputText 
+               
+              type="text" 
+              id="complement" 
+              formControlName="complement"
+              placeholder="Apto, Bloco, etc.">
+          </div>
+        </div>
+
+        <!-- Seção: Opções de Envio -->
+        <div class="mt-8">
+          <h3 class="section-title">Opções de Envio</h3>
+          <div class="form-grid">
+            <div 
+              *ngFor="let option of shippingOptions" 
+              class="payment-option-card"
+              [class.selected]="selectedShipping.type === option.type"
+              (click)="onShippingSelect(option)">
+              <div class="payment-option-header">
+                <i class="pi" [ngClass]="option.icon"></i>
+                <h4>Entrega {{option.type}}</h4>
+              </div>
+              <p class="payment-info-text">Receba em {{option.days}}</p>
+              <span class="font-bold text-lg" 
+                    [ngClass]="{'text-green-600': selectedShipping.type === option.type, 'text-blue-600': selectedShipping.type !== option.type}">
+                {{ option.price | currency:'BRL':'symbol':'1.2-2' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Pagamento -->
+        <div class="mt-8">
+          <h3 class="section-title">Método de Pagamento</h3>
+          <div class="form-grid">
+            <div 
+              *ngFor="let option of paymentOptions" 
+              class="payment-option-card"
+              [class.selected]="selectedPayment.code === option.code"
+              (click)="onPaymentSelect(option)">
+              <div class="payment-option-header">
+                <i class="pi" [ngClass]="option.icon"></i>
+                <h4>{{option.name}}</h4>
+              </div>
+              <p class="payment-info-text">{{option.description}}</p>
+            </div>
+          </div>
+          
+          <!-- Detalhes do Cartão (visível apenas se selecionado) -->
+          <div class="card-details-section" *ngIf="selectedPayment.code === 'credit_card'">
+            <div class="form-group">
+              <label class="form-label" for="card-number">Número do Cartão</label>
+              <p-inputMask 
+                
+                mask="9999 9999 9999 9999" 
+                formControlName="cardNumber"
+                placeholder="0000 0000 0000 0000"
+                [class.p-invalid]="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched">
+              </p-inputMask>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="card-expiry">Validade</label>
+                <p-inputMask 
+                  
+                  mask="99/99" 
+                  formControlName="cardExpiry"
+                  placeholder="MM/AA"
+                  [class.p-invalid]="checkoutForm.get('cardExpiry')?.invalid && checkoutForm.get('cardExpiry')?.touched">
+                </p-inputMask>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="card-cvv">CVV</label>
+                <p-inputMask 
+                   
+                  mask="999" 
+                  formControlName="cardCvv"
+                  placeholder="123"
+                  [class.p-invalid]="checkoutForm.get('cardCvv')?.invalid && checkoutForm.get('cardCvv')?.touched">
+                </p-inputMask>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: Summary -->
+    <div class="checkout-summary">
+      <h3 class="section-title">Seu Pedido</h3>
+      
+      <!-- Lista de itens do carrinho -->
+      <ul class="space-y-4 pb-4 border-b border-gray-200">
+        <li *ngFor="let item of cartItems" class="flex items-center gap-4">
+          <img [src]="item.image" [alt]="item.name" class="w-16 h-16 object-cover rounded-lg">
+          <div class="flex-grow">
+            <p class="font-medium text-gray-900">{{item.name}}</p>
+            <p class="text-sm text-gray-500">Quantidade: {{item.quantity}}</p>
+          </div>
+          <span class="font-semibold text-gray-900">{{ item.price | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </li>
+      </ul>
+      
+      <!-- Resumo dos valores -->
+      <div class="mt-4">
+        <div class="summary-row">
+          <span class="text-gray-600">Subtotal:</span>
+          <span class="font-semibold text-gray-800">{{ subtotal | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-gray-600">Frete:</span>
+          <span class="font-semibold text-gray-800">{{ shipping | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-gray-600">Desconto:</span>
+          <span class="font-semibold text-red-600">{{ discount | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="summary-row total">
+          <span class="text-xl font-bold text-gray-800">Total:</span>
+          <span class="text-2xl font-bold text-green-600">{{ total | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="mt-6">
+        <p-button 
+          class="place-order-btn w-full" 
+          [loading]="isProcessing"
+          [disabled]="checkoutForm.invalid || isProcessing"
+          (onClick)="placeOrder()">
+          <ng-container *ngIf="!isProcessing">
+            <i class="pi pi-lock mr-2"></i>
+            Pagar e Finalizar Pedido
+          </ng-container>
+          <ng-container *ngIf="isProcessing">
+            <i class="pi pi-spinner pi-spin mr-2"></i>
+            Processando...
+          </ng-container>
+        </p-button>
+        
+        <p-button 
+          class="back-to-cart-btn w-full mt-4" 
+          severity="secondary"
+          outlined="true"
+          (onClick)="goBackToCart()">
+          <i class="pi pi-arrow-left mr-2"></i>
+          Voltar para o Carrinho
+        </p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast para mensagens -->
+<p-toast position="top-right"></p-toast>

@@ -1,0 +1,439 @@
+// Variáveis locais
+:host {
+  display: block;
+  width: 100%;
+}
+
+// ========================================
+// HEADER PRINCIPAL
+// ========================================
+
+.store-header {
+  transition: all 0.3s ease;
+  
+  // Glassmorphism effect
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  // Border dinâmico baseado no tema
+  border-bottom-color: var(--border-color, #E5E7EB);
+  
+  // Sombra dinâmica
+  box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.08));
+}
+
+// ========================================
+// LOGO E BRANDING
+// ========================================
+
+.logo-container {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    
+    .logo-icon {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px var(--shadow-color, rgba(0, 0, 0, 0.15));
+    }
+  }
+}
+
+.logo-icon {
+  background: linear-gradient(135deg, var(--primary-color, #3B82F6), var(--accent-color, #1E40AF));
+  transition: all 0.3s ease;
+}
+
+.store-title {
+  background: linear-gradient(135deg, var(--primary-color, #3B82F6), var(--accent-color, #1E40AF));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-secondary, 'Playfair Display', serif);
+}
+
+// ========================================
+// CONTROLES DE LAYOUT
+// ========================================
+
+.layout-switcher {
+  .layout-buttons {
+    background: var(--secondary-color, rgba(59, 130, 246, 0.1));
+    border-radius: 12px;
+    padding: 4px;
+  }
+}
+
+.layout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color, #1F2937);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(1.05);
+  }
+  
+  &.active {
+    background: var(--primary-color, #3B82F6);
+    color: white;
+    box-shadow: 0 2px 8px var(--shadow-color, rgba(59, 130, 246, 0.3));
+  }
+  
+  // Mobile version
+  &.mobile {
+    width: auto;
+    height: auto;
+    padding: 12px 16px;
+    gap: 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    
+    span {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// ========================================
+// BOTÕES DE TOGGLE (HERO/CATEGORIES)
+// ========================================
+
+.hero-toggle-btn,
+.categories-toggle-btn {
+  &.active {
+    background: var(--primary-color, #3B82F6) !important;
+    border-color: var(--primary-color, #3B82F6) !important;
+    color: white !important;
+  }
+  
+  &:not(.active) {
+    background: var(--secondary-color, rgba(59, 130, 246, 0.1)) !important;
+    border-color: var(--border-color, #E5E7EB) !important;
+    color: var(--text-color, #1F2937) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.7) !important;
+      border-color: var(--primary-color, #3B82F6) !important;
+    }
+  }
+}
+
+// ========================================
+// CARRINHO
+// ========================================
+
+.cart-wrapper {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    
+    .cart-icon-container {
+      background: var(--secondary-color, rgba(59, 130, 246, 0.1)) !important;
+      box-shadow: 0 4px 12px var(--shadow-color, rgba(59, 130, 246, 0.2));
+    }
+  }
+}
+
+.cart-icon-container {
+  transition: all 0.2s ease;
+  
+  i {
+    color: var(--primary-color, #3B82F6);
+  }
+}
+
+.cart-count {
+  background: var(--error-color, #EF4444);
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.cart-total {
+  .text-sm {
+    color: var(--text-color, #1F2937);
+  }
+  
+  .text-xs {
+    color: var(--text-secondary, #6B7280);
+  }
+}
+
+// ========================================
+// MENU MOBILE
+// ========================================
+
+.mobile-menu {
+  max-height: 0;
+  opacity: 0;
+  
+  &.mobile-menu-open {
+    max-height: 800px;
+    opacity: 1;
+  }
+}
+
+.mobile-menu-content {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.mobile-control-group {
+  .mobile-control-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color, #1F2937);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--secondary-color, rgba(59, 130, 246, 0.1));
+  }
+}
+
+.control-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6B7280);
+}
+
+.layout-buttons-mobile {
+  .layout-btn.mobile {
+    flex: 1;
+    border: 2px solid var(--border-color, #E5E7EB);
+    
+    &.active {
+      border-color: var(--primary-color, #3B82F6);
+    }
+  }
+}
+
+.toggle-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color, #E5E7EB);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  i {
+    color: var(--primary-color, #3B82F6);
+  }
+  
+  span {
+    color: var(--text-color, #1F2937);
+  }
+}
+
+.cart-info-mobile {
+  background: var(--secondary-color, rgba(59, 130, 246, 0.05)) !important;
+  border: 1px solid var(--border-color, #E5E7EB);
+}
+
+.mobile-menu-overlay {
+  z-index: 40;
+}
+
+// ========================================
+// ESTILIZAÇÃO PRIMENG CUSTOMIZADA
+// ========================================
+
+::ng-deep {
+  // Botões PrimeNG no header
+  .p-button {
+    transition: all 0.2s ease;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+    
+    &.p-button-sm {
+      .p-button-icon {
+        font-size: 0.875rem;
+      }
+    }
+  }
+  
+  // InputSwitch customizado
+  .p-inputswitch {
+    .p-inputswitch-slider {
+      background: var(--border-color, #E5E7EB);
+      transition: all 0.2s ease;
+      
+      &:before {
+        background: white;
+        transition: all 0.2s ease;
+      }
+    }
+    
+    &.p-inputswitch-checked .p-inputswitch-slider {
+      background: var(--primary-color, #3B82F6);
+    }
+    
+    &:not(.p-disabled):hover .p-inputswitch-slider {
+      box-shadow: 0 0 0 3px var(--shadow-color, rgba(59, 130, 246, 0.15));
+    }
+  }
+  
+  // Tooltips customizados
+  .p-tooltip {
+    .p-tooltip-text {
+      background: var(--text-color, #1F2937);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 6px 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .p-tooltip-arrow {
+      border-top-color: var(--text-color, #1F2937);
+    }
+  }
+}
+
+// ========================================
+// RESPONSIVIDADE ESPECÍFICA
+// ========================================
+
+@media (max-width: 1024px) {
+  .header-controls {
+    gap: 16px;
+  }
+  
+  .cart-total {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .store-header {
+    .header-content {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+  
+  .store-title {
+    font-size: 1.125rem;
+  }
+  
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+  
+  .cart-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.625rem;
+  }
+}
+
+// ========================================
+// ANIMAÇÕES PERSONALIZADAS
+// ========================================
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu-content {
+  animation: slideDown 0.3s ease-out;
+}
+
+// Animação para indicadores ativos
+.layout-btn.active,
+.hero-toggle-btn.active,
+.categories-toggle-btn.active {
+  animation: activeGlow 0.3s ease-out;
+}
+
+@keyframes activeGlow {
+  0% {
+    box-shadow: 0 0 0 0 var(--shadow-color, rgba(59, 130, 246, 0.3));
+  }
+  70% {
+    box-shadow: 0 0 0 6px var(--shadow-color, rgba(59, 130, 246, 0.1));
+  }
+  100% {
+    box-shadow: 0 2px 8px var(--shadow-color, rgba(59, 130, 246, 0.3));
+  }
+}
+
+// ========================================
+// ESTADOS DE LOADING E DISABLED
+// ========================================
+
+.control-loading {
+  opacity: 0.6;
+  pointer-events: none;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid var(--primary-color, #3B82F6);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ========================================
+// DARK MODE SUPPORT (FUTURO)
+// ========================================
+
+.dark-mode {
+  .store-header {
+    background: rgba(17, 24, 39, 0.95);
+    border-bottom-color: rgba(75, 85, 99, 0.3);
+  }
+  
+  .mobile-menu-content {
+    background: rgba(17, 24, 39, 0.98);
+  }
+}

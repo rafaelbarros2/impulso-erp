@@ -1,0 +1,580 @@
+// ========================================
+// CATEGORIES SECTION
+// ========================================
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.categories-section {
+  padding: 3rem 0;
+  transition: all 0.3s ease;
+  
+  &.hidden {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+  }
+}
+
+// ========================================
+// SECTION HEADER
+// ========================================
+
+.section-header {
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
+}
+
+.section-title {
+  font-family: var(--font-secondary, 'Playfair Display', serif);
+  background: linear-gradient(135deg, var(--primary-color, #3B82F6), var(--accent-color, #1E40AF));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.section-subtitle {
+  color: var(--text-secondary, #6B7280);
+  line-height: 1.6;
+}
+
+// ========================================
+// CATEGORIES GRID
+// ========================================
+
+.categories-container {
+  .grid {
+    gap: 1.5rem;
+    
+    @media (max-width: 768px) {
+      gap: 1rem;
+    }
+  }
+}
+
+// ========================================
+// CATEGORY CARDS - BASE STYLES
+// ========================================
+
+.category-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  outline: none;
+  will-change: transform;
+  
+  &:focus {
+    outline: 3px solid var(--primary-color, #3B82F6);
+    outline-offset: 2px;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ========================================
+// CARD STYLE: DEFAULT (Gradient Background)
+// ========================================
+
+.category-card {
+  // Default style (gradient)
+  &.bg-gradient-to-br {
+    background: linear-gradient(135deg, var(--primary-color, #3B82F6), var(--accent-color, #1E40AF));
+    box-shadow: 0 4px 15px var(--shadow-color, rgba(59, 130, 246, 0.15));
+    
+    &:hover {
+      box-shadow: 0 12px 35px var(--shadow-color, rgba(59, 130, 246, 0.25));
+      transform: translateY(-8px);
+    }
+    
+    .category-icon {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .category-name {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hover-overlay {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+  }
+}
+
+// ========================================
+// CARD STYLE: MINIMAL (White with border)
+// ========================================
+
+.category-card {
+  &.bg-white.border-2 {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: var(--border-color, #E5E7EB);
+    
+    &:hover {
+      border-color: var(--primary-color, #3B82F6);
+      box-shadow: 0 8px 25px var(--shadow-color, rgba(59, 130, 246, 0.15));
+      transform: translateY(-2px);
+    }
+    
+    .category-icon {
+      border: 2px solid currentColor;
+    }
+    
+    .category-name {
+      color: var(--text-color, #1F2937);
+    }
+    
+    .category-description {
+      color: var(--text-secondary, #6B7280);
+    }
+  }
+}
+
+// ========================================
+// CARD STYLE: CARD (White with shadow)
+// ========================================
+
+.category-card {
+  &.bg-white.shadow-md {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+    
+    &:hover {
+      box-shadow: var(--shadow-xl, 0 12px 40px rgba(0, 0, 0, 0.15));
+      transform: translateY(-4px);
+    }
+    
+    .category-icon {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// ========================================
+// CARD STYLE: IMAGE (Background image)
+// ========================================
+
+.category-card {
+  &.h-48 {
+    min-height: 12rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: end;
+    padding: 1.5rem;
+    
+    &:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-8px) scale(1.02);
+    }
+    
+    .category-content {
+      position: relative;
+      z-index: 15;
+      text-align: left;
+      width: 100%;
+    }
+    
+    .category-name,
+    .category-description,
+    .category-stats {
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .category-overlay {
+      transition: opacity 0.3s ease;
+    }
+    
+    &:hover .category-overlay {
+      opacity: 0.8;
+    }
+  }
+}
+
+// ========================================
+// CATEGORY CONTENT ELEMENTS
+// ========================================
+
+.category-icon-container {
+  transition: all 0.3s ease;
+}
+
+.category-icon {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.category-image {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.category-name {
+  font-weight: 700;
+  line-height: 1.3;
+  transition: all 0.3s ease;
+}
+
+.category-description {
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.category-stats {
+  transition: all 0.3s ease;
+  
+  i {
+    opacity: 0.8;
+  }
+}
+
+// ========================================
+// FEATURED BADGE
+// ========================================
+
+.featured-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #FFB800, #FF8F00);
+  box-shadow: 0 2px 10px rgba(255, 184, 0, 0.3);
+  animation: pulse 2s infinite;
+  
+  i {
+    font-size: 0.625rem;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// ========================================
+// HOVER EFFECTS
+// ========================================
+
+.hover-overlay {
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+// ========================================
+// MOBILE CATEGORIES
+// ========================================
+
+.categories-mobile {
+  display: block;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.mobile-category-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.mobile-icon {
+  transition: transform 0.2s ease;
+  
+  .mobile-category-card:hover & {
+    transform: scale(1.1);
+  }
+}
+
+.mobile-name {
+  color: var(--text-color, #1F2937);
+  line-height: 1.3;
+}
+
+.mobile-count {
+  color: var(--text-secondary, #6B7280);
+}
+
+.mobile-featured-badge {
+  span {
+    background: rgba(255, 193, 7, 0.1);
+    color: rgba(255, 193, 7, 0.8);
+    font-weight: 600;
+  }
+}
+
+// ========================================
+// EMPTY STATE
+// ========================================
+
+.empty-state {
+  .empty-icon {
+    background: var(--secondary-color, rgba(59, 130, 246, 0.1));
+    
+    i {
+      color: var(--text-secondary, #6B7280);
+    }
+  }
+  
+  .empty-title {
+    color: var(--text-color, #1F2937);
+  }
+  
+  .empty-description {
+    color: var(--text-secondary, #6B7280);
+  }
+}
+
+// ========================================
+// RIPPLE EFFECT CUSTOMIZATION
+// ========================================
+
+::ng-deep {
+  .p-ripple {
+    .p-ink {
+      background: rgba(255, 255, 255, 0.3);
+      
+      .category-card.bg-white & {
+        background: var(--primary-color, #3B82F6);
+        opacity: 0.1;
+      }
+    }
+  }
+}
+
+// ========================================
+// RESPONSIVE BREAKPOINTS
+// ========================================
+
+@media (max-width: 1024px) {
+  .category-card {
+    padding: 1.5rem;
+  }
+  
+  .category-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  
+  .category-name {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .categories-section {
+    .categories-container {
+      display: none; // Use mobile version
+    }
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-category-card {
+    padding: 0.75rem;
+  }
+  
+  .mobile-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .mobile-name {
+    font-size: 0.875rem;
+  }
+}
+
+// ========================================
+// ACCESSIBILITY
+// ========================================
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .category-card {
+    border: 2px solid;
+    
+    &:focus {
+      outline: 4px solid;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ========================================
+// REDUCED MOTION SUPPORT
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card,
+  .category-icon,
+  .category-image,
+  .mobile-icon,
+  .hover-overlay,
+  .category-overlay {
+    transition: none;
+    animation: none;
+  }
+  
+  .featured-badge {
+    animation: none;
+  }
+}
+
+// ========================================
+// DARK MODE SUPPORT (FUTURO)
+// ========================================
+
+.dark-mode {
+  .categories-section {
+    background: rgba(17, 24, 39, 0.95);
+  }
+  
+  .category-card.bg-white {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(75, 85, 99, 0.3);
+    
+    .category-name {
+      color: rgba(243, 244, 246, 0.95);
+    }
+    
+    .category-description {
+      color: rgba(156, 163, 175, 0.9);
+    }
+  }
+  
+  .mobile-category-card {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(75, 85, 99, 0.3);
+    
+    .mobile-name {
+      color: rgba(243, 244, 246, 0.95);
+    }
+    
+    .mobile-count {
+      color: rgba(156, 163, 175, 0.9);
+    }
+  }
+}
+
+// ========================================
+// CUSTOM SCROLLBAR (Se necessário)
+// ========================================
+
+.categories-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color, #3B82F6) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #3B82F6);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color, #1E40AF);
+  }
+}
+
+// ========================================
+// PERFORMANCE OPTIMIZATIONS
+// ========================================
+
+.category-card {
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.category-icon,
+.mobile-icon {
+  will-change: transform;
+}
+
+// ========================================
+// PRINT STYLES
+// ========================================
+
+@media print {
+  .categories-section {
+    break-inside: avoid;
+    
+    .category-card {
+      break-inside: avoid;
+      box-shadow: none;
+      border: 1px solid #000;
+    }
+    
+    .hover-overlay,
+    .category-overlay {
+      display: none;
+    }
+  }
+}

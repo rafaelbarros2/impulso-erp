@@ -1,0 +1,240 @@
+<!-- Store Header -->
+<header class="store-header sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-md">
+  <div class="header-content max-w-7xl mx-auto px-4 lg:px-6">
+    
+    <!-- Desktop Layout -->
+    <div class="hidden lg:flex items-center justify-between py-4 gap-6">
+      
+      <!-- Left Section: Logo & Store Name -->
+      <div class="flex items-center gap-4 flex-shrink-0" *ngIf="showLogo">
+        <div 
+          class="logo-container cursor-pointer flex items-center gap-3 group"
+          (click)="onLogoClick()">
+          
+          <!-- Logo Icon -->
+          <div class="logo-icon w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
+            <i class="pi pi-shopping-bag text-lg"></i>
+          </div>
+          
+          <!-- Store Name -->
+          <h1 class="store-title text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            {{ storeName }}
+          </h1>
+        </div>
+      </div>
+      
+      <!-- Center Section: Controls -->
+      <div class="header-controls flex items-center gap-6 flex-wrap" *ngIf="showControls">
+        
+        <!-- Theme Selector -->
+        <app-storefront-theme-selector></app-storefront-theme-selector>
+        
+        <!-- Background Selector -->
+        <app-storefront-background-selector></app-storefront-background-selector>
+        
+        <!-- Layout Switcher -->
+        <div class="layout-switcher flex items-center gap-2">
+          <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Layout:</span>
+          <div class="layout-buttons flex bg-gray-100 rounded-lg p-1 gap-1">
+            <button
+              *ngFor="let layout of layoutOptions"
+              [class]="getLayoutButtonClass(layout.type)"
+              (click)="onLayoutChange(layout.type)"
+              [pTooltip]="layout.description"
+              tooltipPosition="bottom">
+              <i [class]="layout.icon"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Section Toggles -->
+        <div class="section-toggles flex items-center gap-2">
+          <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Seções:</span>
+          
+          <!-- Hero Toggle -->
+          <p-button
+            [icon]="heroToggleIcon"
+            [styleClass]="heroToggleClass"
+            size="small"
+            (onClick)="toggleHero()"
+            [pTooltip]="heroToggleTooltip"
+            tooltipPosition="bottom">
+          </p-button>
+          
+          <!-- Categories Toggle -->
+          <p-button
+            [icon]="categoriesToggleIcon"
+            [styleClass]="categoriesToggleClass"
+            size="small"
+            (onClick)="toggleCategories()"
+            [pTooltip]="categoriesToggleTooltip"
+            tooltipPosition="bottom">
+          </p-button>
+        </div>
+      </div>
+      
+      <!-- Right Section: Cart -->
+      <div class="cart-section flex items-center">
+        <div 
+          class="cart-wrapper relative cursor-pointer group"
+          (click)="onCartClick()">
+          
+          <!-- Cart Icon -->
+          <div class="cart-icon-container relative p-3 rounded-xl bg-gray-50 group-hover:bg-primary/10 transition-colors">
+            <i class="pi pi-shopping-cart text-xl text-primary"></i>
+            
+            <!-- Cart Count Badge -->
+            <div 
+              class="cart-count absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center"
+              *ngIf="cartInfo.itemCount > 0">
+              {{ cartInfo.itemCount > 99 ? '99+' : cartInfo.itemCount }}
+            </div>
+          </div>
+          
+          <!-- Cart Total (if available) -->
+          <div class="cart-total hidden xl:block ml-2" *ngIf="shouldShowCartTotal">
+            <div class="text-sm font-medium text-gray-900">{{ formattedCartTotal }}</div>
+            <div class="text-xs text-gray-500">{{ cartInfo.itemCount }} {{ cartInfo.itemCount === 1 ? 'item' : 'itens' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Layout -->
+    <div class="lg:hidden flex items-center justify-between py-3">
+      
+      <!-- Left: Logo -->
+      <div class="flex items-center gap-3" *ngIf="showLogo" (click)="onLogoClick()">
+        <div class="logo-icon w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center text-white">
+          <i class="pi pi-shopping-bag text-sm"></i>
+        </div>
+        <h1 class="store-title text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          {{ storeName }}
+        </h1>
+      </div>
+      
+      <!-- Right: Cart & Menu Button -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Cart (Mobile) -->
+        <div 
+          class="cart-wrapper relative"
+          (click)="onCartClick()">
+          <div class="relative p-2">
+            <i class="pi pi-shopping-cart text-xl text-primary"></i>
+            <div 
+              class="cart-count absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-4 flex items-center justify-center"
+              *ngIf="cartInfo.itemCount > 0">
+              {{ cartInfo.itemCount > 99 ? '99+' : cartInfo.itemCount }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mobile Menu Button -->
+        <p-button
+          icon="pi pi-bars"
+          styleClass="p-button-outlined p-button-sm"
+          (onClick)="toggleMobileMenu()"
+          *ngIf="showControls">
+        </p-button>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu Panel -->
+    <div 
+      class="mobile-menu lg:hidden overflow-hidden transition-all duration-300 ease-in-out"
+      [class.mobile-menu-open]="isMobileMenuOpen"
+      *ngIf="showControls">
+      
+      <div class="mobile-menu-content py-4 space-y-6 border-t border-gray-200 bg-white">
+        
+        <!-- Theme Selector Mobile -->
+        <div class="mobile-control-group">
+          <h3 class="mobile-control-title">Personalização</h3>
+          <div class="space-y-4">
+            <app-storefront-theme-selector></app-storefront-theme-selector>
+            <app-storefront-background-selector></app-storefront-background-selector>
+          </div>
+        </div>
+        
+        <!-- Layout Controls Mobile -->
+        <div class="mobile-control-group">
+          <h3 class="mobile-control-title">Layout</h3>
+          <div class="space-y-3">
+            
+            <!-- Layout Switcher Mobile -->
+            <div class="layout-switcher-mobile">
+              <span class="control-label">Estilo:</span>
+              <div class="layout-buttons-mobile flex gap-2 mt-2">
+                <button
+                  *ngFor="let layout of layoutOptions"
+                  [class]="getLayoutButtonClass(layout.type) + ' mobile'"
+                  (click)="onLayoutChange(layout.type)">
+                  <i [class]="layout.icon"></i>
+                  <span>{{ layout.label }}</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Section Toggles Mobile -->
+            <div class="section-toggles-mobile space-y-3">
+              <span class="control-label">Seções:</span>
+              
+              <!-- Hero Toggle Mobile -->
+              <div class="toggle-item flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-image text-primary"></i>
+                  <span class="text-sm font-medium">Hero Section</span>
+                </div>
+                <p-inputSwitch
+                  [(ngModel)]="heroVisible"
+                  (onChange)="toggleHero()">
+                </p-inputSwitch>
+              </div>
+              
+              <!-- Categories Toggle Mobile -->
+              <div class="toggle-item flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-th-large text-primary"></i>
+                  <span class="text-sm font-medium">Categorias</span>
+                </div>
+                <p-inputSwitch
+                  [(ngModel)]="categoriesVisible"
+                  (onChange)="toggleCategories()">
+                </p-inputSwitch>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Cart Info Mobile -->
+        <div class="mobile-control-group" *ngIf="cartInfo.itemCount > 0">
+          <h3 class="mobile-control-title">Carrinho</h3>
+          <div class="cart-info-mobile bg-gray-50 rounded-lg p-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-medium">{{ cartInfo.itemCount }} {{ cartInfo.itemCount === 1 ? 'item' : 'itens' }}</div>
+                <div class="text-xs text-gray-500" *ngIf="shouldShowCartTotal">{{ formattedCartTotal }}</div>
+              </div>
+              <p-button
+                label="Ver Carrinho"
+                size="small"
+                (onClick)="onCartClick(); closeMobileMenu()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu Overlay -->
+<div 
+  class="mobile-menu-overlay lg:hidden fixed inset-0 bg-black/25 z-40 transition-opacity duration-300"
+  [class.opacity-0]="!isMobileMenuOpen"
+  [class.opacity-100]="isMobileMenuOpen"
+  [class.pointer-events-none]="!isMobileMenuOpen"
+  (click)="closeMobileMenu()"
+  *ngIf="isMobileMenuOpen">
+</div>

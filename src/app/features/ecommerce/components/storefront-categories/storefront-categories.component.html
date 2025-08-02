@@ -1,0 +1,191 @@
+<!-- Categories Section -->
+<section 
+  class="categories-section"
+  [class.hidden]="!isVisible"
+  [@slideIn]
+  *ngIf="categories.length > 0">
+  
+  <!-- Section Header -->
+  <div class="section-header text-center mb-8 lg:mb-12" *ngIf="showTitle || showSubtitle">
+    
+    <!-- Title -->
+    <h2 
+      class="section-title text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+      *ngIf="showTitle">
+      {{ title }}
+    </h2>
+    
+    <!-- Subtitle -->
+    <p 
+      class="section-subtitle text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
+      *ngIf="showSubtitle">
+      {{ subtitle }}
+    </p>
+  </div>
+  
+  <!-- Categories Grid -->
+  <div class="categories-container max-w-7xl mx-auto px-4 lg:px-6">
+    <div [class]="gridClasses">
+      
+      <!-- Category Card -->
+      <div
+        *ngFor="let category of categories; trackBy: trackByCategory"
+        [class]="getCategoryCardClasses(category)"
+        [ngStyle]="getCategoryImageStyle(category)"
+        (click)="onCategoryClick(category)"
+        (mouseenter)="onCategoryHover(category.id)"
+        (mouseleave)="onCategoryHover(null)"
+        [@cardHover]
+        pRipple
+        [attr.aria-label]="'Categoria ' + category.name + (category.itemCount ? ' com ' + category.itemCount + ' produtos' : '')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onCategoryClick(category)"
+        (keydown.space)="$event.preventDefault(); onCategoryClick(category)">
+        
+        <!-- Card Content -->
+        <div class="category-content relative z-10">
+          
+          <!-- Icon/Image for non-image style -->
+          <div 
+            class="category-icon-container mb-4"
+            *ngIf="cardStyle !== 'image'">
+            
+            <!-- Custom Icon -->
+            <div 
+              class="category-icon w-16 h-16 mx-auto flex items-center justify-center rounded-2xl text-2xl transition-transform group-hover:scale-110"
+              [style.background-color]="cardStyle === 'default' ? 'rgba(255,255,255,0.2)' : getCategoryColor(category)"
+              [style.color]="cardStyle === 'default' ? 'white' : 'white'"
+              *ngIf="category.icon && !category.image">
+              <i [class]="category.icon"></i>
+            </div>
+            
+            <!-- Category Image (for card/minimal styles) -->
+            <div 
+              class="category-image w-16 h-16 mx-auto rounded-2xl bg-cover bg-center transition-transform group-hover:scale-110"
+              [style.background-image]="'url(' + category.image + ')'"
+              *ngIf="category.image">
+            </div>
+          </div>
+          
+          <!-- Category Name -->
+          <h3 
+            class="category-name text-xl md:text-2xl font-bold mb-2 transition-colors"
+            [class.text-white]="cardStyle === 'default' || cardStyle === 'image'"
+            [class.text-gray-900]="cardStyle === 'minimal' || cardStyle === 'card'"
+            [style.color]="cardStyle === 'minimal' ? getCategoryColor(category) : null">
+            {{ category.name }}
+          </h3>
+          
+          <!-- Category Description -->
+          <p 
+            class="category-description text-sm md:text-base mb-3 opacity-90 transition-opacity"
+            [class.text-white]="cardStyle === 'default' || cardStyle === 'image'"
+            [class.text-gray-600]="cardStyle === 'minimal' || cardStyle === 'card'"
+            *ngIf="category.description">
+            {{ category.description }}
+          </p>
+          
+          <!-- Item Count -->
+          <div 
+            class="category-stats flex items-center justify-center gap-1 text-sm font-medium"
+            [class.text-white]="cardStyle === 'default' || cardStyle === 'image'"
+            [class.text-gray-500]="cardStyle === 'minimal' || cardStyle === 'card'"
+            *ngIf="showItemCount && category.itemCount">
+            <i class="pi pi-tag text-xs"></i>
+            <span>{{ category.itemCount }} {{ category.itemCount === 1 ? 'produto' : 'produtos' }}</span>
+          </div>
+        </div>
+        
+        <!-- Overlay for image style -->
+        <div 
+          class="category-overlay absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-2xl z-5"
+          *ngIf="cardStyle === 'image'">
+        </div>
+        
+        <!-- Featured Badge -->
+        <div 
+          class="featured-badge absolute top-3 right-3 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20"
+          *ngIf="category.featured">
+          <i class="pi pi-star-fill mr-1"></i>
+          Destaque
+        </div>
+        
+        <!-- Hover Effect Overlay -->
+        <div 
+          class="hover-overlay absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+          *ngIf="cardStyle === 'default'">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Grid (Simplified for smaller screens) -->
+  <div class="categories-mobile md:hidden" *ngIf="categories.length > 0">
+    <div class="grid grid-cols-2 gap-4 px-4">
+      
+      <div
+        *ngFor="let category of categories; trackBy: trackByCategory"
+        class="mobile-category-card bg-white rounded-xl p-4 shadow-md border border-gray-100 text-center transition-all hover:shadow-lg hover:-translate-y-1"
+        (click)="onCategoryClick(category)"
+        [attr.aria-label]="'Categoria ' + category.name + (category.itemCount ? ' com ' + category.itemCount + ' produtos' : '')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onCategoryClick(category)"
+        (keydown.space)="$event.preventDefault(); onCategoryClick(category)"
+        pRipple>
+        
+        <!-- Mobile Icon -->
+        <div 
+          class="mobile-icon w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center text-lg"
+          [style.background-color]="getCategoryColor(category)"
+          [style.color]="'white'">
+          <i [class]="category.icon || 'pi pi-tag'"></i>
+        </div>
+        
+        <!-- Mobile Name -->
+        <h4 class="mobile-name text-sm font-semibold text-gray-900 mb-1">
+          {{ category.name }}
+        </h4>
+        
+        <!-- Mobile Count -->
+        <p class="mobile-count text-xs text-gray-500" *ngIf="showItemCount && category.itemCount">
+          {{ category.itemCount }} itens
+        </p>
+        
+        <!-- Mobile Featured -->
+        <div 
+          class="mobile-featured-badge mt-2"
+          *ngIf="category.featured">
+          <span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+            ⭐ Destaque
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Empty State -->
+  <div 
+    class="empty-state text-center py-16"
+    *ngIf="categories.length === 0">
+    
+    <div class="empty-icon w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+      <i class="pi pi-inbox text-3xl text-gray-400"></i>
+    </div>
+    
+    <h3 class="empty-title text-xl font-semibold text-gray-900 mb-2">
+      Nenhuma categoria encontrada
+    </h3>
+    
+    <p class="empty-description text-gray-600">
+      As categorias serão carregadas em breve.
+    </p>
+  </div>
+</section>
+
+<!-- Accessibility: Screen Reader Content -->
+<div class="sr-only">
+  <p>Seção de categorias com {{ categories.length }} {{ categories.length === 1 ? 'categoria' : 'categorias' }} disponíveis.</p>
+  <p *ngIf="!isVisible">Esta seção está atualmente oculta.</p>
+</div>

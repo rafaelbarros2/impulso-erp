@@ -1,0 +1,170 @@
+<!-- Hero Section -->
+<section 
+  class="hero-section"
+  [class.hidden]="!isVisible"
+  [@slideIn]
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (keydown)="onKeydown($event)"
+  tabindex="0"
+  role="banner"
+  [attr.aria-label]="'Hero section with promotional content'"
+  *ngIf="slides.length > 0">
+  
+  <!-- Slides Container -->
+  <div class="slides-container relative overflow-hidden">
+    
+    <!-- Individual Slides -->
+    <div 
+      *ngFor="let slide of slides; trackBy: trackBySlideId"
+      [class]="getSlideClass(slide)"
+      [ngStyle]="getSlideStyle(slide)"
+      [@fadeSlide]="slide.isActive ? 'active' : 'inactive'"
+      [attr.aria-hidden]="!slide.isActive">
+      
+      <!-- Slide Content -->
+      <div class="hero-content max-w-4xl mx-auto px-6 text-center relative z-10">
+        
+        <!-- Title -->
+        <h1 
+          class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+          [innerHTML]="slide.content.title">
+        </h1>
+        
+        <!-- Subtitle -->
+        <p 
+          class="hero-subtitle text-lg md:text-xl lg:text-2xl mb-8 max-w-2xl mx-auto leading-relaxed opacity-90"
+          [innerHTML]="slide.content.subtitle">
+        </p>
+        
+        <!-- CTA Button -->
+        <button 
+          class="hero-btn inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-white/30"
+          (click)="onButtonClick(slide)"
+          [@buttonPulse]="buttonPulseState"
+          [attr.aria-label]="slide.content.buttonText">
+          
+          <span>{{ slide.content.buttonText }}</span>
+          <i [class]="slide.content.buttonIcon || 'pi pi-arrow-right'" *ngIf="slide.content.buttonIcon"></i>
+        </button>
+      </div>
+      
+      <!-- Background Overlay -->
+      <div class="hero-overlay absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-accent/80"></div>
+    </div>
+  </div>
+  
+  <!-- Navigation Controls -->
+  <div class="hero-navigation" *ngIf="shouldShowNavigation">
+    
+    <!-- Previous Button -->
+    <button 
+      class="nav-btn nav-btn-prev absolute left-4 top-1/2 transform -translate-y-1/2 z-20"
+      (click)="previousSlide()"
+      [disabled]="isAnimating"
+      aria-label="Slide anterior"
+      pRipple>
+      <i class="pi pi-chevron-left"></i>
+    </button>
+    
+    <!-- Next Button -->
+    <button 
+      class="nav-btn nav-btn-next absolute right-4 top-1/2 transform -translate-y-1/2 z-20"
+      (click)="nextSlide()"
+      [disabled]="isAnimating"
+      aria-label="Próximo slide"
+      pRipple>
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
+  
+  <!-- Slide Indicators -->
+  <div 
+    class="hero-indicators absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex gap-3"
+    *ngIf="shouldShowIndicators">
+    
+    <button
+      *ngFor="let slide of slides; let i = index; trackBy: trackBySlideId"
+      class="indicator-btn"
+      [class.active]="i === currentSlideIndex"
+      (click)="goToSlide(i)"
+      [disabled]="isAnimating"
+      [attr.aria-label]="'Ir para slide ' + (i + 1)"
+      [attr.aria-current]="i === currentSlideIndex ? 'true' : 'false'"
+      pRipple>
+    </button>
+  </div>
+  
+  <!-- Progress Bar (Auto Slide) -->
+  <div 
+    class="slide-progress absolute bottom-0 left-0 h-1 bg-white/30 z-20 transition-all duration-300"
+    *ngIf="autoSlide && slides.length > 1">
+    <div 
+      class="progress-fill h-full bg-white transition-all linear"
+      [style.width.%]="0"
+      [style.animation-duration.ms]="slideInterval"
+      [style.animation-name]="isVisible && !isAnimating ? 'slideProgress' : 'none'">
+    </div>
+  </div>
+</section>
+
+<!-- Mobile Hero (Simplified) -->
+<section 
+  class="hero-section-mobile md:hidden"
+  [class.hidden]="!isVisible"
+  [@slideIn]
+  *ngIf="slides.length > 0 && currentSlide">
+  
+  <div 
+    class="mobile-hero-slide"
+    [ngStyle]="getSlideStyle(currentSlide)">
+    
+    <!-- Mobile Content -->
+    <div class="mobile-hero-content px-4 py-12 text-center relative z-10">
+      
+      <!-- Mobile Title -->
+      <h1 
+        class="mobile-hero-title text-2xl md:text-3xl font-bold mb-4 leading-tight text-white"
+        [innerHTML]="currentSlide.content.title">
+      </h1>
+      
+      <!-- Mobile Subtitle -->
+      <p 
+        class="mobile-hero-subtitle text-base md:text-lg mb-6 opacity-90 text-white"
+        [innerHTML]="currentSlide.content.subtitle">
+      </p>
+      
+      <!-- Mobile CTA -->
+      <p-button
+        [label]="currentSlide.content.buttonText"
+        [icon]="currentSlide.content.buttonIcon || 'pi pi-arrow-right'"
+        styleClass="p-button-lg p-button-outlined mobile-hero-btn"
+        (onClick)="onButtonClick(currentSlide)">
+      </p-button>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-hero-overlay absolute inset-0 bg-gradient-to-b from-primary/70 to-accent/90"></div>
+  </div>
+  
+  <!-- Mobile Indicators -->
+  <div 
+    class="mobile-indicators flex justify-center gap-2 py-4 bg-white/10 backdrop-blur-sm"
+    *ngIf="slides.length > 1">
+    
+    <button
+      *ngFor="let slide of slides; let i = index"
+      class="mobile-indicator"
+      [class.active]="i === currentSlideIndex"
+      (click)="goToSlide(i)"
+      [attr.aria-label]="'Slide ' + (i + 1)">
+    </button>
+  </div>
+</section>
+
+<!-- Accessibility: Screen Reader Content -->
+<div class="sr-only">
+  <p>Seção promocional com {{ slides.length }} {{ slides.length === 1 ? 'slide' : 'slides' }}.</p>
+  <p>Slide atual: {{ currentSlideIndex + 1 }} de {{ slides.length }}</p>
+  <p *ngIf="autoSlide">Os slides mudam automaticamente a cada {{ slideInterval / 1000 }} segundos.</p>
+</div>

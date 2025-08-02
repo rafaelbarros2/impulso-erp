@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:host {
+  font-family: 'Inter', sans-serif;
+  display: block;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+}
+
+.checkout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.checkout-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.checkout-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.checkout-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1.5fr 1fr;
+  }
+}
+
+.checkout-form {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+}
+
+.checkout-summary {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  height: fit-content;
+  position: sticky;
+  top: 3rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &.p-invalid {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+// Override PrimeNG input styles
+::ng-deep {
+  .p-inputtext {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+
+    &:enabled:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &.p-invalid {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+
+  .p-inputmask {
+    width: 100%;
+    
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+
+  // Botão customizado
+  .p-button {
+    font-family: 'Inter', sans-serif;
+    
+    &.place-order-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 1.25rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      
+      &:enabled:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: #d1d5db;
+        box-shadow: none;
+        transform: none;
+      }
+    }
+
+    &.back-to-cart-btn {
+      background: transparent;
+      color: #6b7280;
+      font-weight: 600;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      
+      &:enabled:hover {
+        background: #f9fafb;
+        border-color: #3b82f6;
+        color: #3b82f6;
+      }
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+.payment-option-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  &.selected {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+}
+
+.payment-option-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  i {
+    font-size: 1.5rem;
+    color: #3b82f6;
+  }
+
+  h4 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1f2937;
+    margin: 0;
+  }
+}
+
+.payment-info-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.card-details-section {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+
+  &.total {
+    border-top: 2px solid #e5e7eb;
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+// Animações
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pi-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Responsividade adicional
+@media (max-width: 640px) {
+  .checkout-container {
+    padding: 2rem 1rem;
+  }
+
+  .checkout-form,
+  .checkout-summary {
+    padding: 1.5rem;
+  }
+
+  .checkout-title {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+  }
+}
+
+// Toast customization
+::ng-deep {
+  .p-toast {
+    .p-toast-message {
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+}

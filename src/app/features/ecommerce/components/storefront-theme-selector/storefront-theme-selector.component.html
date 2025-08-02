@@ -1,0 +1,48 @@
+<!-- Theme Selector Container -->
+<div class="theme-selector flex items-center gap-2">
+  <!-- Label -->
+  <span class="text-sm font-medium text-gray-700 whitespace-nowrap">
+    Tema:
+  </span>
+  
+  <!-- PrimeNG Dropdown -->
+  <p-dropdown
+    [options]="themeOptions"
+    [(ngModel)]="selectedTheme"
+    (onChange)="onThemeChange($event)"
+    optionLabel="label"
+    placeholder="Selecione um tema"
+    [style]="{ 'min-width': '160px' }"
+    styleClass="theme-dropdown"
+    [showClear]="false">
+    
+    <!-- Template customizado para as opções -->
+    <ng-template pTemplate="selectedItem">
+      <div class="flex items-center gap-2" *ngIf="selectedTheme">
+        <!-- Indicador de cor do tema -->
+        <div 
+          class="w-4 h-4 rounded-full border border-gray-300"
+          [style.background-color]="selectedTheme.theme.primaryColor">
+        </div>
+        <span class="font-medium">{{ selectedTheme.label }}</span>
+      </div>
+    </ng-template>
+    
+    <!-- Template para itens no dropdown -->
+    <ng-template let-option pTemplate="item">
+      <div class="flex items-center gap-3 py-2 px-1">
+        <!-- Indicador de cor do tema -->
+        <div 
+          class="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0"
+          [style.background-color]="option.theme.primaryColor">
+        </div>
+        
+        <!-- Informações do tema -->
+        <div class="flex flex-col">
+          <span class="font-medium text-gray-900">{{ option.label }}</span>
+          <span class="text-xs text-gray-500">{{ option.theme.primaryColor }}</span>
+        </div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</div>
