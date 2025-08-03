@@ -55,27 +55,32 @@
   </div>
   
   <!-- Navigation Controls -->
-  <div class="hero-navigation" *ngIf="shouldShowNavigation">
+  <div class="hero-navigation grid grid-cols-2 gap-4 " *ngIf="shouldShowNavigation">
     
     <!-- Previous Button -->
+     <div class="col-span-1 self-end">
     <button 
-      class="nav-btn nav-btn-prev absolute left-4 top-1/2 transform -translate-y-1/2 z-20"
+      class="nav-btn nav-btn-prev top-1/2 transform -translate-y-1/2 z-20"
       (click)="previousSlide()"
       [disabled]="isAnimating"
       aria-label="Slide anterior"
       pRipple>
       <i class="pi pi-chevron-left"></i>
     </button>
-    
+     </div>
+
     <!-- Next Button -->
-    <button 
-      class="nav-btn nav-btn-next absolute right-4 top-1/2 transform -translate-y-1/2 z-20"
-      (click)="nextSlide()"
-      [disabled]="isAnimating"
-      aria-label="Próximo slide"
-      pRipple>
-      <i class="pi pi-chevron-right"></i>
-    </button>
+<div class="col-span-1 justify-self-end self-end">
+  <button 
+    class="nav-btn nav-btn-next top-1/2 transform -translate-y-1/2 z-20"
+    (click)="nextSlide()"
+    [disabled]="isAnimating"
+    aria-label="Próximo slide"
+    pRipple>
+    <i class="pi pi-chevron-right"></i>
+  </button>
+</div>
+
   </div>
   
   <!-- Slide Indicators -->
@@ -111,7 +116,7 @@
 <!-- Mobile Hero (Simplified) -->
 <section 
   class="hero-section-mobile md:hidden"
-  [class.hidden]="!isVisible"
+  [class.hidden]="!isVisible()"
   [@slideIn]
   *ngIf="slides.length > 0 && currentSlide">
   

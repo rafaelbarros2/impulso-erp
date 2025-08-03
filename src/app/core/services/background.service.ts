@@ -1,4 +1,4 @@
-import { Injectable, signal, Signal } from '@angular/core';
+import { Injectable, signal, Signal, effect } from '@angular/core';
 
 // Interface para definir a estrutura de um background
 export interface BackgroundConfig {
@@ -113,6 +113,22 @@ export class BackgroundService {
   constructor() {
     // Carrega configurações salvas ou aplica padrão
     this.loadSavedConfig();
+    
+    // Effect para aplicar mudanças automaticamente
+    effect(() => {
+      const bg = this._currentBackground();
+      if (bg) {
+        console.log('🎨 Background Service: Aplicando background', bg.name);
+        this.setCssProperties(bg);
+      }
+    });
+    
+    // Effect para overlay
+    effect(() => {
+      const enabled = this._overlayEnabled();
+      console.log('🎨 Background Service: Overlay', enabled ? 'ativado' : 'desativado');
+      this.updateOverlayOpacity(enabled);
+    });
   }
 
   /**
@@ -120,14 +136,14 @@ export class BackgroundService {
    * @param backgroundType Tipo de background a ser aplicado
    */
   applyBackground(backgroundType: BackgroundType): void {
+    console.log('🎨 Aplicando background:', backgroundType);
     const background = this.backgroundPresets.get(backgroundType);
     if (background) {
       this._currentBackground.set(background);
-      this.setCssProperties(background);
       localStorage.setItem('storefrontBackground', JSON.stringify(background));
-      console.log(`Background aplicado: ${background.name}`);
+      console.log(`✅ Background aplicado: ${background.name}`);
     } else {
-      console.warn(`Background "${backgroundType}" não encontrado`);
+      console.warn(`❌ Background "${backgroundType}" não encontrado`);
     }
   }
 
@@ -137,6 +153,8 @@ export class BackgroundService {
    */
   applyCustomBackground(value: string): void {
     if (!value.trim()) return;
+
+    console.log('🎨 Aplicando background customizado:', value);
 
     let backgroundConfig: BackgroundConfig;
 
@@ -173,9 +191,8 @@ export class BackgroundService {
     }
 
     this._currentBackground.set(backgroundConfig);
-    this.setCssProperties(backgroundConfig);
     localStorage.setItem('storefrontBackground', JSON.stringify(backgroundConfig));
-    console.log('Background personalizado aplicado:', backgroundConfig);
+    console.log('✅ Background personalizado aplicado:', backgroundConfig);
   }
 
   /**
@@ -186,7 +203,6 @@ export class BackgroundService {
     const newState = !currentState;
     
     this._overlayEnabled.set(newState);
-    this.updateOverlayOpacity(newState);
     localStorage.setItem('storefrontOverlayEnabled', newState.toString());
     
     console.log(`Overlay ${newState ? 'ativado' : 'desativado'}`);
@@ -198,7 +214,6 @@ export class BackgroundService {
    */
   setOverlayEnabled(enabled: boolean): void {
     this._overlayEnabled.set(enabled);
-    this.updateOverlayOpacity(enabled);
     localStorage.setItem('storefrontOverlayEnabled', enabled.toString());
   }
 
@@ -220,29 +235,25 @@ export class BackgroundService {
   }
 
   /**
-   * Define as propriedades CSS no elemento root
+   * CORRIGIDO: Define as propriedades CSS no elemento root e body
    * @param background Configuração do background
    */
   private setCssProperties(background: BackgroundConfig): void {
     const root = document.documentElement;
     const body = document.body;
 
+    console.log('🎨 Aplicando CSS para background:', background.type, background.value);
+
     // Limpa propriedades anteriores
-    root.style.removeProperty('--bg-gradient');
-    root.style.removeProperty('--bg-image');
-    root.style.removeProperty('--bg-pattern');
-    body.style.removeProperty('background');
-    body.style.removeProperty('background-image');
-    body.style.removeProperty('background-size');
-    body.style.removeProperty('background-position');
-    body.style.removeProperty('background-repeat');
-    body.style.removeProperty('background-attachment');
+    this.clearAllBackgroundProperties();
 
     // Aplica novas propriedades baseado no tipo
     switch (background.type) {
       case 'solid':
         if (background.value) {
           body.style.background = background.value;
+          body.style.backgroundImage = 'none';
+          console.log('🎨 Cor sólida aplicada:', background.value);
         }
         break;
 
@@ -250,16 +261,20 @@ export class BackgroundService {
         if (background.value) {
           root.style.setProperty('--bg-gradient', background.value);
           body.style.background = background.value;
+          body.style.backgroundImage = background.value;
+          body.style.backgroundAttachment = 'fixed';
+          console.log('🎨 Gradiente aplicado:', background.value);
         }
         break;
 
       case 'pattern':
         if (background.value) {
           root.style.setProperty('--bg-pattern', background.value);
+          body.style.background = 'var(--background-color, #f0f2f5)';
           body.style.backgroundImage = background.value;
-          if (background.backgroundSize) {
-            body.style.backgroundSize = background.backgroundSize;
-          }
+          body.style.backgroundSize = background.backgroundSize || '20px 20px';
+          body.style.backgroundAttachment = 'local';
+          console.log('🎨 Padrão aplicado:', background.value);
         }
         break;
 
@@ -271,17 +286,20 @@ export class BackgroundService {
           body.style.backgroundPosition = background.backgroundPosition || 'center';
           body.style.backgroundRepeat = background.backgroundRepeat || 'no-repeat';
           body.style.backgroundAttachment = background.backgroundAttachment || 'fixed';
+          console.log('🎨 Imagem aplicada:', background.value);
         }
         break;
 
       case 'custom':
         if (background.value) {
           body.style.background = background.value;
+          console.log('🎨 CSS personalizado aplicado:', background.value);
         }
         break;
 
       default:
         // Padrão - remove todas as propriedades
+        console.log('🎨 Aplicando background padrão');
         break;
     }
 
@@ -292,9 +310,27 @@ export class BackgroundService {
     if (background.overlayColor) {
       root.style.setProperty('--bg-overlay-color', background.overlayColor);
     }
+  }
 
-    // Atualiza overlay se estiver habilitado
-    this.updateOverlayOpacity(this._overlayEnabled());
+  /**
+   * NOVO: Limpa todas as propriedades de background
+   */
+  private clearAllBackgroundProperties(): void {
+    const root = document.documentElement;
+    const body = document.body;
+
+    // Remove variáveis CSS
+    root.style.removeProperty('--bg-gradient');
+    root.style.removeProperty('--bg-image');
+    root.style.removeProperty('--bg-pattern');
+    
+    // Limpa estilos do body
+    body.style.removeProperty('background');
+    body.style.removeProperty('background-image');
+    body.style.removeProperty('background-size');
+    body.style.removeProperty('background-position');
+    body.style.removeProperty('background-repeat');
+    body.style.removeProperty('background-attachment');
   }
 
   /**
@@ -322,7 +358,7 @@ export class BackgroundService {
       try {
         const background: BackgroundConfig = JSON.parse(savedBackground);
         this._currentBackground.set(background);
-        this.setCssProperties(background);
+        console.log('📂 Background carregado do localStorage:', background.name);
       } catch (error) {
         console.warn('Erro ao carregar background salvo:', error);
         this.applyBackground('default');
@@ -336,7 +372,6 @@ export class BackgroundService {
     if (savedOverlayEnabled !== null) {
       const enabled = savedOverlayEnabled === 'true';
       this._overlayEnabled.set(enabled);
-      this.updateOverlayOpacity(enabled);
     }
   }
 
@@ -348,5 +383,19 @@ export class BackgroundService {
     localStorage.removeItem('storefrontOverlayEnabled');
     this.applyBackground('default');
     this.setOverlayEnabled(false);
+  }
+
+  /**
+   * NOVO: Método para debug
+   */
+  getDebugState(): any {
+    return {
+      currentBackground: this._currentBackground(),
+      overlayEnabled: this._overlayEnabled(),
+      localStorage: {
+        background: localStorage.getItem('storefrontBackground'),
+        overlay: localStorage.getItem('storefrontOverlayEnabled')
+      }
+    };
   }
 }

@@ -1,201 +1,221 @@
-<div class="storefront-container" [ngClass]="getLayoutClasses()">
-  <p-toast position="top-right"></p-toast>
+<div class="storefront-container" 
+         [ngClass]="getLayoutClasses()" 
+         [attr.data-layout]="currentLayout()"
+         [attr.data-theme]="currentTheme()?.id">
+      <p-toast position="top-right"></p-toast>
 
-  <!-- Header da Loja - Componente storefront-header -->
-  <app-storefront-header
-    [storeName]="'FashionERP Store'"
-    [cartInfo]="{ itemCount: cartItemCount, totalValue: cartTotalValue }"
-    [showLogo]="true"
-    [showControls]="true"
-    [showHeroControls]="true"
-    [showCategoriesControls]="true"
-    (cartClicked)="onCartClick()"
-    (logoClicked)="onLogoClick()"
-  ></app-storefront-header>
+      <!-- Header da Loja - Componente storefront-header -->
+      <app-storefront-header
+        [storeName]="'FashionERP Store'"
+        [cartInfo]="{ itemCount: cartItemCount, totalValue: cartTotalValue }"
+        [showLogo]="true"
+        [showControls]="true"
+        [showHeroControls]="true"
+        [showCategoriesControls]="true"
+        (cartClicked)="onCartClick()"
+        (logoClicked)="onLogoClick()"
+      ></app-storefront-header>
 
-  <!-- Hero Banner - Componente storefront-hero -->
-  <app-storefront-hero *ngIf="showHeroBanner"></app-storefront-hero>
+      <!-- Hero Banner - Componente storefront-hero -->
+      <app-storefront-hero *ngIf="showHeroBanner()"></app-storefront-hero>
 
-  <main class="store-main">
-    
-    <!-- Seção de Categorias - Componente storefront-categories -->
-    <app-storefront-categories *ngIf="showCategories"></app-storefront-categories>
+      <main class="store-main" [attr.data-layout]="currentLayout()" style=" bottom: 1rem; position: relative;">
+        
+        <!-- Seção de Categorias - Componente storefront-categories -->
+        <app-storefront-categories *ngIf="showCategories()"></app-storefront-categories>
 
-    <!-- Lista de Produtos - Componente storefront-item-grid -->
-    <section class="products-section">
-      <h2 class="section-title">Novidades</h2>
-      <!-- APLICA A CLASSE DO LAYOUT DINAMICAMENTE AQUI -->
-      <app-storefront-item-grid
-        [ngClass]="currentLayout() === 'minimal' ? 'layout-minimal' : 'layout-grid'"
-        [products]="products"
-        [loading]="false"
-        [showActions]="true"
-        [showRating]="currentLayout() === 'grid'"
-        [showDescription]="currentLayout() === 'grid'"
-        (productClick)="onProductClick($event)"
-        (addToCart)="addToCart($event)"
-        (favoriteToggle)="onFavoriteToggle($event)"
-        (compareProduct)="onCompareProduct($event)"
-        (quickView)="openQuickView($event)"
-      ></app-storefront-item-grid>
-    </section>
-  </main>
-
-  <!-- Quick View Modal (CORRIGIDO para nossa interface Product) -->
-  <p-dialog 
-    [header]="quickViewProduct?.name" 
-    [(visible)]="showQuickView" 
-    [modal]="true" 
-    [style]="{width: '90vw', maxWidth: '700px'}" 
-    [baseZIndex]="10000"
-    styleClass="quick-view-dialog"
-    (onHide)="closeQuickView()"
-  >
-    <div class="modal-content" *ngIf="quickViewProduct">
-      <div class="modal-image-container">
-        <img 
-          [src]="quickViewProduct.image" 
-          [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
-          class="modal-product-image"
-          (error)="onImageError($event)"
-        />
-        
-        <!-- Badges do produto -->
-        <div class="modal-badges" *ngIf="quickViewProduct.badges && quickViewProduct.badges.length > 0">
-          <span *ngfor="let badge of quickViewProduct.badges" 
-                [ngClass]="'badge-' + badge.type"
-                class="modal-badge">
-            {{ badge.label }}
-          </span>
-        </div>
-        
-        <!-- Badge de desconto -->
-        <div class="discount-badge" *ngIf="hasDiscount(quickViewProduct)">
-          -{{ getDiscountPercentage(quickViewProduct) }}%
-        </div>
-      </div>
-      
-      <div class="modal-details">
-        <h3 class="modal-product-name">{{ quickViewProduct.name }}</h3>
-        
-        <!-- Rating System -->
-        <div class="modal-rating" *ngIf="quickViewProduct.rating">
-          <div class="stars">
-            <i *ngFor="let star of [1,2,3,4,5]" 
-               [class]="star <= quickViewProduct.rating.stars ? 'pi pi-star-fill star' : 'pi pi-star star'">
-            </i>
-          </div>
-          <span class="rating-count">({{ quickViewProduct.rating.count }} avaliações)</span>
-          <span class="rating-average">{{ quickViewProduct.rating.average }}/5</span>
-        </div>
-        
-        <!-- Preços -->
-        <div class="modal-price-container">
-          <div class="current-price">{{ formatPrice(quickViewProduct.price) }}</div>
-          <div class="old-price" *ngIf="quickViewProduct.oldPrice">
-            {{ formatPrice(quickViewProduct.oldPrice) }}
-          </div>
-          <div class="discount-text" *ngIf="hasDiscount(quickViewProduct)">
-            Economize {{ formatPrice(quickViewProduct.oldPrice! - quickViewProduct.price) }}
-          </div>
-        </div>
-        
-        <!-- Descrição do produto -->
-        <div class="product-details">
-          <p class="modal-product-description">
-            {{ quickViewProduct.description }}
-          </p>
+        <!-- Lista de Produtos - Componente storefront-item-grid -->
+        <section class="products-section" [attr.data-layout]="currentLayout()">
+          <!-- <h3 class="section-title">Nossa Coleção Exclusiva</h3> -->
           
-          <!-- Meta informações -->
-          <div class="product-meta">
-            <div class="meta-item">
-              <strong>Categoria:</strong> {{ quickViewProduct.category }}
-            </div>
-            <div class="meta-item">
-              <strong>Status:</strong> 
-              <span [ngClass]="{
-                'text-green-600': quickViewProduct.inStock,
-                'text-red-600': !quickViewProduct.inStock
-              }">
-                {{ quickViewProduct.inStock ? 'Disponível' : 'Fora de estoque' }}
+          <!-- DEBUG: Mostra o layout atual (remover em produção) -->
+          <!-- <div class="layout-debug" 
+               style="margin-bottom: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; font-size: 0.875rem; font-weight: 600; border: 2px solid #667eea; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+            <strong>🎯 Layout Atual:</strong> {{ currentLayout() | uppercase }} 
+            <button type="button" 
+                    (click)="debugLayoutState()" 
+                    style="margin-left: 1rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px; cursor: pointer; transition: all 0.2s ease;"
+                    onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='scale(1)'">
+              🐛 Debug Console
+            </button>
+            <span style="margin-left: 1rem; font-size: 0.75rem; opacity: 0.9;">
+              ({{ products.length }} produtos • Tema: {{ currentTheme()?.name }})
+            </span>
+          </div> -->
+          
+          <!-- Grid de Produtos com Classes Dinâmicas -->
+          <app-storefront-item-grid
+            [ngClass]="getGridClasses()"
+            [products]="products"
+            [loading]="false"
+            [showActions]="true"
+            [showRating]="currentLayout() === 'grid'"
+            [showDescription]="currentLayout() === 'grid'"
+            (productClick)="onProductClick($event)"
+            (addToCart)="addToCart($event)"
+            (favoriteToggle)="onFavoriteToggle($event)"
+            (compareProduct)="onCompareProduct($event)"
+            (quickView)="openQuickView($event)"
+          ></app-storefront-item-grid>
+        </section>
+      </main>
+
+      <!-- Quick View Modal -->
+      <p-dialog 
+        [header]="quickViewProduct?.name" 
+        [(visible)]="showQuickView" 
+        [modal]="true" 
+        [style]="{width: '90vw', maxWidth: '700px'}" 
+        [baseZIndex]="10000"
+        styleClass="quick-view-dialog"
+        (onHide)="closeQuickView()"
+      >
+        <div class="modal-content" *ngIf="quickViewProduct">
+          <div class="modal-image-container">
+            <img 
+              [src]="quickViewProduct.image" 
+              [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
+              class="modal-product-image"
+              (error)="onImageError($event)"
+            />
+            
+            <!-- Badges do produto -->
+            <div class="modal-badges" *ngIf="quickViewProduct.badges && quickViewProduct.badges.length > 0">
+              <span *ngFor="let badge of quickViewProduct.badges" 
+                    [ngClass]="'badge-' + badge.type"
+                    class="modal-badge">
+                {{ badge.label }}
               </span>
             </div>
-            <div class="meta-item" *ngIf="quickViewProduct.featured">
-              <strong>Produto em destaque</strong>
-              <i class="pi pi-star-fill text-yellow-500 ml-1"></i>
+            
+            <!-- Badge de desconto -->
+            <div class="discount-badge" *ngIf="hasDiscount(quickViewProduct)">
+              -{{ getDiscountPercentage(quickViewProduct) }}%
+            </div>
+          </div>
+          
+          <div class="modal-details">
+            <h3 class="modal-product-name">{{ quickViewProduct.name }}</h3>
+            
+            <!-- Rating System -->
+            <div class="modal-rating" *ngIf="quickViewProduct.rating">
+              <div class="stars">
+                <i *ngFor="let star of [1,2,3,4,5]" 
+                   [class]="star <= quickViewProduct.rating.stars ? 'pi pi-star-fill star' : 'pi pi-star star'">
+                </i>
+              </div>
+              <span class="rating-count">({{ quickViewProduct.rating.count }} avaliações)</span>
+              <span class="rating-average">{{ quickViewProduct.rating.average }}/5</span>
+            </div>
+            
+            <!-- Preços -->
+            <div class="modal-price-container">
+              <div class="current-price">{{ formatPrice(quickViewProduct.price) }}</div>
+              <div class="old-price" *ngIf="quickViewProduct.oldPrice">
+                {{ formatPrice(quickViewProduct.oldPrice) }}
+              </div>
+              <div class="discount-text" *ngIf="hasDiscount(quickViewProduct)">
+                Economize {{ formatPrice(quickViewProduct.oldPrice! - quickViewProduct.price) }}
+              </div>
+            </div>
+            
+            <!-- Descrição do produto -->
+            <div class="product-details">
+              <p class="modal-product-description">
+                {{ quickViewProduct.description }}
+              </p>
+              
+              <!-- Meta informações -->
+              <div class="product-meta">
+                <div class="meta-item">
+                  <strong>Categoria:</strong> {{ quickViewProduct.category }}
+                </div>
+                <div class="meta-item">
+                  <strong>Status:</strong> 
+                  <span [ngClass]="{
+                    'text-green-600': quickViewProduct.inStock,
+                    'text-red-600': !quickViewProduct.inStock
+                  }">
+                    {{ quickViewProduct.inStock ? 'Disponível' : 'Fora de estoque' }}
+                  </span>
+                </div>
+                <div class="meta-item" *ngIf="quickViewProduct.featured">
+                  <strong>Produto em destaque</strong>
+                  <i class="pi pi-star-fill text-yellow-500 ml-1"></i>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Controles de quantidade (se em estoque) -->
+            <div class="quantity-controls" *ngIf="quickViewProduct.inStock">
+              <label for="quantity">Quantidade:</label>
+              <div class="quantity-input-group">
+                <button 
+                  type="button" 
+                  class="quantity-btn" 
+                  (click)="quickViewQuantity = quickViewQuantity > 1 ? quickViewQuantity - 1 : 1"
+                  [disabled]="quickViewQuantity <= 1"
+                >
+                  <i class="pi pi-minus"></i>
+                </button>
+                <input 
+                  type="number" 
+                  id="quantity"
+                  [(ngModel)]="quickViewQuantity" 
+                  min="1" 
+                  max="10"
+                  class="quantity-input"
+                />
+                <button 
+                  type="button" 
+                  class="quantity-btn" 
+                  (click)="quickViewQuantity = quickViewQuantity < 10 ? quickViewQuantity + 1 : 10"
+                  [disabled]="quickViewQuantity >= 10"
+                >
+                  <i class="pi pi-plus"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Ações do modal -->
+            <div class="modal-actions">
+              <button 
+                class="modal-add-cart-btn" 
+                (click)="addToCartFromQuickView()"
+                [disabled]="!quickViewProduct.inStock"
+                type="button"
+              >
+                <i class="pi pi-shopping-cart mr-2"></i>
+                <span *ngIf="quickViewProduct.inStock; else outOfStockText">
+                  Adicionar {{ quickViewQuantity > 1 ? quickViewQuantity + ' itens' : '' }} ao Carrinho
+                </span>
+                <ng-template #outOfStockText>
+                  Produto Esgotado
+                </ng-template>
+              </button>
+              
+              <!-- Botões secundários -->
+              <div class="secondary-actions">
+                <button 
+                  class="secondary-btn" 
+                  (click)="onFavoriteToggle(quickViewProduct)"
+                  type="button"
+                >
+                  <i class="pi pi-heart mr-2"></i>
+                  Favoritar
+                </button>
+                <button 
+                  class="secondary-btn" 
+                  (click)="onCompareProduct(quickViewProduct)"
+                  type="button"
+                >
+                  <i class="pi pi-chart-line mr-2"></i>
+                  Comparar
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        
-        <!-- Controles de quantidade (se em estoque) -->
-        <div class="quantity-controls" *ngIf="quickViewProduct.inStock">
-          <label for="quantity">Quantidade:</label>
-          <div class="quantity-input-group">
-            <button 
-              type="button" 
-              class="quantity-btn" 
-              (click)="quickViewQuantity = quickViewQuantity > 1 ? quickViewQuantity - 1 : 1"
-              [disabled]="quickViewQuantity <= 1"
-            >
-              <i class="pi pi-minus"></i>
-            </button>
-            <input 
-              type="number" 
-              id="quantity"
-              [(ngModel)]="quickViewQuantity" 
-              min="1" 
-              max="10"
-              class="quantity-input"
-            />
-            <button 
-              type="button" 
-              class="quantity-btn" 
-              (click)="quickViewQuantity = quickViewQuantity < 10 ? quickViewQuantity + 1 : 10"
-              [disabled]="quickViewQuantity >= 10"
-            >
-              <i class="pi pi-plus"></i>
-            </button>
-          </div>
-        </div>
-        
-        <!-- Ações do modal -->
-        <div class="modal-actions">
-          <button 
-            class="modal-add-cart-btn" 
-            (click)="addToCartFromQuickView()"
-            [disabled]="!quickViewProduct.inStock"
-            type="button"
-          >
-            <i class="pi pi-shopping-cart mr-2"></i>
-            <span *ngIf="quickViewProduct.inStock; else outOfStockText">
-              Adicionar {{ quickViewQuantity > 1 ? quickViewQuantity + ' itens' : '' }} ao Carrinho
-            </span>
-            <ng-template #outOfStockText>
-              Produto Esgotado
-            </ng-template>
-          </button>
-          
-          <!-- Botões secundários -->
-          <div class="secondary-actions">
-            <button 
-              class="secondary-btn" 
-              (click)="onFavoriteToggle(quickViewProduct)"
-              type="button"
-            >
-              <i class="pi pi-heart mr-2"></i>
-              Favoritar
-            </button>
-            <button 
-              class="secondary-btn" 
-              (click)="onCompareProduct(quickViewProduct)"
-              type="button"
-            >
-              <i class="pi pi-chart-line mr-2"></i>
-              Comparar
-            </button>
-          </div>
-        </div>
-      </div>
+      </p-dialog>
     </div>
-  </p-dialog>
-</div>
