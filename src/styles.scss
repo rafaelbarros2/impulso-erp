@@ -1,2 +1,486 @@
 @import 'tailwindcss';   
 @plugin "tailwindcss-primeui";
+
+
+/* ================================
+   LAYOUTS GLOBAIS - ADICIONAR AO styles.css
+   ================================ */
+
+/* CSS Custom Properties para Layouts */
+:root {
+  --grid-gap: 2rem;
+  --card-padding: 1.5rem;
+  --card-border-radius: 16px;
+  --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  --primary-color: #D81B60;
+  --secondary-color: #F8BBD9;
+  --accent-color: #8E24AA;
+  --text-color: #424242;
+  --text-secondary: #757575;
+  --border-color: #E1BEE7;
+  --shadow-color: rgba(216, 27, 96, 0.15);
+  --success-color: #4CAF50;
+  --warning-color: #FF9800;
+  --error-color: #F44336;
+}
+
+/* ================================
+   LAYOUT GRID (Moderno/Rico)
+   ================================ */
+.layout-grid app-storefront-item-grid .products-container,
+app-storefront-item-grid.layout-grid .products-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 2rem !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-card,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  padding: 0 !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-card:hover,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-image-container,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image-container {
+  position: relative !important;
+  overflow: hidden !important;
+  height: 300px !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-image,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transition: transform 0.3s ease !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-image,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-image {
+  transform: scale(1.05) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-actions,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-actions {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  opacity: 0 !important;
+  transform: translateX(20px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-actions,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-actions {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .action-btn,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: var(--text-color) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .action-btn:hover,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn:hover {
+  background: var(--primary-color) !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-info,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-info {
+  padding: 1.5rem !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-rating,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-name,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-name {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: var(--text-color) !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.4 !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-description,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-description {
+  display: block !important;
+  font-size: 0.875rem !important;
+  color: var(--text-secondary) !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-price,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-price {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: var(--primary-color) !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn {
+  width: 100% !important;
+  background: var(--primary-color) !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.875rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn:hover,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px var(--shadow-color) !important;
+  background: var(--accent-color) !important;
+}
+
+/* ================================
+   LAYOUT MINIMAL (Limpo/Simples)
+   ================================ */
+.layout-minimal app-storefront-item-grid .products-container,
+app-storefront-item-grid.layout-minimal .products-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-card,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  padding: 1rem !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-image-container,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image-container {
+  position: relative !important;
+  overflow: hidden !important;
+  height: 250px !important;
+  border-radius: 8px !important;
+  margin-bottom: 1rem !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-image,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transition: all 0.3s ease !important;
+  filter: grayscale(0.1) !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-image,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-image {
+  transform: scale(1.02) !important;
+  filter: grayscale(0) !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-actions,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-actions {
+  position: absolute !important;
+  top: 0.5rem !important;
+  right: 0.5rem !important;
+  display: flex !important;
+  gap: 0.25rem !important;
+  opacity: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-actions,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-actions {
+  opacity: 1 !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .action-btn,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .action-btn {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: none !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: var(--text-color) !important;
+  font-size: 0.875rem !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .action-btn:hover,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .action-btn:hover {
+  background: var(--text-color) !important;
+  color: white !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-info,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-info {
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-rating,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-rating {
+  display: none !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-name,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-name {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: var(--text-color) !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.3 !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-description,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-description {
+  display: none !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-price,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-price {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  color: var(--text-color) !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn {
+  width: 100% !important;
+  background: transparent !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--text-color) !important;
+  padding: 0.625rem !important;
+  border-radius: 0 !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn:hover,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn:hover {
+  background: var(--text-color) !important;
+  color: white !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ================================
+   BADGES ESPECÍFICOS POR LAYOUT
+   ================================ */
+.layout-grid app-storefront-item-card ::ng-deep .product-badges,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-badges {
+  position: absolute !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  z-index: 10 !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-badges,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-badges {
+  position: absolute !important;
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  z-index: 10 !important;
+}
+
+.layout-grid app-storefront-item-card ::ng-deep .product-badge,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-badge {
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.layout-minimal app-storefront-item-card ::ng-deep .product-badge,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-badge {
+  padding: 2px 0.5rem !important;
+  border-radius: 2px !important;
+  font-size: 0.625rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  background: var(--text-color) !important;
+  color: white !important;
+}
+
+/* Cores dos badges */
+.product-badge.badge-new {
+  background: rgba(142, 36, 170, 0.9) !important;
+  color: white !important;
+}
+
+.product-badge.badge-sale {
+  background: rgba(244, 67, 54, 0.9) !important;
+  color: white !important;
+}
+
+.product-badge.badge-featured {
+  background: rgba(255, 152, 0, 0.9) !important;
+  color: white !important;
+}
+
+/* ================================
+   BOTÕES DE LAYOUT NO HEADER
+   ================================ */
+.layout-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: var(--text-color) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 1.1rem !important;
+  position: relative !important;
+}
+
+.layout-btn:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.layout-btn.active {
+  background: var(--primary-color) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px var(--shadow-color) !important;
+  transform: scale(1.1) !important;
+}
+
+.layout-btn.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 20px !important;
+  height: 2px !important;
+  background: var(--primary-color) !important;
+  border-radius: 1px !important;
+}
+
+/* ================================
+   ANIMAÇÕES DE TRANSIÇÃO
+   ================================ */
+@keyframes layoutChange {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.products-container {
+  animation: layoutChange 0.4s ease-out !important;
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+@media (max-width: 768px) {
+  .layout-grid app-storefront-item-grid .products-container,
+  app-storefront-item-grid.layout-grid .products-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  
+  .layout-minimal app-storefront-item-grid .products-container,
+  app-storefront-item-grid.layout-minimal .products-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+  
+  .layout-grid app-storefront-item-card ::ng-deep .product-image-container,
+  app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image-container {
+    height: 250px !important;
+  }
+  
+  .layout-minimal app-storefront-item-card ::ng-deep .product-image-container,
+  app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image-container {
+    height: 200px !important;
+  }
+}

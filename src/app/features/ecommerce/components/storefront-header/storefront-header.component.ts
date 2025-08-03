@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, Input, Output, EventEmitter, Signal } from '@angular/core';
+import { Component, OnInit, inject, Input, Output, EventEmitter, Signal, effect } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -79,37 +79,71 @@ export class StorefrontHeaderComponent implements OnInit {
   // Estados da UI
   isMobileMenuOpen: boolean = false;
   
-  constructor() {}
+  constructor() {
+    // Effect para debugar mudanças de layout
+    effect(() => {
+      console.log('🎯 Header detectou mudança de layout:', this.currentLayout());
+    });
+  }
 
   ngOnInit(): void {
-    // Não é mais necessário se inscrever nos Observables.
-    // O Angular gerencia a reatividade dos Signals automaticamente.
+    console.log('🎯 Header inicializado. Layout atual:', this.currentLayout());
+    
+    // Debug inicial
+    setTimeout(() => {
+      console.log('🎯 Debug estado do header:');
+      console.log('   - Layout atual:', this.currentLayout());
+      console.log('   - Hero visível:', this.heroVisible());
+      console.log('   - Categories visíveis:', this.categoriesVisible());
+      console.log('   - Layout service debug:', this.layoutService.getDebugState());
+    }, 1000);
   }
 
   /**
-   * Altera o layout
+   * CORRIGIDO: Altera o layout
    * @param layout Tipo de layout a ser aplicado
    */
   onLayoutChange(layout: LayoutType): void {
-    console.log('🔄 Tentando alterar layout para:', layout);
-    this.layoutService.setLayout(layout);
-    console.log('✅ Layout alterado no service');
+    console.log('🔄 Header.onLayoutChange chamado');
+    console.log('🔄 Layout solicitado:', layout);
+    console.log('🔄 Layout atual antes da mudança:', this.currentLayout());
+    
+    // Força um delay pequeno para garantir que o estado seja atualizado
+    setTimeout(() => {
+      this.layoutService.setLayout(layout);
+      console.log('🔄 Layout alterado via service');
+      
+      // Verifica se a mudança foi efetiva
+      setTimeout(() => {
+        console.log('🔄 Verificação pós-mudança:', this.currentLayout());
+      }, 100);
+    }, 0);
   }
 
   /**
    * Alterna a visibilidade do hero (agora chamando o service)
    */
   toggleHero(): void {
-    console.log('🏠 Toggling hero visibility');
+    console.log('🏠 Header.toggleHero chamado');
+    console.log('🏠 Estado atual do hero:', this.heroVisible());
     this.layoutService.toggleHero();
+    
+    setTimeout(() => {
+      console.log('🏠 Novo estado do hero:', this.heroVisible());
+    }, 100);
   }
 
   /**
    * Alterna a visibilidade das categorias (agora chamando o service)
    */
   toggleCategories(): void {
-    console.log('Toggling categories visibility');
+    console.log('📂 Header.toggleCategories chamado');
+    console.log('📂 Estado atual das categories:', this.categoriesVisible());
     this.layoutService.toggleCategories();
+    
+    setTimeout(() => {
+      console.log('📂 Novo estado das categories:', this.categoriesVisible());
+    }, 100);
   }
 
   /**
@@ -141,11 +175,13 @@ export class StorefrontHeaderComponent implements OnInit {
   }
 
   /**
-   * Verifica se um layout está ativo
+   * CORRIGIDO: Verifica se um layout está ativo
    * @param layout Tipo de layout
    */
   isLayoutActive(layout: LayoutType): boolean {
-    return this.currentLayout() === layout;
+    const isActive = this.currentLayout() === layout;
+    console.log(`🎯 isLayoutActive(${layout}):`, isActive, '(atual:', this.currentLayout(), ')');
+    return isActive;
   }
 
   /**
@@ -177,12 +213,16 @@ export class StorefrontHeaderComponent implements OnInit {
   }
 
   /**
-   * Retorna a classe CSS para o botão de layout ativo
+   * CORRIGIDO: Retorna a classe CSS para o botão de layout ativo
    * @param layout Tipo de layout
    */
   getLayoutButtonClass(layout: LayoutType): string {
     const baseClass = 'layout-btn';
-    return this.isLayoutActive(layout) ? `${baseClass} active` : baseClass;
+    const isActive = this.isLayoutActive(layout);
+    const finalClass = isActive ? `${baseClass} active` : baseClass;
+    
+    console.log(`🎨 getLayoutButtonClass(${layout}):`, finalClass);
+    return finalClass;
   }
 
   /**
@@ -216,5 +256,16 @@ export class StorefrontHeaderComponent implements OnInit {
    */
   get shouldShowCartTotal(): boolean {
     return this.cartInfo.totalValue !== undefined && this.cartInfo.totalValue > 0;
+  }
+
+  /**
+   * Método para debug - mostra o estado atual
+   */
+  debugCurrentState(): void {
+    console.log('🐛 DEBUG Estado atual do Header:');
+    console.log('   - Layout:', this.currentLayout());
+    console.log('   - Hero:', this.heroVisible());
+    console.log('   - Categories:', this.categoriesVisible());
+    console.log('   - Service Debug:', this.layoutService.getDebugState());
   }
 }

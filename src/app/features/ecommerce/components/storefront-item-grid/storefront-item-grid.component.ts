@@ -11,7 +11,6 @@ import { StorefrontItemCardComponent } from '../storefront-item-card/storefront-
 import { MOCK_PRODUCTS } from '../../model/roduct-mock.data';
 import { BadgeType, Product } from '../../model/product.interface';
 
-
 @Component({
   selector: 'app-storefront-item-grid',
   standalone: true,
@@ -46,8 +45,6 @@ export class StorefrontItemGridComponent implements OnInit {
   currentLayout: Signal<LayoutType> = this.layoutService.currentLayout;
   currentTheme: Signal<StoreTheme | null> = this.themeService.currentTheme;
   currentBackground: Signal<BackgroundConfig | null> = this.backgroundService.currentBackground;
-  
-  productLayoutType!: LayoutType;
 
   constructor() {}
 
@@ -55,13 +52,13 @@ export class StorefrontItemGridComponent implements OnInit {
     // A injeção de dependências e a leitura de Signals
     // não precisam mais de métodos de subscribe ou unsubscribe.
     // A reatividade é gerenciada de forma automática pelo Angular.
-    console.log('Grid inicializado com Signals.');
+    console.log('Grid inicializado com Signals. Layout atual:', this.currentLayout());
   }
 
   /**
-   * Retorna o layout atual para o StorefrontItemCardComponent
+   * CORREÇÃO: Retorna o layout atual para o StorefrontItemCardComponent
    */
-  get currentLayoutForCard(): LayoutType {
+  get productLayoutType(): LayoutType {
     return this.currentLayout();
   }
 
@@ -72,6 +69,8 @@ export class StorefrontItemGridComponent implements OnInit {
     const baseClasses = 'products-grid w-full';
     const layout = this.currentLayout();
     const layoutClass = `layout-${layout}`;
+    
+    console.log('🎯 Layout atual no gridClasses:', layout); // Debug
     
     // TailwindCSS classes baseadas no layout
     if (layout === 'grid') {
@@ -177,7 +176,9 @@ export class StorefrontItemGridComponent implements OnInit {
    * Força refresh do grid (útil para debugging)
    */
   refreshGrid(): void {
-    console.log('Grid refreshed');
+    console.log('Grid refreshed. Layout atual:', this.currentLayout());
+    // Força uma nova renderização
+    this.layoutService.setLayout(this.currentLayout());
   }
 
   /**
