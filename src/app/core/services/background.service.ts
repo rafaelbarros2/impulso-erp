@@ -238,100 +238,184 @@ export class BackgroundService {
    * CORRIGIDO: Define as propriedades CSS no elemento root e body
    * @param background Configuração do background
    */
-  private setCssProperties(background: BackgroundConfig): void {
-    const root = document.documentElement;
-    const body = document.body;
+private setCssProperties(background: BackgroundConfig): void {
+  const root = document.documentElement;
+  const body = document.body;
+  const container = document.querySelector('.storefront-container') as HTMLElement;
 
-    console.log('🎨 Aplicando CSS para background:', background.type, background.value);
+  console.log('🎨 Aplicando CSS para background:', background.type, background.value);
+  console.log('🎯 Aplicando em:', {
+    body: !!body,
+    container: !!container,
+    containerClass: container?.className
+  });
 
-    // Limpa propriedades anteriores
-    this.clearAllBackgroundProperties();
+  // Limpa propriedades anteriores
+  this.clearAllBackgroundProperties();
 
-    // Aplica novas propriedades baseado no tipo
-    switch (background.type) {
-      case 'solid':
-        if (background.value) {
-          body.style.background = background.value;
-          body.style.backgroundImage = 'none';
-          console.log('🎨 Cor sólida aplicada:', background.value);
+  // Aplica novas propriedades baseado no tipo
+  switch (background.type) {
+    case 'solid':
+      if (background.value) {
+        // Aplica no body
+        body.style.setProperty('background', background.value, 'important');
+        body.style.setProperty('background-image', 'none', 'important');
+        
+        // TAMBÉM aplica no container se existir
+        if (container) {
+          container.style.setProperty('background', background.value, 'important');
+          container.style.setProperty('background-image', 'none', 'important');
         }
-        break;
+        
+        console.log('🎨 Cor sólida aplicada em body e container:', background.value);
+      }
+      break;
 
-      case 'gradient':
-        if (background.value) {
-          root.style.setProperty('--bg-gradient', background.value);
-          body.style.background = background.value;
-          body.style.backgroundImage = background.value;
-          body.style.backgroundAttachment = 'fixed';
-          console.log('🎨 Gradiente aplicado:', background.value);
+    case 'gradient':
+      if (background.value) {
+        root.style.setProperty('--bg-gradient', background.value);
+        
+        // Aplica no body
+        body.style.setProperty('background', background.value, 'important');
+        body.style.setProperty('background-image', background.value, 'important');
+        body.style.setProperty('background-attachment', 'fixed', 'important');
+        
+        // TAMBÉM aplica no container
+        if (container) {
+          container.style.setProperty('background', background.value, 'important');
+          container.style.setProperty('background-image', background.value, 'important');
+          container.style.setProperty('background-attachment', 'fixed', 'important');
         }
-        break;
+        
+        console.log('🎨 Gradiente aplicado em body e container:', background.value);
+      }
+      break;
 
-      case 'pattern':
-        if (background.value) {
-          root.style.setProperty('--bg-pattern', background.value);
-          body.style.background = 'var(--background-color, #f0f2f5)';
-          body.style.backgroundImage = background.value;
-          body.style.backgroundSize = background.backgroundSize || '20px 20px';
-          body.style.backgroundAttachment = 'local';
-          console.log('🎨 Padrão aplicado:', background.value);
+    case 'pattern':
+      if (background.value) {
+        root.style.setProperty('--bg-pattern', background.value);
+        
+        const backgroundBase = 'var(--background-color, #f0f2f5)';
+        const backgroundSize = background.backgroundSize || '20px 20px';
+        
+        // Aplica no body
+        body.style.setProperty('background', backgroundBase, 'important');
+        body.style.setProperty('background-image', background.value, 'important');
+        body.style.setProperty('background-size', backgroundSize, 'important');
+        body.style.setProperty('background-attachment', 'local', 'important');
+        
+        // TAMBÉM aplica no container
+        if (container) {
+          container.style.setProperty('background', backgroundBase, 'important');
+          container.style.setProperty('background-image', background.value, 'important');
+          container.style.setProperty('background-size', backgroundSize, 'important');
+          container.style.setProperty('background-attachment', 'local', 'important');
         }
-        break;
+        
+        console.log('🎨 Padrão aplicado em body e container:', background.value);
+      }
+      break;
 
-      case 'image':
-        if (background.value) {
-          root.style.setProperty('--bg-image', background.value);
-          body.style.backgroundImage = background.value;
-          body.style.backgroundSize = background.backgroundSize || 'cover';
-          body.style.backgroundPosition = background.backgroundPosition || 'center';
-          body.style.backgroundRepeat = background.backgroundRepeat || 'no-repeat';
-          body.style.backgroundAttachment = background.backgroundAttachment || 'fixed';
-          console.log('🎨 Imagem aplicada:', background.value);
+    case 'image':
+      if (background.value) {
+        root.style.setProperty('--bg-image', background.value);
+        
+        const bgSize = background.backgroundSize || 'cover';
+        const bgPosition = background.backgroundPosition || 'center';
+        const bgRepeat = background.backgroundRepeat || 'no-repeat';
+        const bgAttachment = background.backgroundAttachment || 'fixed';
+        
+        // Aplica no body
+        body.style.setProperty('background-image', background.value, 'important');
+        body.style.setProperty('background-size', bgSize, 'important');
+        body.style.setProperty('background-position', bgPosition, 'important');
+        body.style.setProperty('background-repeat', bgRepeat, 'important');
+        body.style.setProperty('background-attachment', bgAttachment, 'important');
+        
+        // TAMBÉM aplica no container
+        if (container) {
+          container.style.setProperty('background-image', background.value, 'important');
+          container.style.setProperty('background-size', bgSize, 'important');
+          container.style.setProperty('background-position', bgPosition, 'important');
+          container.style.setProperty('background-repeat', bgRepeat, 'important');
+          container.style.setProperty('background-attachment', bgAttachment, 'important');
         }
-        break;
+        
+        console.log('🎨 Imagem aplicada em body e container:', background.value);
+      }
+      break;
 
-      case 'custom':
-        if (background.value) {
-          body.style.background = background.value;
-          console.log('🎨 CSS personalizado aplicado:', background.value);
+    case 'custom':
+      if (background.value) {
+        // Aplica no body
+        body.style.setProperty('background', background.value, 'important');
+        
+        // TAMBÉM aplica no container
+        if (container) {
+          container.style.setProperty('background', background.value, 'important');
         }
-        break;
+        
+        console.log('🎨 CSS personalizado aplicado em body e container:', background.value);
+      }
+      break;
 
-      default:
-        // Padrão - remove todas as propriedades
-        console.log('🎨 Aplicando background padrão');
-        break;
-    }
-
-    // Aplica propriedades de overlay
-    if (background.overlayOpacity !== undefined) {
-      root.style.setProperty('--bg-overlay-opacity', background.overlayOpacity.toString());
-    }
-    if (background.overlayColor) {
-      root.style.setProperty('--bg-overlay-color', background.overlayColor);
-    }
+    default:
+      // Padrão - remove todas as propriedades
+      console.log('🎨 Aplicando background padrão');
+      break;
   }
 
+  // Aplica propriedades de overlay
+  if (background.overlayOpacity !== undefined) {
+    root.style.setProperty('--bg-overlay-opacity', background.overlayOpacity.toString());
+  }
+  if (background.overlayColor) {
+    root.style.setProperty('--bg-overlay-color', background.overlayColor);
+  }
+  
+  // Força min-height no container para garantir que o background cubra toda a tela
+  if (container) {
+    container.style.setProperty('min-height', '100vh', 'important');
+  }
+}
   /**
    * NOVO: Limpa todas as propriedades de background
    */
-  private clearAllBackgroundProperties(): void {
-    const root = document.documentElement;
-    const body = document.body;
+private clearAllBackgroundProperties(): void {
+  const root = document.documentElement;
+  const body = document.body;
+  const container = document.querySelector('.storefront-container') as HTMLElement;
 
-    // Remove variáveis CSS
-    root.style.removeProperty('--bg-gradient');
-    root.style.removeProperty('--bg-image');
-    root.style.removeProperty('--bg-pattern');
-    
-    // Limpa estilos do body
-    body.style.removeProperty('background');
-    body.style.removeProperty('background-image');
-    body.style.removeProperty('background-size');
-    body.style.removeProperty('background-position');
-    body.style.removeProperty('background-repeat');
-    body.style.removeProperty('background-attachment');
+  // Remove variáveis CSS
+  root.style.removeProperty('--bg-gradient');
+  root.style.removeProperty('--bg-image');
+  root.style.removeProperty('--bg-pattern');
+  
+  // Lista de propriedades para limpar
+  const backgroundProps = [
+    'background',
+    'background-image',
+    'background-size',
+    'background-position',
+    'background-repeat',
+    'background-attachment',
+    'background-color'
+  ];
+  
+  // Limpa do body
+  backgroundProps.forEach(prop => {
+    body.style.removeProperty(prop);
+  });
+  
+  // TAMBÉM limpa do container
+  if (container) {
+    backgroundProps.forEach(prop => {
+      container.style.removeProperty(prop);
+    });
   }
+  
+  console.log('🧹 Propriedades de background removidas de body e container');
+}
 
   /**
    * Atualiza a opacidade do overlay
@@ -388,14 +472,32 @@ export class BackgroundService {
   /**
    * NOVO: Método para debug
    */
-  getDebugState(): any {
-    return {
-      currentBackground: this._currentBackground(),
-      overlayEnabled: this._overlayEnabled(),
-      localStorage: {
-        background: localStorage.getItem('storefrontBackground'),
-        overlay: localStorage.getItem('storefrontOverlayEnabled')
+getDebugState(): any {
+  const body = document.body;
+  const container = document.querySelector('.storefront-container') as HTMLElement;
+  
+  const bodyStyle = window.getComputedStyle(body);
+  const containerStyle = container ? window.getComputedStyle(container) : null;
+  
+  return {
+    currentBackground: this._currentBackground(),
+    overlayEnabled: this._overlayEnabled(),
+    elements: {
+      container: {
+        found: !!container,
+        className: container?.className,
+        background: containerStyle?.background,
+        backgroundImage: containerStyle?.backgroundImage
+      },
+      body: {
+        background: bodyStyle.background,
+        backgroundImage: bodyStyle.backgroundImage
       }
-    };
-  }
+    },
+    localStorage: {
+      background: localStorage.getItem('storefrontBackground'),
+      overlay: localStorage.getItem('storefrontOverlayEnabled')
+    }
+  };
+}
 }
