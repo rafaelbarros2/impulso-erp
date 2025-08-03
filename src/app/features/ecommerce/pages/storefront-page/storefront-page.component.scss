@@ -310,3 +310,28 @@ app-storefront-item-grid.layout-minimal {
 [data-layout="minimal"] app-storefront-item-grid {
   animation: layoutChange 0.3s ease-out;
 }
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.storefront-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.store-main {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.hero-section,
+.categories-section,
+.products-section {
+  background: transparent !important;
+  background-color: transparent !important;
+}

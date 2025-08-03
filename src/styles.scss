@@ -1,17 +1,17 @@
 @use 'tailwindcss';   
 @plugin "tailwindcss-primeui";
 
-
 /* ================================
-   LAYOUTS GLOBAIS - ADICIONAR AO styles.css
+   CSS CUSTOM PROPERTIES - SISTEMA DE DESIGN
    ================================ */
-
-/* CSS Custom Properties para Layouts */
 :root {
+  // Layout Properties
   --grid-gap: 2rem;
   --card-padding: 1.5rem;
   --card-border-radius: 16px;
   --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+
+  // Color System
   --primary-color: #D81B60;
   --secondary-color: #F8BBD9;
   --accent-color: #8E24AA;
@@ -22,22 +22,107 @@
   --success-color: #4CAF50;
   --warning-color: #FF9800;
   --error-color: #F44336;
+
+  // Background System
+  --bg-overlay-opacity: 0;
+  --bg-overlay-color: rgba(0, 0, 0, 0.5);
+  --bg-transition: background-image 0.3s ease, background-color 0.3s ease;
 }
 
 /* ================================
-   LAYOUT GRID (Moderno/Rico)
+   RESET E BASE STYLING
    ================================ */
-.layout-grid app-storefront-item-grid .products-container,
-app-storefront-item-grid.layout-grid .products-container {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
-  gap: 2rem !important;
+* {
+  box-sizing: border-box;
 }
 
+html, body {
+  height: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+body {
+  // Background system
+  transition: var(--bg-transition) !important;
+  background-attachment: scroll !important;
+  
+  // Typography
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+/* ================================
+   BACKGROUND SYSTEM
+   ================================ */
+
+app-root {
+  display: block !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  background: transparent !important;
+}
+
+.storefront-container {
+  position: relative !important;
+  min-height: 100vh !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.store-header {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.store-main {
+  background: transparent !important;
+  background-color: transparent !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.hero-section,
+.categories-section,
+.products-section {
+  background: transparent !important;
+  background-color: transparent !important;
+  position: relative !important;
+}
+
+/* ================================
+   LAYOUT GRID (MODERNO/RICO)
+   ================================ */
+
+.layout-grid {
+  app-storefront-item-grid {
+    .products-container {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+      gap: 2rem !important;
+    }
+  }
+}
+
+app-storefront-item-grid.layout-grid {
+  .products-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 2rem !important;
+  }
+}
+
+// Grid Layout - Product Cards
 .layout-grid app-storefront-item-card ::ng-deep .product-card,
 app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
   border-radius: 16px !important;
   overflow: hidden !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
@@ -46,149 +131,182 @@ app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product
   cursor: pointer !important;
   position: relative !important;
   padding: 0 !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-card:hover,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover {
-  transform: translateY(-8px) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-  border-color: var(--primary-color) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-image-container,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image-container {
-  position: relative !important;
-  overflow: hidden !important;
-  height: 300px !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-image,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  transition: transform 0.3s ease !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-image,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-image {
-  transform: scale(1.05) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-actions,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-actions {
-  position: absolute !important;
-  top: 1rem !important;
-  right: 1rem !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.5rem !important;
-  opacity: 0 !important;
-  transform: translateX(20px) !important;
-  transition: all 0.3s ease !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-actions,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card:hover .product-actions {
-  opacity: 1 !important;
-  transform: translateX(0) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .action-btn,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn {
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: none !important;
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  color: var(--text-color) !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .action-btn:hover,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn:hover {
-  background: var(--primary-color) !important;
-  color: white !important;
-  transform: scale(1.1) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-info,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-info {
-  padding: 1.5rem !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-rating,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-rating {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  margin-bottom: 0.75rem !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-name,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-name {
-  font-size: 1.25rem !important;
-  font-weight: 600 !important;
-  color: var(--text-color) !important;
-  margin-bottom: 0.75rem !important;
-  line-height: 1.4 !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-description,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-description {
-  display: block !important;
-  font-size: 0.875rem !important;
-  color: var(--text-secondary) !important;
-  margin-bottom: 1rem !important;
-  line-height: 1.5 !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-price,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-price {
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  color: var(--primary-color) !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn {
-  width: 100% !important;
-  background: var(--primary-color) !important;
-  color: white !important;
-  border: none !important;
-  padding: 0.875rem !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn:hover,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .add-to-cart-btn:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px var(--shadow-color) !important;
-  background: var(--accent-color) !important;
+  
+  &:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+    border-color: var(--primary-color) !important;
+    
+    .product-image {
+      transform: scale(1.05) !important;
+    }
+    
+    .product-actions {
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+    }
+  }
+  
+  .product-image-container {
+    position: relative !important;
+    overflow: hidden !important;
+    height: 300px !important;
+  }
+  
+  .product-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.3s ease !important;
+  }
+  
+  .product-actions {
+    position: absolute !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    opacity: 0 !important;
+    transform: translateX(20px) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  .action-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    color: var(--text-color) !important;
+    backdrop-filter: blur(10px) !important;
+    
+    &:hover {
+      background: var(--primary-color) !important;
+      color: white !important;
+      transform: scale(1.1) !important;
+    }
+  }
+  
+  .product-info {
+    padding: 1.5rem !important;
+  }
+  
+  .product-rating {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .product-name {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--text-color) !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .product-description {
+    display: block !important;
+    font-size: 0.875rem !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.5 !important;
+  }
+  
+  .product-price {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--primary-color) !important;
+  }
+  
+  .add-to-cart-btn {
+    width: 100% !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.875rem !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    
+    &:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 25px var(--shadow-color) !important;
+      background: var(--accent-color) !important;
+    }
+  }
+  
+  .product-badges {
+    position: absolute !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    z-index: 10 !important;
+  }
+  
+  .product-badge {
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 12px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    backdrop-filter: blur(10px) !important;
+    
+    &.badge-new {
+      background: rgba(142, 36, 170, 0.9) !important;
+      color: white !important;
+    }
+    
+    &.badge-sale {
+      background: rgba(244, 67, 54, 0.9) !important;
+      color: white !important;
+    }
+    
+    &.badge-featured {
+      background: rgba(255, 152, 0, 0.9) !important;
+      color: white !important;
+    }
+  }
 }
 
 /* ================================
-   LAYOUT MINIMAL (Limpo/Simples)
+   LAYOUT MINIMAL (LIMPO/SIMPLES)
    ================================ */
-.layout-minimal app-storefront-item-grid .products-container,
-app-storefront-item-grid.layout-minimal .products-container {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-  gap: 1rem !important;
+
+.layout-minimal {
+  app-storefront-item-grid {
+    .products-container {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+      gap: 1rem !important;
+    }
+  }
 }
 
+app-storefront-item-grid.layout-minimal {
+  .products-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 1rem !important;
+  }
+}
+
+// Minimal Layout - Product Cards
 .layout-minimal app-storefront-item-card ::ng-deep .product-card,
 app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card {
   background: transparent !important;
@@ -199,202 +317,145 @@ app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .prod
   transition: all 0.3s ease !important;
   cursor: pointer !important;
   padding: 1rem !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover {
-  transform: translateY(-2px) !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-image-container,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image-container {
-  position: relative !important;
-  overflow: hidden !important;
-  height: 250px !important;
-  border-radius: 8px !important;
-  margin-bottom: 1rem !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-image,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  transition: all 0.3s ease !important;
-  filter: grayscale(0.1) !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-image,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-image {
-  transform: scale(1.02) !important;
-  filter: grayscale(0) !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-actions,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-actions {
-  position: absolute !important;
-  top: 0.5rem !important;
-  right: 0.5rem !important;
-  display: flex !important;
-  gap: 0.25rem !important;
-  opacity: 0 !important;
-  transition: all 0.3s ease !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-actions,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card:hover .product-actions {
-  opacity: 1 !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .action-btn,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .action-btn {
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: none !important;
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 4px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  color: var(--text-color) !important;
-  font-size: 0.875rem !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .action-btn:hover,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .action-btn:hover {
-  background: var(--text-color) !important;
-  color: white !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-info,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-info {
-  padding: 0 !important;
-  text-align: left !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-rating,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-rating {
-  display: none !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-name,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-name {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: var(--text-color) !important;
-  margin-bottom: 0.5rem !important;
-  line-height: 1.3 !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-description,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-description {
-  display: none !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-price,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-price {
-  font-size: 1.125rem !important;
-  font-weight: 600 !important;
-  color: var(--text-color) !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn {
-  width: 100% !important;
-  background: transparent !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--text-color) !important;
-  padding: 0.625rem !important;
-  border-radius: 0 !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-  font-size: 0.875rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 1px !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn:hover,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .add-to-cart-btn:hover {
-  background: var(--text-color) !important;
-  color: white !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* ================================
-   BADGES ESPECÍFICOS POR LAYOUT
-   ================================ */
-.layout-grid app-storefront-item-card ::ng-deep .product-badges,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-badges {
-  position: absolute !important;
-  top: 1rem !important;
-  left: 1rem !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.5rem !important;
-  z-index: 10 !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-badges,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-badges {
-  position: absolute !important;
-  top: 0.5rem !important;
-  left: 0.5rem !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.25rem !important;
-  z-index: 10 !important;
-}
-
-.layout-grid app-storefront-item-card ::ng-deep .product-badge,
-app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-badge {
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 12px !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.layout-minimal app-storefront-item-card ::ng-deep .product-badge,
-app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-badge {
-  padding: 2px 0.5rem !important;
-  border-radius: 2px !important;
-  font-size: 0.625rem !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 1px !important;
-  background: var(--text-color) !important;
-  color: white !important;
-}
-
-/* Cores dos badges */
-.product-badge.badge-new {
-  background: rgba(142, 36, 170, 0.9) !important;
-  color: white !important;
-}
-
-.product-badge.badge-sale {
-  background: rgba(244, 67, 54, 0.9) !important;
-  color: white !important;
-}
-
-.product-badge.badge-featured {
-  background: rgba(255, 152, 0, 0.9) !important;
-  color: white !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    
+    .product-image {
+      transform: scale(1.02) !important;
+      filter: grayscale(0) !important;
+    }
+    
+    .product-actions {
+      opacity: 1 !important;
+    }
+  }
+  
+  .product-image-container {
+    position: relative !important;
+    overflow: hidden !important;
+    height: 250px !important;
+    border-radius: 8px !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .product-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: all 0.3s ease !important;
+    filter: grayscale(0.1) !important;
+  }
+  
+  .product-actions {
+    position: absolute !important;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    display: flex !important;
+    gap: 0.25rem !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  .action-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    color: var(--text-color) !important;
+    font-size: 0.875rem !important;
+    
+    &:hover {
+      background: var(--text-color) !important;
+      color: white !important;
+    }
+  }
+  
+  .product-info {
+    padding: 0 !important;
+    text-align: left !important;
+  }
+  
+  .product-rating {
+    display: none !important;
+  }
+  
+  .product-name {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: var(--text-color) !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .product-description {
+    display: none !important;
+  }
+  
+  .product-price {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--text-color) !important;
+  }
+  
+  .add-to-cart-btn {
+    width: 100% !important;
+    background: transparent !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--text-color) !important;
+    padding: 0.625rem !important;
+    border-radius: 0 !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.875rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    
+    &:hover {
+      background: var(--text-color) !important;
+      color: white !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  .product-badges {
+    position: absolute !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.25rem !important;
+    z-index: 10 !important;
+  }
+  
+  .product-badge {
+    padding: 2px 0.5rem !important;
+    border-radius: 2px !important;
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    background: var(--text-color) !important;
+    color: white !important;
+  }
 }
 
 /* ================================
    BOTÕES DE LAYOUT NO HEADER
    ================================ */
+
 .layout-btn {
   display: flex !important;
   align-items: center !important;
@@ -409,36 +470,88 @@ app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .prod
   transition: all 0.2s ease !important;
   font-size: 1.1rem !important;
   position: relative !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  &.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+    transform: scale(1.1) !important;
+
+    &::after {
+      content: '' !important;
+      position: absolute !important;
+      bottom: -2px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 20px !important;
+      height: 2px !important;
+      background: var(--primary-color) !important;
+      border-radius: 1px !important;
+    }
+  }
 }
 
-.layout-btn:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
-  transform: scale(1.05) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+/* ================================
+   SISTEMA DE OVERLAYS PARA BACKGROUNDS
+   ================================ */
+
+.bg-overlay {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay-color);
+    opacity: var(--bg-overlay-opacity);
+    pointer-events: none;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+  }
 }
 
-.layout-btn.active {
-  background: var(--primary-color) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px var(--shadow-color) !important;
-  transform: scale(1.1) !important;
+/* ================================
+   UTILITÁRIOS PARA DEBUG
+   ================================ */
+
+.debug-bg-test {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+  min-height: 100vh !important;
 }
 
-.layout-btn.active::after {
-  content: '' !important;
-  position: absolute !important;
-  bottom: -2px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 20px !important;
-  height: 2px !important;
-  background: var(--primary-color) !important;
-  border-radius: 1px !important;
+.debug-layout {
+  * {
+    outline: 1px solid rgba(255, 0, 0, 0.2) !important;
+  }
+}
+
+.debug-active {
+  &::before {
+    content: "🐛 DEBUG MODE";
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #ff0000;
+    color: white;
+    padding: 5px 10px;
+    z-index: 9999;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 12px;
+  }
 }
 
 /* ================================
    ANIMAÇÕES DE TRANSIÇÃO
    ================================ */
+
 @keyframes layoutChange {
   0% {
     opacity: 0.7;
@@ -454,33 +567,201 @@ app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .prod
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bgFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .products-container {
   animation: layoutChange 0.4s ease-out !important;
+}
+
+body.bg-changing {
+  animation: bgFadeIn 0.5s ease-out;
 }
 
 /* ================================
    RESPONSIVIDADE
    ================================ */
+
+@media (max-width: 1024px) {
+  :root {
+    --grid-gap: 1.5rem;
+    --card-padding: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .layout-grid app-storefront-item-grid .products-container,
-  app-storefront-item-grid.layout-grid .products-container {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem !important;
+  .layout-grid {
+    app-storefront-item-grid {
+      .products-container {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+    }
   }
   
-  .layout-minimal app-storefront-item-grid .products-container,
-  app-storefront-item-grid.layout-minimal .products-container {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.75rem !important;
+  app-storefront-item-grid.layout-grid {
+    .products-container {
+      grid-template-columns: 1fr !important;
+      gap: 1.5rem !important;
+    }
+  }
+
+  .layout-minimal {
+    app-storefront-item-grid {
+      .products-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+    }
   }
   
+  app-storefront-item-grid.layout-minimal {
+    .products-container {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
+    }
+  }
+
   .layout-grid app-storefront-item-card ::ng-deep .product-image-container,
   app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-image-container {
     height: 250px !important;
   }
-  
+
   .layout-minimal app-storefront-item-card ::ng-deep .product-image-container,
   app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-image-container {
     height: 200px !important;
   }
+
+  .layout-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1rem !important;
+  }
+
+  body {
+    background-attachment: scroll !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-minimal app-storefront-item-card ::ng-deep .product-card,
+  app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card {
+    padding: 0.5rem !important;
+  }
+}
+
+/* ================================
+   FALLBACKS PARA NAVEGADORES ANTIGOS
+   ================================ */
+
+@supports not (backdrop-filter: blur(10px)) {
+  .store-header {
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+  
+  .layout-grid app-storefront-item-card ::ng-deep .product-card,
+  app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .layout-grid app-storefront-item-card ::ng-deep .action-btn,
+  app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ================================
+   THEMES ESPECÍFICOS
+   ================================ */
+
+[data-theme*="dark"] {
+  --bg-overlay-color: rgba(0, 0, 0, 0.7);
+  
+  .store-header {
+    background: rgba(17, 24, 39, 0.95) !important;
+  }
+  
+  .layout-grid app-storefront-item-card ::ng-deep .product-card,
+  app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card {
+    background: rgba(31, 41, 55, 0.9) !important;
+    border-color: rgba(75, 85, 99, 0.3) !important;
+  }
+}
+
+[data-theme*="light"] {
+  --bg-overlay-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ================================
+   PRINT STYLES
+   ================================ */
+
+@media print {
+  .store-header,
+  .product-actions,
+  .layout-btn {
+    display: none !important;
+  }
+  
+  .layout-grid app-storefront-item-card ::ng-deep .product-card,
+  app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card,
+  .layout-minimal app-storefront-item-card ::ng-deep .product-card,
+  app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+}
+
+/* ================================
+   PERFORMANCE OPTIMIZATIONS
+   ================================ */
+
+.layout-grid app-storefront-item-card ::ng-deep .product-card,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .product-card,
+.layout-minimal app-storefront-item-card ::ng-deep .product-card,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .product-card,
+.layout-grid app-storefront-item-card ::ng-deep .action-btn,
+app-storefront-item-grid.layout-grid app-storefront-item-card ::ng-deep .action-btn,
+.layout-minimal app-storefront-item-card ::ng-deep .action-btn,
+app-storefront-item-grid.layout-minimal app-storefront-item-card ::ng-deep .action-btn,
+.layout-btn {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }

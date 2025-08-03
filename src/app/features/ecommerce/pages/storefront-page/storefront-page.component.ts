@@ -103,7 +103,7 @@ export class StorefrontPageComponent implements OnInit {
       id: '3',
       name: 'Tênis Esportivo Pro',
       description: 'Tênis de alta performance para corrida e treino. Tecnologia de absorção de impacto, sola antiderrapante e design ergonômico. Conforto e performance em cada passo.',
-      image: 'https://images.unsplash.com/photo-1591047139829-d91aec6fc87e?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=400&h=400',
       imageAlt: 'Tênis Esportivo Pro',
       price: 890.00,
       rating: { average: 4.2, count: 23, stars: 4 },
@@ -165,8 +165,8 @@ export class StorefrontPageComponent implements OnInit {
   constructor() {
     // Effect para monitorar mudanças de layout
     effect(() => {
-      console.log('🏪 StorefrontPage detectou mudança de layout:', this.currentLayout());
-      console.log('🏪 Classes aplicadas no host:', this.hostClasses);
+      //console.log('🏪 StorefrontPage detectou mudança de layout:', this.currentLayout());
+      //console.log('🏪 Classes aplicadas no host:', this.hostClasses);
     });
   }
 
@@ -175,8 +175,8 @@ export class StorefrontPageComponent implements OnInit {
     this.showWelcomeMessage();
     
     // Debug inicial
-    console.log('🏪 StorefrontPage inicializada');
-    console.log('🏪 Layout inicial:', this.currentLayout());
+    //console.log('🏪 StorefrontPage inicializada');
+    //console.log('🏪 Layout inicial:', this.currentLayout());
     
     setTimeout(() => {
       this.debugLayoutState();
@@ -194,16 +194,16 @@ export class StorefrontPageComponent implements OnInit {
    * ADICIONADO: Método para debug do estado do layout
    */
   debugLayoutState(): void {
-    console.log('🐛 ===== DEBUG STOREFRONT PAGE =====');
-    console.log('🐛 Layout atual:', this.currentLayout());
-    console.log('🐛 Hero visível:', this.showHeroBanner());
-    console.log('🐛 Categories visíveis:', this.showCategories());
-    console.log('🐛 Tema atual:', this.currentTheme()?.name);
-    console.log('🐛 Classes CSS aplicadas:', this.getLayoutClasses());
-    console.log('🐛 Classes do grid:', this.getGridClasses());
-    console.log('🐛 Layout Service Debug:', this.layoutService.getDebugState());
-    console.log('🐛 Produtos carregados:', this.products.length);
-    console.log('🐛 ================================');
+    // //console.log('🐛 ===== DEBUG STOREFRONT PAGE =====');
+    // //console.log('🐛 Layout atual:', this.currentLayout());
+    // //console.log('🐛 Hero visível:', this.showHeroBanner());
+    // //console.log('🐛 Categories visíveis:', this.showCategories());
+    // //console.log('🐛 Tema atual:', this.currentTheme()?.name);
+    // //console.log('🐛 Classes CSS aplicadas:', this.getLayoutClasses());
+    // //console.log('🐛 Classes do grid:', this.getGridClasses());
+    // //console.log('🐛 Layout Service Debug:', this.layoutService.getDebugState());
+    // //console.log('🐛 Produtos carregados:', this.products.length);
+    // //console.log('🐛 ================================');
   }
 
   /**
@@ -217,7 +217,7 @@ export class StorefrontPageComponent implements OnInit {
     if (!this.showCategories()) {
       classes += ' no-categories';
     }
-    console.log('🎨 Classes CSS aplicadas:', classes);
+    //console.log('🎨 Classes CSS aplicadas:', classes);
     return classes;
   }
 
@@ -365,7 +365,7 @@ export class StorefrontPageComponent implements OnInit {
    * Manipula clique no produto para ir para página de detalhes
    */
   onProductClick(product: Product): void {
-    console.log('Navegando para produto:', product.name);
+    //console.log('Navegando para produto:', product.name);
     // this.router.navigate(['/ecommerce/product', product.id]);
   }
 
@@ -373,7 +373,7 @@ export class StorefrontPageComponent implements OnInit {
    * Manipula evento de favoritar produto
    */
   onFavoriteToggle(product: Product): void {
-    console.log('Produto favoritado:', product.name);
+    //console.log('Produto favoritado:', product.name);
     this.messageService.add({
       severity: 'info',
       summary: 'Favoritos',
@@ -386,7 +386,7 @@ export class StorefrontPageComponent implements OnInit {
    * Manipula evento de comparar produto
    */
   onCompareProduct(product: Product): void {
-    console.log('Produto para comparação:', product.name);
+    //console.log('Produto para comparação:', product.name);
     this.messageService.add({
       severity: 'info',
       summary: 'Comparação',

@@ -1,7 +1,7 @@
-<div class="storefront-container" 
-         [ngClass]="getLayoutClasses()" 
-         [attr.data-layout]="currentLayout()"
-         [attr.data-theme]="currentTheme()?.id">
+<div class="storefront-container bg-transparent" 
+     [ngClass]="getLayoutClasses()" 
+     [attr.data-layout]="currentLayout()"
+     [attr.data-theme]="currentTheme()?.id">
       <p-toast position="top-right"></p-toast>
 
       <!-- Header da Loja - Componente storefront-header -->
@@ -19,7 +19,7 @@
       <!-- Hero Banner - Componente storefront-hero -->
       <app-storefront-hero *ngIf="showHeroBanner()"></app-storefront-hero>
 
-      <main class="store-main" [attr.data-layout]="currentLayout()" style=" bottom: 1rem; position: relative;">
+      <main class="store-main store-main bg-transparent" [attr.data-layout]="currentLayout()" style=" bottom: 1rem; position: relative;">
         
         <!-- Seção de Categorias - Componente storefront-categories -->
         <app-storefront-categories *ngIf="showCategories()"></app-storefront-categories>

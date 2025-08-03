@@ -48,7 +48,7 @@ export const MOCK_PRODUCTS: Product[] = [
     id: '3',
     name: 'Blusa Social Elegante',
     description: 'Blusa versátil para looks profissionais e casuais.',
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aec6fc87e?auto=format&fit=crop&q=80&w=400&h=400',
+    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=400&h=400',
     imageAlt: 'Blusa Elegante',
     price: 89.90,
     rating: {

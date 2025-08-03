@@ -9,7 +9,7 @@
   <!-- Background Dropdown -->
   <p-dropdown
     [options]="backgroundOptions"
-    [(ngModel)]="selectedBackground"
+    [ngModel]="selectedBackground()"
     (onChange)="onBackgroundChange($event)"
     optionLabel="label"
     placeholder="Selecione um fundo"
@@ -39,12 +39,13 @@
 
   <!-- Custom Background Controls -->
   <div class="custom-bg-controls flex items-center gap-2" 
-       *ngIf="showCustomControls()"
+       *ngIf="showCustomControls"
        [@slideIn]>
     
     <!-- Custom Input -->
     <p-inputText
-      [(ngModel)]="customBackgroundValue"
+      [ngModel]="customBackgroundValue()"
+      (input)="onCustomValueChange($event)"
       placeholder="URL da imagem ou cor hex"
       [style]="{ 'width': '200px' }"
       styleClass="custom-bg-input"
@@ -54,7 +55,7 @@
     <!-- Apply Custom Background Button -->
     <p-button
       icon="pi pi-check"
-      [disabled]="!isCustomValueValid()"
+      [disabled]="!isCustomValueValid"
       (onClick)="applyCustomBackground()"
       styleClass="p-button-success p-button-sm"
       pTooltip="Aplicar fundo personalizado"
@@ -67,18 +68,18 @@
     
     <!-- Overlay Toggle -->
     <p-button
-      [icon]="overlayToggleIcon()"
-      [disabled]="!hasBackgroundApplied()"
+      [icon]="overlayToggleIcon"
+      [disabled]="!hasBackgroundApplied"
       (onClick)="toggleOverlay()"
       [styleClass]="overlayEnabled() ? 'p-button-info p-button-sm' : 'p-button-outlined p-button-sm'"
-      [pTooltip]="overlayToggleTooltip()"
+      [pTooltip]="overlayToggleTooltip"
       tooltipPosition="top">
     </p-button>
     
     <!-- Clear Background Button -->
     <p-button
       icon="pi pi-refresh"
-      [disabled]="!hasBackgroundApplied()"
+      [disabled]="!hasBackgroundApplied"
       (onClick)="clearBackground()"
       styleClass="p-button-outlined p-button-sm"
       pTooltip="Restaurar fundo padrão"
@@ -107,7 +108,7 @@
     <span class="text-sm font-medium text-gray-700">Personalizar Fundo</span>
     <p-button
       icon="pi pi-refresh"
-      [disabled]="!hasBackgroundApplied()"
+      [disabled]="!hasBackgroundApplied"
       (onClick)="clearBackground()"
       styleClass="p-button-text p-button-sm"
       pTooltip="Restaurar padrão">
@@ -118,9 +119,8 @@
   <div class="mb-3">
     <p-dropdown
       [options]="backgroundOptions"
-      [(ngModel)]="selectedBackground"
-      (onChange)="onBackgroundChange($event)"
-      optionLabel="label"
+      [ngModel]="selectedBackground()"
+      (onChange)="onBackgroundChange($event)"      optionLabel="label"
       placeholder="Selecione um fundo"
       [style]="{ 'width': '100%' }"
       styleClass="background-dropdown-mobile">
@@ -145,17 +145,18 @@
   </div>
   
   <!-- Custom Controls -->
-  <div class="custom-controls" *ngIf="showCustomControls()" [@slideIn]>
+  <div class="custom-controls" *ngIf="showCustomControls" [@slideIn]>
     <div class="flex gap-2 mb-2">
       <p-inputText
-        [(ngModel)]="customBackgroundValue"
+        ngModel="customBackgroundValue()"
+        (input)="onCustomValueChange($event)"
         placeholder="URL ou código CSS"
         [style]="{ 'flex': '1' }"
         styleClass="custom-bg-input-mobile">
       </p-inputText>
       <p-button
         icon="pi pi-check"
-        [disabled]="!isCustomValueValid()"
+        [disabled]="!isCustomValueValid"
         (onClick)="applyCustomBackground()"
         styleClass="p-button-success">
       </p-button>
@@ -163,11 +164,11 @@
   </div>
   
   <!-- Toggle Controls -->
-  <div class="flex items-center justify-between" *ngIf="hasBackgroundApplied()">
+  <div class="flex items-center justify-between" *ngIf="hasBackgroundApplied">
     <span class="text-sm text-gray-600">Overlay:</span>
     <p-inputSwitch
-      [(ngModel)]="overlayEnabled"
-      (onChange)="toggleOverlay()">
+      [ngModel]="overlayEnabled()"
+      (onChange)="onOverlayChange($event)">
     </p-inputSwitch>
   </div>
 </div>

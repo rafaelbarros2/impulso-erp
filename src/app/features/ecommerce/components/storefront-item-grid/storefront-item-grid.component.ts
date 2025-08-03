@@ -52,7 +52,7 @@ export class StorefrontItemGridComponent implements OnInit {
     // A injeção de dependências e a leitura de Signals
     // não precisam mais de métodos de subscribe ou unsubscribe.
     // A reatividade é gerenciada de forma automática pelo Angular.
-    console.log('Grid inicializado com Signals. Layout atual:', this.currentLayout());
+    //console.log('Grid inicializado com Signals. Layout atual:', this.currentLayout());
   }
 
   /**
@@ -70,7 +70,7 @@ export class StorefrontItemGridComponent implements OnInit {
     const layout = this.currentLayout();
     const layoutClass = `layout-${layout}`;
     
-    console.log('🎯 Layout atual no gridClasses:', layout); // Debug
+    //console.log('🎯 Layout atual no gridClasses:', layout); // Debug
     
     // TailwindCSS classes baseadas no layout
     if (layout === 'grid') {
@@ -117,27 +117,27 @@ export class StorefrontItemGridComponent implements OnInit {
    */
   onProductClick(product: Product): void {
     this.productClick.emit(product);
-    console.log('Produto clicado:', product.name);
+    //console.log('Produto clicado:', product.name);
   }
 
   onAddToCart(product: Product): void {
     this.addToCart.emit(product);
-    console.log('Adicionado ao carrinho:', product.name);
+    //console.log('Adicionado ao carrinho:', product.name);
   }
 
   onFavoriteToggle(product: Product): void {
     this.favoriteToggle.emit(product);
-    console.log('Favorito alternado:', product.name);
+    //console.log('Favorito alternado:', product.name);
   }
 
   onCompareProduct(product: Product): void {
     this.compareProduct.emit(product);
-    console.log('Produto para comparação:', product.name);
+    //console.log('Produto para comparação:', product.name);
   }
 
   onQuickView(product: Product): void {
     this.quickView.emit(product);
-    console.log('Visualização rápida:', product.name);
+    //console.log('Visualização rápida:', product.name);
   }
 
   /**
@@ -176,7 +176,7 @@ export class StorefrontItemGridComponent implements OnInit {
    * Força refresh do grid (útil para debugging)
    */
   refreshGrid(): void {
-    console.log('Grid refreshed. Layout atual:', this.currentLayout());
+    //console.log('Grid refreshed. Layout atual:', this.currentLayout());
     // Força uma nova renderização
     this.layoutService.setLayout(this.currentLayout());
   }
