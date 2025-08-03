@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, Signal } from '@angular/core';
 
 // Interface para definir a estrutura de um tema
 export interface StoreTheme {
@@ -76,8 +75,8 @@ export class ThemeService {
     }
   ];
 
-  private _currentTheme = new BehaviorSubject<StoreTheme | null>(null);
-  currentTheme$: Observable<StoreTheme | null> = this._currentTheme.asObservable();
+  private _currentTheme = signal<StoreTheme | null>(null);
+  currentTheme: Signal<StoreTheme | null> = this._currentTheme.asReadonly();
 
   constructor() {
     // Tenta carregar o tema do localStorage ou aplica um padrão
@@ -97,7 +96,7 @@ export class ThemeService {
   applyTheme(themeId: string): void {
     const theme = this.themes.find(t => t.id === themeId);
     if (theme) {
-      this._currentTheme.next(theme);
+      this._currentTheme.set(theme);
       this.setCssVariables(theme);
       localStorage.setItem('currentThemeId', theme.id);
     } else {

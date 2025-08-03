@@ -7,27 +7,31 @@
     [cartInfo]="{ itemCount: cartItemCount, totalValue: cartTotalValue }"
     [showLogo]="true"
     [showControls]="true"
+    [showHeroControls]="true"
+    [showCategoriesControls]="true"
     (cartClicked)="onCartClick()"
     (logoClicked)="onLogoClick()"
   ></app-storefront-header>
 
   <!-- Hero Banner - Componente storefront-hero -->
-  <app-storefront-hero></app-storefront-hero>
+  <app-storefront-hero *ngIf="showHeroBanner"></app-storefront-hero>
 
   <main class="store-main">
     
     <!-- Seção de Categorias - Componente storefront-categories -->
-    <app-storefront-categories></app-storefront-categories>
+    <app-storefront-categories *ngIf="showCategories"></app-storefront-categories>
 
     <!-- Lista de Produtos - Componente storefront-item-grid -->
     <section class="products-section">
       <h2 class="section-title">Novidades</h2>
+      <!-- APLICA A CLASSE DO LAYOUT DINAMICAMENTE AQUI -->
       <app-storefront-item-grid
+        [ngClass]="currentLayout() === 'minimal' ? 'layout-minimal' : 'layout-grid'"
         [products]="products"
         [loading]="false"
         [showActions]="true"
-        [showRating]="currentLayout === 'grid'"
-        [showDescription]="currentLayout === 'grid'"
+        [showRating]="currentLayout() === 'grid'"
+        [showDescription]="currentLayout() === 'grid'"
         (productClick)="onProductClick($event)"
         (addToCart)="addToCart($event)"
         (favoriteToggle)="onFavoriteToggle($event)"
@@ -58,7 +62,7 @@
         
         <!-- Badges do produto -->
         <div class="modal-badges" *ngIf="quickViewProduct.badges && quickViewProduct.badges.length > 0">
-          <span *ngFor="let badge of quickViewProduct.badges" 
+          <span *ngfor="let badge of quickViewProduct.badges" 
                 [ngClass]="'badge-' + badge.type"
                 class="modal-badge">
             {{ badge.label }}

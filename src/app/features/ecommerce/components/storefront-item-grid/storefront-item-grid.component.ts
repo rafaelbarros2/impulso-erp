@@ -1,18 +1,15 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 // Services
-
+import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
+import { BackgroundService, BackgroundConfig } from '../../../../core/services/background.service';
+import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
 
 // Components & Models
 import { StorefrontItemCardComponent } from '../storefront-item-card/storefront-item-card.component';
 import { MOCK_PRODUCTS } from '../../model/roduct-mock.data';
-import { LayoutType, Product } from '../../model/product.interface';
-import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
-import { BackgroundService } from '../../../../core/services/background.service';
-import { LayoutService } from '../../../../core/services/layout.service';
+import { BadgeType, Product } from '../../model/product.interface';
 
 
 @Component({
@@ -21,10 +18,14 @@ import { LayoutService } from '../../../../core/services/layout.service';
   imports: [CommonModule, StorefrontItemCardComponent],
   templateUrl: './storefront-item-grid.component.html',
   styleUrls: ['./storefront-item-grid.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StorefrontItemGridComponent implements OnInit, OnDestroy {
+export class StorefrontItemGridComponent implements OnInit {
   
+  // Injeção de dependências
+  private readonly themeService = inject(ThemeService);
+  private readonly layoutService = inject(LayoutService);
+  private readonly backgroundService = inject(BackgroundService);
+
   // Inputs
   @Input() products: Product[] = MOCK_PRODUCTS;
   @Input() loading: boolean = false;
@@ -41,58 +42,27 @@ export class StorefrontItemGridComponent implements OnInit, OnDestroy {
   @Output() compareProduct = new EventEmitter<Product>();
   @Output() quickView = new EventEmitter<Product>();
 
-  // Estados internos
-  currentLayout: LayoutType = LayoutType.GRID;
-  currentTheme: StoreTheme | null = null;
+  // Estados reativos usando Signals
+  currentLayout: Signal<LayoutType> = this.layoutService.currentLayout;
+  currentTheme: Signal<StoreTheme | null> = this.themeService.currentTheme;
+  currentBackground: Signal<BackgroundConfig | null> = this.backgroundService.currentBackground;
   
-  // Subject para cleanup
-  private destroy$ = new Subject<void>();
   productLayoutType!: LayoutType;
 
-  constructor(
-    private themeService: ThemeService,
-    private layoutService: LayoutService,
-    private backgroundService: BackgroundService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.subscribeToServices();
+    // A injeção de dependências e a leitura de Signals
+    // não precisam mais de métodos de subscribe ou unsubscribe.
+    // A reatividade é gerenciada de forma automática pelo Angular.
+    console.log('Grid inicializado com Signals.');
   }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  /**
-   * Subscribe aos observables dos serviços
-   */
-private subscribeToServices(): void {
-  // Combina observables dos serviços
-  combineLatest([
-    this.layoutService.currentLayout$,
-    this.themeService.currentTheme$,
-    this.backgroundService.currentBackground$
-  ]).pipe(
-    takeUntil(this.destroy$)
-  ).subscribe(([layout, theme, background]) => {
-    this.currentLayout = layout as LayoutType; // Cast para garantir compatibilidade
-    this.currentTheme = theme;
-    
-    // Log para debug
-    console.log('Grid atualizado:', {
-      layout,
-      theme: theme?.name,
-      background: background?.name
-    });
-  });
-}
 
   /**
    * Retorna o layout atual para o StorefrontItemCardComponent
    */
   get currentLayoutForCard(): LayoutType {
-    return this.currentLayout;
+    return this.currentLayout();
   }
 
   /**
@@ -100,10 +70,11 @@ private subscribeToServices(): void {
    */
   get gridClasses(): string {
     const baseClasses = 'products-grid w-full';
-    const layoutClass = `layout-${this.currentLayout}`;
+    const layout = this.currentLayout();
+    const layoutClass = `layout-${layout}`;
     
     // TailwindCSS classes baseadas no layout
-    if (this.currentLayout === 'grid') {
+    if (layout === 'grid') {
       return `${baseClasses} ${layoutClass} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8`;
     } else {
       // Layout minimal - grid mais compacto
@@ -132,14 +103,14 @@ private subscribeToServices(): void {
    * Verifica se deve mostrar rating baseado no layout
    */
   get shouldShowRating(): boolean {
-    return this.showRating && this.currentLayout === 'grid';
+    return this.showRating && this.currentLayout() === 'grid';
   }
 
   /**
    * Verifica se deve mostrar descrição baseado no layout
    */
   get shouldShowDescription(): boolean {
-    return this.showDescription && this.currentLayout === 'grid';
+    return this.showDescription && this.currentLayout() === 'grid';
   }
 
   /**
@@ -153,33 +124,21 @@ private subscribeToServices(): void {
   onAddToCart(product: Product): void {
     this.addToCart.emit(product);
     console.log('Adicionado ao carrinho:', product.name);
-    
-    // Aqui você pode integrar com um serviço de carrinho
-    // this.cartService.addItem(product);
   }
 
   onFavoriteToggle(product: Product): void {
     this.favoriteToggle.emit(product);
     console.log('Favorito alternado:', product.name);
-    
-    // Aqui você pode integrar com um serviço de favoritos
-    // this.favoritesService.toggle(product.id);
   }
 
   onCompareProduct(product: Product): void {
     this.compareProduct.emit(product);
     console.log('Produto para comparação:', product.name);
-    
-    // Aqui você pode integrar com um serviço de comparação
-    // this.compareService.addProduct(product);
   }
 
   onQuickView(product: Product): void {
     this.quickView.emit(product);
     console.log('Visualização rápida:', product.name);
-    
-    // Aqui você pode abrir um modal/sidebar
-    // this.modalService.openQuickView(product);
   }
 
   /**
@@ -210,7 +169,7 @@ private subscribeToServices(): void {
    */
   get newProducts(): Product[] {
     return this.products.filter(product => 
-      product.badges.some(badge => badge.type === 'new')
+      product.badges.some(badge => badge.type === BadgeType.NEW)
     );
   }
 
@@ -219,7 +178,6 @@ private subscribeToServices(): void {
    */
   refreshGrid(): void {
     console.log('Grid refreshed');
-    // Força detecção de mudanças se necessário
   }
 
   /**
@@ -227,8 +185,8 @@ private subscribeToServices(): void {
    */
   getDebugInfo(): any {
     return {
-      layout: this.currentLayout,
-      theme: this.currentTheme?.name,
+      layout: this.currentLayout(),
+      theme: this.currentTheme()?.name,
       productsCount: this.products.length,
       featuredCount: this.featuredProducts.length,
       saleCount: this.saleProducts.length,

@@ -1,8 +1,6 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, inject, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate, state } from '@angular/animations';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 // PrimeNG Imports
 import { ButtonModule } from 'primeng/button';
@@ -66,8 +64,9 @@ interface HeroSlide {
 })
 export class StorefrontHeroComponent implements OnInit, OnDestroy {
   
-  private destroy$ = new Subject<void>();
-  
+  // Injeção de dependências
+  private readonly layoutService = inject(LayoutService);
+
   // Inputs
   @Input() slides: HeroSlide[] = [
     {
@@ -116,7 +115,7 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
   @Output() slideChanged = new EventEmitter<{ previous: HeroSlide, current: HeroSlide }>();
   
   // Estados do componente
-  isVisible: boolean = true;
+  isVisible: Signal<boolean> = this.layoutService.heroVisible;
   currentSlideIndex: number = 0;
   slideTimer: any = null;
   buttonPulseState: string = '';
@@ -124,35 +123,15 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
   // Estado de animação
   isAnimating: boolean = false;
   
-  constructor(private layoutService: LayoutService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.subscribeToLayoutChanges();
     this.initializeSlides();
     this.startAutoSlide();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
     this.stopAutoSlide();
-  }
-
-  /**
-   * Se inscreve nas mudanças de visibilidade do hero
-   */
-  private subscribeToLayoutChanges(): void {
-    this.layoutService.heroVisible$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(visible => {
-        this.isVisible = visible;
-        
-        if (visible && this.autoSlide) {
-          this.startAutoSlide();
-        } else {
-          this.stopAutoSlide();
-        }
-      });
   }
 
   /**
@@ -170,7 +149,8 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
    * Inicia o slide automático
    */
   private startAutoSlide(): void {
-    if (!this.autoSlide || this.slides.length <= 1) return;
+    // Verifica a visibilidade do hero antes de iniciar
+    if (!this.autoSlide || this.slides.length <= 1 || !this.isVisible()) return;
     
     this.stopAutoSlide(); // Para evitar múltiplos timers
     
@@ -368,7 +348,7 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
    * Retoma o auto slide quando o mouse sai
    */
   onMouseLeave(): void {
-    if (this.autoSlide && this.isVisible) {
+    if (this.autoSlide && this.isVisible()) {
       this.startAutoSlide();
     }
   }
@@ -572,5 +552,5 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
       default:
         this.loadFashionSlides();
     }
+  }  
   }
-}

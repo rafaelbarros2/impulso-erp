@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, Signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Observable, Subscription } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -41,107 +40,99 @@ interface CartItem {
   templateUrl: './storefront-page-promotion.component.html',
   styleUrls: ['./storefront-page-promotion.component.scss']
 })
-export class StorefrontPagePromotionComponent implements OnInit, OnDestroy {
+export class StorefrontPagePromotionComponent implements OnInit {
+  
+  // Propriedades reativas usando Signals do serviço
+  currentTheme: Signal<StoreTheme | null> = inject(ThemeService).currentTheme;
+  currentLayout: Signal<LayoutType> = inject(LayoutService).currentLayout;
+  showHeroBanner: Signal<boolean> = inject(LayoutService).heroVisible;
+  showCategories: Signal<boolean> = inject(LayoutService).categoriesVisible;
+  currentBackground: Signal<BackgroundConfig | null> = inject(BackgroundService).currentBackground;
 
-  // Observables para os serviços
-  currentTheme$!: Observable<StoreTheme | null>;
-  currentLayout$!: Observable<LayoutType>;
-  currentBackground$!: Observable<BackgroundConfig | null>;
-  heroVisible$!: Observable<boolean>;
-  categoriesVisible$!: Observable<boolean>;
-
-  private subscriptions = new Subscription();
 
   // Produtos usando nossa interface Product CORRETA
   products: Product[] = [
-    {
-      id: '1',
-      name: 'Jaqueta de Couro Clássica',
-      description: 'Jaqueta de couro genuíno, perfeita para qualquer ocasião. Design atemporal com detalhes em zíper premium e bolsos funcionais.',
-      image: 'https://images.unsplash.com/photo-1551028150-64b9f398f678?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Jaqueta de Couro Clássica',
-      price: 1500.00,
-      oldPrice: 1800.00, // Produto em promoção
-      rating: { average: 4.7, count: 89, stars: 5 },
-      badges: [{ type: BadgeType.SALE, label: '-17%' }],
-      category: 'Jaquetas',
-      inStock: true,
-      featured: false
-    },
-    {
-      id: '2',
-      name: 'Vestido Florido de Verão',
-      description: 'Vestido leve e confortável com estampa floral exclusiva, ideal para o verão. Tecido respirável e corte que valoriza a silhueta.',
-      image: 'https://images.unsplash.com/photo-1594938634149-a1b945d8b9f0?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Vestido Florido de Verão',
-      price: 350.00,
-      rating: { average: 4.8, count: 156, stars: 5 },
-      badges: [{ type: BadgeType.NEW, label: 'Novo' }],
-      category: 'Vestidos',
-      inStock: true,
-      featured: true
-    },
-    {
-      id: '3',
-      name: 'Tênis Esportivo Pro',
-      description: 'Tênis de alta performance para corrida e treino. Tecnologia de absorção de impacto e design ergonômico para máximo conforto.',
-      image: 'https://images.unsplash.com/photo-1511746313175-103362a4d5e6?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Tênis Esportivo Pro',
-      price: 890.00,
-      oldPrice: 1200.00, // Produto em promoção
-      rating: { average: 4.3, count: 67, stars: 4 },
-      badges: [
-        { type: BadgeType.SALE, label: '-26%' },
-        { type: BadgeType.FEATURED, label: 'Destaque' }
-      ],
-      category: 'Calçados',
-      inStock: false, // Fora de estoque
-      featured: true
-    },
-    {
-      id: '4',
-      name: 'Calça Jeans Slim',
-      description: 'Calça jeans com corte slim moderno e versátil. Tecido de alta qualidade com elastano para maior conforto e mobilidade.',
-      image: 'https://images.unsplash.com/photo-1518042456381-da9b07127e7d?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Calça Jeans Slim',
-      price: 280.00,
-      rating: { average: 4.5, count: 203, stars: 5 },
-      badges: [],
-      category: 'Calças',
-      inStock: true,
-      featured: false
-    },
-    {
-      id: '5',
-      name: 'Camiseta Básica de Algodão',
-      description: 'Camiseta 100% algodão pré-encolhido, macia e durável. Corte clássico unissex, essencial no guarda-roupa moderno.',
-      image: 'https://images.unsplash.com/photo-1581456105315-1a8519c5c2d3?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Camiseta Básica de Algodão',
-      price: 80.00,
-      oldPrice: 120.00, // Produto em promoção
-      rating: { average: 4.9, count: 445, stars: 5 },
-      badges: [
-        { type: BadgeType.NEW, label: 'Novo' },
-        { type: BadgeType.SALE, label: '-33%' }
-      ],
-      category: 'Camisetas',
-      inStock: true,
-      featured: false
-    },
-    {
-      id: '6',
-      name: 'Óculos de Sol Aviador',
-      description: 'Óculos de sol estilo aviador clássico com proteção UV 400. Armação resistente e lentes polarizadas de alta qualidade.',
-      image: 'https://images.unsplash.com/photo-1577717903265-985472407268?auto=format&fit=crop&q=80&w=1974',
-      imageAlt: 'Óculos de Sol Aviador',
-      price: 450.00,
-      rating: { average: 4.6, count: 78, stars: 5 },
-      badges: [{ type: BadgeType.FEATURED, label: 'Destaque' }],
-      category: 'Acessórios',
-      inStock: true,
-      featured: true
-    }
-  ];
+  {
+    id: '1',
+    name: 'Jaqueta de Couro Clássica',
+    description: 'Jaqueta de couro genuíno, perfeita para qualquer ocasião. Corte moderno com detalhes em zíper e bolsos laterais. Material de alta qualidade que oferece durabilidade e estilo atemporal.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/black-watch.jpg',
+    imageAlt: 'Jaqueta de Couro Clássica',
+    price: 1500.00,
+    oldPrice: 1800.00,
+    discountPercent: 15,
+    rating: { average: 4.5, count: 58, stars: 5 },
+    badges: [{ type: BadgeType.SALE, label: '-15%' }],
+    category: 'Jaquetas',
+    inStock: true,
+    featured: true,
+  },
+  {
+    id: '2',
+    name: 'Vestido Florido de Verão',
+    description: 'Vestido leve e confortável com estampa floral exclusiva, ideal para o verão. Tecido respirável e corte que valoriza a silhueta. Perfeito para ocasiões casuais e encontros especiais.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/blue-band.jpg',
+    imageAlt: 'Vestido Florido de Verão',
+    price: 350.00,
+    rating: { average: 4.8, count: 120, stars: 5 },
+    badges: [{ type: BadgeType.NEW, label: 'Novo' }],
+    category: 'Vestidos',
+    inStock: true,
+    featured: false,
+  },
+  {
+    id: '3',
+    name: 'Tênis Esportivo Pro',
+    description: 'Tênis de alta performance para corrida e treino. Tecnologia de absorção de impacto, sola antiderrapante e design ergonômico. Conforto e performance em cada passo.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/game-controller.jpg',
+    imageAlt: 'Tênis Esportivo Pro',
+    price: 890.00,
+    rating: { average: 4.2, count: 23, stars: 4 },
+    badges: [],
+    category: 'Calçados',
+    inStock: false,
+    featured: false,
+  },
+  {
+    id: '4',
+    name: 'Calça Jeans Slim',
+    description: 'Calça jeans com corte slim moderno e versátil. Tecido de alta qualidade com elastano para maior conforto. Disponível em lavagem stone com acabamento premium.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/headphones.jpg',
+    imageAlt: 'Calça Jeans Slim',
+    price: 280.00,
+    rating: { average: 4.6, count: 75, stars: 5 },
+    badges: [],
+    category: 'Calças',
+    inStock: true,
+    featured: false,
+  },
+  {
+    id: '5',
+    name: 'Camiseta Básica de Algodão',
+    description: 'Camiseta 100% algodão pré-encolhido, macia e durável. Corte clássico unissex, essencial no guarda-roupa. Disponível em várias cores básicas.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/iphone-14.jpg',
+    imageAlt: 'Camiseta Básica de Algodão',
+    price: 80.00,
+    rating: { average: 4.9, count: 200, stars: 5 },
+    badges: [{ type: BadgeType.NEW, label: 'Novo' }],
+    category: 'Camisetas',
+    inStock: true,
+    featured: false,
+  },
+  {
+    id: '6',
+    name: 'Óculos de Sol Aviador',
+    description: 'Óculos de sol estilo aviador clássico com proteção UV 400. Armação resistente e lentes polarizadas. Design atemporal que combina com qualquer estilo.',
+    image: 'https://primefaces.org/cdn/primeng/images/demo/product/sunglasses.jpg',
+    imageAlt: 'Óculos de Sol Aviador',
+    price: 450.00,
+    rating: { average: 4.7, count: 42, stars: 5 },
+    badges: [{ type: BadgeType.FEATURED, label: 'Destaque' }],
+    category: 'Acessórios',
+    inStock: true,
+    featured: true,
+  }
+];
 
   cartItems: CartItem[] = [];
   cartTotalValue = 0;
@@ -155,45 +146,21 @@ export class StorefrontPagePromotionComponent implements OnInit, OnDestroy {
   // Estado do layout
   selectedTheme: StoreTheme | null = null;
   availableThemes: StoreTheme[] = [];
-  currentLayout: LayoutType = 'grid'; // Usando nosso LayoutType correto
+  
+  // Injeção de dependências
+  private readonly themeService = inject(ThemeService);
+  private readonly messageService = inject(MessageService);
+  private readonly router = inject(Router);
+  private readonly layoutService = inject(LayoutService);
+  private readonly backgroundService = inject(BackgroundService);
 
-  // Visibilidade do hero banner
-  showHeroBanner = true;
-
-  constructor(
-    private themeService: ThemeService,
-    private messageService: MessageService,
-    private router: Router,
-    private layoutService: LayoutService,
-    private backgroundService: BackgroundService
-  ) {
-    this.currentTheme$ = this.themeService.currentTheme$;
-    this.currentLayout$ = this.layoutService.currentLayout$;
-    this.heroVisible$ = this.layoutService.heroVisible$;
-    this.categoriesVisible$ = this.layoutService.categoriesVisible$;
-    this.currentBackground$ = this.backgroundService.currentBackground$;
+  constructor() {
+    this.availableThemes = this.themeService.getAvailableThemes();
   }
 
   ngOnInit(): void {
-    // Pega a lista de temas disponíveis
-    this.availableThemes = this.themeService.getAvailableThemes();
-
     // Sincroniza o tema selecionado
-    this.subscriptions.add(this.themeService.currentTheme$.subscribe(theme => {
-      if (theme) {
-        this.selectedTheme = theme;
-      }
-    }));
-
-    // Sincroniza o layout (corrigido para usar 'grid' | 'minimal')
-    this.subscriptions.add(this.currentLayout$.subscribe(layout => {
-      this.currentLayout = layout;
-    }));
-
-    // Sincroniza a visibilidade do banner
-    this.subscriptions.add(this.heroVisible$.subscribe(visible => {
-      this.showHeroBanner = visible;
-    }));
+    this.selectedTheme = this.themeService.currentTheme();
 
     // Atualiza informações do carrinho inicialmente
     this.updateCartInfo();
@@ -202,16 +169,12 @@ export class StorefrontPagePromotionComponent implements OnInit, OnDestroy {
     this.showWelcomeMessage();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
   /**
    * Retorna as classes CSS para o layout
    */
   getLayoutClasses(): string {
-    let classes = this.currentLayout;
-    if (!this.showHeroBanner) {
+    let classes = this.currentLayout();
+    if (!this.showHeroBanner()) {
       classes += ' no-hero';
     }
     return classes;

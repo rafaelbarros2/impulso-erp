@@ -1,7 +1,7 @@
 <!-- Container Principal -->
 <div class="storefront-item-grid w-full" 
-     [attr.data-layout]="currentLayout"
-     [attr.data-theme]="currentTheme?.id">
+     [attr.data-layout]="currentLayout()"
+     [attr.data-theme]="currentTheme()?.id">
 
   <!-- Loading State -->
   <div *ngIf="loading" 
@@ -63,10 +63,10 @@
     <h4 class="font-semibold mb-2">Grid Debug Info:</h4>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
       <div>
-        <strong>Layout:</strong> {{ currentLayout }}
+        <strong>Layout:</strong> {{ currentLayout() }}
       </div>
       <div>
-        <strong>Tema:</strong> {{ currentTheme?.name }}
+        <strong>Tema:</strong> {{ currentTheme()?.name }}
       </div>
       <div>
         <strong>Produtos:</strong> {{ products.length }}

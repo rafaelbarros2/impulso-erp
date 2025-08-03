@@ -2,7 +2,7 @@
   <p-toast position="top-right"></p-toast>
 
   <!-- Header da Loja -->
-  <header class="store-header" *ngIf="(currentTheme$ | async) as theme">
+  <header class="store-header" *ngIf="currentTheme()">
     <div class="header-content">
       <h1 class="store-title">FashionERP Store</h1>
       
@@ -24,7 +24,7 @@
         <div class="layout-switcher">
           <button 
             class="layout-btn" 
-            [class.active]="currentLayout === 'grid'"
+            [class.active]="currentLayout() === 'grid'"
             (click)="switchLayout('grid')" 
             title="Visualização em Grade"
             type="button"
@@ -33,7 +33,7 @@
           </button>
           <button 
             class="layout-btn" 
-            [class.active]="currentLayout === 'minimal'"
+            [class.active]="currentLayout() === 'minimal'"
             (click)="switchLayout('minimal')" 
             title="Visualização Minimal"
             type="button"
@@ -46,12 +46,12 @@
         <div class="hero-controls">
           <button 
             class="hero-toggle-btn"
-            [class.active]="showHeroBanner"
-            (click)="showHeroBanner ? hideHeroBanner() : showHeroBannerAgain()"
-            [title]="showHeroBanner ? 'Ocultar Banner' : 'Mostrar Banner'"
+            [class.active]="showHeroBanner()"
+            (click)="showHeroBanner() ? hideHeroBanner() : showHeroBannerAgain()"
+            [title]="showHeroBanner() ? 'Ocultar Banner' : 'Mostrar Banner'"
             type="button"
           >
-            <i class="pi" [class]="showHeroBanner ? 'pi-eye-slash' : 'pi-eye'"></i>
+            <i class="pi" [class]="showHeroBanner() ? 'pi-eye-slash' : 'pi-eye'"></i>
           </button>
         </div>
 
@@ -67,7 +67,7 @@
   </header>
 
   <!-- Hero Banner (se estiver visível) -->
-  <section class="hero-banner" *ngIf="showHeroBanner">
+  <section class="hero-banner" *ngIf="showHeroBanner()">
     <div class="hero-content">
       <div class="hero-text">
         <h2 class="hero-title">🔥 Promoções Imperdíveis!</h2>
@@ -105,9 +105,9 @@
         [products]="promotedProducts"
         [loading]="false"
         [showActions]="true"
-        [showRating]="currentLayout === 'grid'"
-        [showDescription]="currentLayout === 'grid'"
-        [columns]="currentLayout === 'grid' ? 'repeat(auto-fill, minmax(300px, 1fr))' : 'repeat(auto-fill, minmax(250px, 1fr))'"
+        [showRating]="currentLayout() === 'grid'"
+        [showDescription]="currentLayout() === 'grid'"
+        [columns]="currentLayout() === 'grid' ? 'repeat(auto-fill, minmax(300px, 1fr))' : 'repeat(auto-fill, minmax(250px, 1fr))'"
         (productClick)="onProductClick($event)"
         (addToCart)="addToCart($event)"
         (favoriteToggle)="onFavoriteToggle($event)"
@@ -132,8 +132,8 @@
         [products]="featuredProducts"
         [loading]="false"
         [showActions]="true"
-        [showRating]="currentLayout === 'grid'"
-        [showDescription]="currentLayout === 'grid'"
+        [showRating]="currentLayout() === 'grid'"
+        [showDescription]="currentLayout() === 'grid'"
         (productClick)="onProductClick($event)"
         (addToCart)="addToCart($event)"
         (favoriteToggle)="onFavoriteToggle($event)"
@@ -158,8 +158,8 @@
         [products]="newProducts"
         [loading]="false"
         [showActions]="true"
-        [showRating]="currentLayout === 'grid'"
-        [showDescription]="currentLayout === 'grid'"
+        [showRating]="currentLayout() === 'grid'"
+        [showDescription]="currentLayout() === 'grid'"
         (productClick)="onProductClick($event)"
         (addToCart)="addToCart($event)"
         (favoriteToggle)="onFavoriteToggle($event)"
@@ -184,8 +184,8 @@
         [products]="regularProducts"
         [loading]="false"
         [showActions]="true"
-        [showRating]="currentLayout === 'grid'"
-        [showDescription]="currentLayout === 'grid'"
+        [showRating]="currentLayout() === 'grid'"
+        [showDescription]="currentLayout() === 'grid'"
         (productClick)="onProductClick($event)"
         (addToCart)="addToCart($event)"
         (favoriteToggle)="onFavoriteToggle($event)"

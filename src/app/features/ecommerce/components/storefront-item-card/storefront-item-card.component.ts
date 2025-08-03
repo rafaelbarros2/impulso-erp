@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product, LayoutType, BadgeType } from '../../model/product.interface';
+import { Product, BadgeType } from '../../model/product.interface';
+import { LayoutType } from '../../../../core/services/layout.service';
 
 @Component({
   selector: 'app-storefront-item-card',
@@ -11,7 +12,7 @@ import { Product, LayoutType, BadgeType } from '../../model/product.interface';
 })
 export class StorefrontItemCardComponent implements OnInit {
   @Input() product!: Product;
-  @Input() layout: LayoutType = LayoutType.GRID;
+  @Input() layout: LayoutType = 'grid'; // Default layout
   @Input() showActions: boolean = true;
   @Input() showRating: boolean = true;
   @Input() showDescription: boolean = true;
@@ -28,7 +29,7 @@ export class StorefrontItemCardComponent implements OnInit {
   isFavorited: boolean = false;
 
   // Enums para template
-  LayoutType = LayoutType;
+  LayoutType = this.layout;
   BadgeType = BadgeType;
 
   ngOnInit(): void {

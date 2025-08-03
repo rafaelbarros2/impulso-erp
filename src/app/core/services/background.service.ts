@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, Signal } from '@angular/core';
 
 // Interface para definir a estrutura de um background
 export interface BackgroundConfig {
@@ -103,13 +102,13 @@ export class BackgroundService {
     }]
   ]);
 
-  // Estados privados
-  private _currentBackground = new BehaviorSubject<BackgroundConfig | null>(null);
-  private _overlayEnabled = new BehaviorSubject<boolean>(false);
+  // Estados privados usando Signals
+  private _currentBackground = signal<BackgroundConfig | null>(null);
+  private _overlayEnabled = signal<boolean>(false);
 
-  // Observables públicos
-  currentBackground$: Observable<BackgroundConfig | null> = this._currentBackground.asObservable();
-  overlayEnabled$: Observable<boolean> = this._overlayEnabled.asObservable();
+  // Signals públicos de leitura
+  currentBackground: Signal<BackgroundConfig | null> = this._currentBackground.asReadonly();
+  overlayEnabled: Signal<boolean> = this._overlayEnabled.asReadonly();
 
   constructor() {
     // Carrega configurações salvas ou aplica padrão
@@ -123,7 +122,7 @@ export class BackgroundService {
   applyBackground(backgroundType: BackgroundType): void {
     const background = this.backgroundPresets.get(backgroundType);
     if (background) {
-      this._currentBackground.next(background);
+      this._currentBackground.set(background);
       this.setCssProperties(background);
       localStorage.setItem('storefrontBackground', JSON.stringify(background));
       console.log(`Background aplicado: ${background.name}`);
@@ -173,7 +172,7 @@ export class BackgroundService {
       };
     }
 
-    this._currentBackground.next(backgroundConfig);
+    this._currentBackground.set(backgroundConfig);
     this.setCssProperties(backgroundConfig);
     localStorage.setItem('storefrontBackground', JSON.stringify(backgroundConfig));
     console.log('Background personalizado aplicado:', backgroundConfig);
@@ -183,10 +182,10 @@ export class BackgroundService {
    * Alterna o estado do overlay
    */
   toggleOverlay(): void {
-    const currentState = this._overlayEnabled.value;
+    const currentState = this._overlayEnabled();
     const newState = !currentState;
     
-    this._overlayEnabled.next(newState);
+    this._overlayEnabled.set(newState);
     this.updateOverlayOpacity(newState);
     localStorage.setItem('storefrontOverlayEnabled', newState.toString());
     
@@ -198,7 +197,7 @@ export class BackgroundService {
    * @param enabled Estado do overlay
    */
   setOverlayEnabled(enabled: boolean): void {
-    this._overlayEnabled.next(enabled);
+    this._overlayEnabled.set(enabled);
     this.updateOverlayOpacity(enabled);
     localStorage.setItem('storefrontOverlayEnabled', enabled.toString());
   }
@@ -214,20 +213,6 @@ export class BackgroundService {
   }
 
   /**
-   * Retorna o background atual
-   */
-  getCurrentBackground(): BackgroundConfig | null {
-    return this._currentBackground.value;
-  }
-
-  /**
-   * Retorna se o overlay está ativado
-   */
-  isOverlayEnabled(): boolean {
-    return this._overlayEnabled.value;
-  }
-
-  /**
    * Remove o background aplicado (volta ao padrão)
    */
   clearBackground(): void {
@@ -240,33 +225,40 @@ export class BackgroundService {
    */
   private setCssProperties(background: BackgroundConfig): void {
     const root = document.documentElement;
+    const body = document.body;
 
     // Limpa propriedades anteriores
     root.style.removeProperty('--bg-gradient');
     root.style.removeProperty('--bg-image');
     root.style.removeProperty('--bg-pattern');
+    body.style.removeProperty('background');
+    body.style.removeProperty('background-image');
+    body.style.removeProperty('background-size');
+    body.style.removeProperty('background-position');
+    body.style.removeProperty('background-repeat');
+    body.style.removeProperty('background-attachment');
 
     // Aplica novas propriedades baseado no tipo
     switch (background.type) {
       case 'solid':
         if (background.value) {
-          document.body.style.background = background.value;
+          body.style.background = background.value;
         }
         break;
 
       case 'gradient':
         if (background.value) {
           root.style.setProperty('--bg-gradient', background.value);
-          document.body.style.background = background.value;
+          body.style.background = background.value;
         }
         break;
 
       case 'pattern':
         if (background.value) {
           root.style.setProperty('--bg-pattern', background.value);
-          document.body.style.backgroundImage = background.value;
+          body.style.backgroundImage = background.value;
           if (background.backgroundSize) {
-            document.body.style.backgroundSize = background.backgroundSize;
+            body.style.backgroundSize = background.backgroundSize;
           }
         }
         break;
@@ -274,28 +266,22 @@ export class BackgroundService {
       case 'image':
         if (background.value) {
           root.style.setProperty('--bg-image', background.value);
-          document.body.style.backgroundImage = background.value;
-          document.body.style.backgroundSize = background.backgroundSize || 'cover';
-          document.body.style.backgroundPosition = background.backgroundPosition || 'center';
-          document.body.style.backgroundRepeat = background.backgroundRepeat || 'no-repeat';
-          document.body.style.backgroundAttachment = background.backgroundAttachment || 'fixed';
+          body.style.backgroundImage = background.value;
+          body.style.backgroundSize = background.backgroundSize || 'cover';
+          body.style.backgroundPosition = background.backgroundPosition || 'center';
+          body.style.backgroundRepeat = background.backgroundRepeat || 'no-repeat';
+          body.style.backgroundAttachment = background.backgroundAttachment || 'fixed';
         }
         break;
 
       case 'custom':
         if (background.value) {
-          document.body.style.background = background.value;
+          body.style.background = background.value;
         }
         break;
 
       default:
         // Padrão - remove todas as propriedades
-        document.body.style.removeProperty('background');
-        document.body.style.removeProperty('background-image');
-        document.body.style.removeProperty('background-size');
-        document.body.style.removeProperty('background-position');
-        document.body.style.removeProperty('background-repeat');
-        document.body.style.removeProperty('background-attachment');
         break;
     }
 
@@ -306,6 +292,9 @@ export class BackgroundService {
     if (background.overlayColor) {
       root.style.setProperty('--bg-overlay-color', background.overlayColor);
     }
+
+    // Atualiza overlay se estiver habilitado
+    this.updateOverlayOpacity(this._overlayEnabled());
   }
 
   /**
@@ -314,7 +303,7 @@ export class BackgroundService {
    */
   private updateOverlayOpacity(enabled: boolean): void {
     const root = document.documentElement;
-    const currentBackground = this._currentBackground.value;
+    const currentBackground = this._currentBackground();
     
     if (enabled && currentBackground?.overlayOpacity !== undefined) {
       root.style.setProperty('--bg-overlay-opacity', currentBackground.overlayOpacity.toString());
@@ -332,7 +321,7 @@ export class BackgroundService {
     if (savedBackground) {
       try {
         const background: BackgroundConfig = JSON.parse(savedBackground);
-        this._currentBackground.next(background);
+        this._currentBackground.set(background);
         this.setCssProperties(background);
       } catch (error) {
         console.warn('Erro ao carregar background salvo:', error);
@@ -346,7 +335,7 @@ export class BackgroundService {
     const savedOverlayEnabled = localStorage.getItem('storefrontOverlayEnabled');
     if (savedOverlayEnabled !== null) {
       const enabled = savedOverlayEnabled === 'true';
-      this._overlayEnabled.next(enabled);
+      this._overlayEnabled.set(enabled);
       this.updateOverlayOpacity(enabled);
     }
   }

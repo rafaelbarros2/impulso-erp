@@ -1,5 +1,5 @@
 <div class="product-card" 
-     [ngClass]="{'layout-grid': layout === LayoutType.GRID, 'layout-minimal': layout === LayoutType.MINIMAL}"
+     [ngClass]="{'layout-grid': layout === 'grid', 'layout-minimal': layout === 'minimal'}"
      (click)="onProductClick()">
   
   <!-- Image Container -->
@@ -43,7 +43,7 @@
   <div class="product-info">
     <!-- Rating - Only show in grid layout and if enabled -->
     <div class="product-rating" 
-         *ngIf="layout === LayoutType.GRID && showRating && product.rating">
+         *ngIf="layout === 'grid' && showRating && product.rating">
       <div class="stars">
         <i *ngFor="let star of starArray" 
            [class]="isStarFilled(star) ? 'pi pi-star-fill star' : 'pi pi-star star'">
@@ -57,7 +57,7 @@
     
     <!-- Description - Only in grid layout and if enabled -->
     <p class="product-description" 
-       *ngIf="layout === LayoutType.GRID && showDescription && product.description">
+       *ngIf="layout === 'grid' && showDescription && product.description">
       {{ product.description }}
     </p>
     

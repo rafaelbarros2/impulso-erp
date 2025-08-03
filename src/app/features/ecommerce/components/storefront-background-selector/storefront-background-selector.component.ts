@@ -1,10 +1,8 @@
-import { Component, OnInit, OnDestroy, input } from '@angular/core';
+import { Component, OnInit, OnDestroy, input, inject, signal, computed, Signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { BackgroundConfig, BackgroundService, BackgroundType } from '../../../../core/services/background.service';
 import { DropdownModule } from 'primeng/dropdown';
-import {  ButtonModule } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -23,7 +21,6 @@ interface BackgroundOption {
   templateUrl: './storefront-background-selector.component.html',
   imports: [DropdownModule, ButtonModule, InputTextModule, CommonModule, FormsModule, ChipModule, TooltipModule],
   standalone: true,
-  providers: [BackgroundService],
   animations: [
     trigger('slideIn', [
       transition(':enter', [
@@ -36,9 +33,10 @@ interface BackgroundOption {
     ])
   ]
 })
-export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy {
-  
-  private destroy$ = new Subject<void>();
+export class StorefrontBackgroundSelectorComponent implements OnInit {
+
+  // Injeção de dependências
+  private readonly backgroundService = inject(BackgroundService);
   
   // Opções do dropdown
   backgroundOptions: BackgroundOption[] = [
@@ -54,75 +52,63 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
     { label: 'Personalizado', value: 'custom', icon: 'pi pi-cog', description: 'URL ou CSS personalizado' }
   ];
   
+  // Sinais do serviço
+  currentBackground: Signal<BackgroundConfig | null> = this.backgroundService.currentBackground;
+  overlayEnabled: Signal<boolean> = this.backgroundService.overlayEnabled;
+
   // Estados do componente
-  selectedBackground: BackgroundOption | null = null;
-  showCustomControls: boolean = false;
-  customBackgroundValue: string = '';
-  overlayEnabled: boolean = false;
-  currentBackground: BackgroundConfig | null = null;
-  
-  constructor(private backgroundService: BackgroundService) {}
+  selectedBackground = signal<BackgroundOption | null>(null);
+  showCustomControls = signal<boolean>(false);
+  customBackgroundValue = signal<string>('');
+
+  constructor() {}
 
   ngOnInit(): void {
-    this.subscribeToBackgroundChanges();
-    this.subscribeToOverlayChanges();
-  }
+    // Inicializa o estado do componente com base no Signal do serviço
+    const currentBg = this.backgroundService.currentBackground();
+    this.updateSelectedBackground(currentBg);
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  /**
-   * Se inscreve nas mudanças de background
-   */
-  private subscribeToBackgroundChanges(): void {
-    this.backgroundService.currentBackground$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(background => {
-        this.currentBackground = background;
-        if (background) {
-          // Encontra a opção correspondente
-          const matchingOption = this.backgroundOptions.find(option => 
-            option.value === background.id as BackgroundType
-          );
-          
-          if (matchingOption) {
-            this.selectedBackground = matchingOption;
-            this.showCustomControls = matchingOption.value === 'custom';
-          } else {
-            // Background customizado
-            this.selectedBackground = this.backgroundOptions.find(opt => opt.value === 'custom') || null;
-            this.showCustomControls = true;
-            this.customBackgroundValue = background.value || '';
-          }
-        }
-      });
+    // O uso de `effect` pode ser uma alternativa, mas
+    // a injeção direta já garante a reatividade no template.
   }
 
   /**
-   * Se inscreve nas mudanças de overlay
+   * Atualiza o estado do dropdown e dos controles com base no background atual.
+   * @param background A configuração de background atual.
    */
-  private subscribeToOverlayChanges(): void {
-    this.backgroundService.overlayEnabled$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(enabled => {
-        this.overlayEnabled = enabled;
-      });
+  private updateSelectedBackground(background: BackgroundConfig | null): void {
+    if (background) {
+      const matchingOption = this.backgroundOptions.find(option => option.value === background.id as BackgroundType);
+      
+      if (matchingOption) {
+        this.selectedBackground.set(matchingOption);
+        this.showCustomControls.set(matchingOption.value === 'custom');
+      } else {
+        // Se for um background customizado, seleciona a opção "Personalizado"
+        const customOption = this.backgroundOptions.find(opt => opt.value === 'custom');
+        this.selectedBackground.set(customOption || null);
+        this.showCustomControls.set(true);
+        this.customBackgroundValue.set(background.value || '');
+      }
+    } else {
+      // Nenhum background aplicado, seleciona o padrão
+      this.selectedBackground.set(this.backgroundOptions.find(opt => opt.value === 'default') || null);
+    }
   }
 
   /**
    * Manipula a mudança de background no dropdown
    * @param event Evento do PrimeNG dropdown
    */
-  onBackgroundChange(event: any): void {
+  onBackgroundChange(event: { value: BackgroundOption }): void {
     const selectedOption: BackgroundOption = event.value;
     
     if (selectedOption) {
-      this.showCustomControls = selectedOption.value === 'custom';
+      this.showCustomControls.set(selectedOption.value === 'custom');
       
       if (selectedOption.value !== 'custom') {
         this.backgroundService.applyBackground(selectedOption.value);
+        this.customBackgroundValue.set('');
         console.log(`Background alterado para: ${selectedOption.label}`);
       }
     }
@@ -132,9 +118,10 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
    * Aplica background personalizado
    */
   applyCustomBackground(): void {
-    if (this.customBackgroundValue.trim()) {
-      this.backgroundService.applyCustomBackground(this.customBackgroundValue.trim());
-      console.log('Background personalizado aplicado:', this.customBackgroundValue);
+    const value = this.customBackgroundValue().trim();
+    if (value) {
+      this.backgroundService.applyCustomBackground(value);
+      console.log('Background personalizado aplicado:', value);
     }
   }
 
@@ -150,35 +137,35 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
    */
   clearBackground(): void {
     this.backgroundService.clearBackground();
-    this.customBackgroundValue = '';
+    this.customBackgroundValue.set('');
   }
 
   /**
    * Verifica se um background está aplicado (não é o padrão)
    */
-  get hasBackgroundApplied(): boolean {
-    return this.currentBackground?.id !== 'default';
-  }
+  hasBackgroundApplied = computed(() => {
+    return this.currentBackground()?.id !== 'default';
+  });
 
   /**
    * Retorna o ícone apropriado para o overlay toggle
    */
-  get overlayToggleIcon(): string {
-    return this.overlayEnabled ? 'pi pi-eye-slash' : 'pi pi-eye';
-  }
+  overlayToggleIcon = computed(() => {
+    return this.overlayEnabled() ? 'pi pi-eye-slash' : 'pi pi-eye';
+  });
 
   /**
    * Retorna o tooltip para o overlay toggle
    */
-  get overlayToggleTooltip(): string {
-    return this.overlayEnabled ? 'Desativar overlay' : 'Ativar overlay';
-  }
+  overlayToggleTooltip = computed(() => {
+    return this.overlayEnabled() ? 'Desativar overlay' : 'Ativar overlay';
+  });
 
   /**
    * Valida se o valor customizado é válido
    */
-  get isCustomValueValid(): boolean {
-    const value = this.customBackgroundValue.trim();
+  isCustomValueValid = computed(() => {
+    const value = this.customBackgroundValue().trim();
     if (!value) return false;
     
     // Valida URLs, cores hex, RGB, HSL ou CSS válido
@@ -189,5 +176,12 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
            value.startsWith('hsl') ||
            value.includes('gradient') ||
            value.includes('repeating');
+  });
+
+  /**
+   * TrackBy function para o *ngFor
+   */
+  trackByFn(index: number, item: BackgroundOption): BackgroundType {
+    return item.value;
   }
 }

@@ -1,8 +1,6 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, inject, Input, Output, EventEmitter, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 // PrimeNG Imports
 import { ButtonModule } from 'primeng/button';
@@ -32,7 +30,8 @@ export type StoreType = 'fashion' | 'tech' | 'beauty' | 'marketplace' | 'food' |
     CommonModule,
     ButtonModule,
     RippleModule
-  ],providers: [LayoutService],
+  ],
+  providers: [LayoutService],
   templateUrl: './storefront-categories.component.html',
   styleUrls: ['./storefront-categories.component.scss'],
   animations: [
@@ -53,10 +52,11 @@ export type StoreType = 'fashion' | 'tech' | 'beauty' | 'marketplace' | 'food' |
     ])
   ]
 })
-export class StorefrontCategoriesComponent implements OnInit, OnDestroy {
+export class StorefrontCategoriesComponent implements OnInit {
   
-  private destroy$ = new Subject<void>();
-  
+  // Injeção de dependências
+  private readonly layoutService = inject(LayoutService);
+
   // Inputs
   @Input() categories: CategoryItem[] = this.getFashionCategories();
   @Input() title: string = 'Compre por Categoria';
@@ -71,29 +71,13 @@ export class StorefrontCategoriesComponent implements OnInit, OnDestroy {
   @Output() categoryClicked = new EventEmitter<CategoryItem>();
   
   // Estados do componente
-  isVisible: boolean = true;
+  isVisible: Signal<boolean> = this.layoutService.categoriesVisible;
   hoveredCategoryId: string | null = null;
   
-  constructor(private layoutService: LayoutService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.subscribeToLayoutChanges();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  /**
-   * Se inscreve nas mudanças de visibilidade das categorias
-   */
-  private subscribeToLayoutChanges(): void {
-    this.layoutService.categoriesVisible$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(visible => {
-        this.isVisible = visible;
-      });
+    // A visibilidade agora é um Signal, não é mais necessário subscrever.
   }
 
   /**

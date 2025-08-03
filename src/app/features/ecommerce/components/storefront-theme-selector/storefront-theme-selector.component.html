@@ -18,13 +18,13 @@
     
     <!-- Template customizado para as opções -->
     <ng-template pTemplate="selectedItem">
-      <div class="flex items-center gap-2" *ngIf="selectedTheme">
+      <div class="flex items-center gap-2" *ngIf="selectedTheme()">
         <!-- Indicador de cor do tema -->
         <div 
           class="w-4 h-4 rounded-full border border-gray-300"
-          [style.background-color]="selectedTheme.theme.primaryColor">
+          [style.background-color]="selectedTheme()?.theme?.primaryColor || '#ffffff'">
         </div>
-        <span class="font-medium">{{ selectedTheme.label }}</span>
+        <span class="font-medium">{{ selectedTheme()?.label }}</span>
       </div>
     </ng-template>
     

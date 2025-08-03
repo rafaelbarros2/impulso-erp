@@ -103,7 +103,7 @@
       class="progress-fill h-full bg-white transition-all linear"
       [style.width.%]="0"
       [style.animation-duration.ms]="slideInterval"
-      [style.animation-name]="isVisible && !isAnimating ? 'slideProgress' : 'none'">
+      [style.animation-name]="isVisible() && !isAnimating ? 'slideProgress' : 'none'">
     </div>
   </div>
 </section>
