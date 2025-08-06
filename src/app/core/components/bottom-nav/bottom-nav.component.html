@@ -1,20 +1,12 @@
 <nav class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-slate-200">
-    <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-        <a href="#" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 text-teal-500">
-            <i class="pi pi-cog text-2xl"></i>
-            <span class="text-sm">Config.</span>
-        </a>
-        <a href="#" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 text-slate-500">
-            <i class="pi pi-chart-bar text-2xl"></i>
-            <span class="text-sm">Relatórios</span>
-        </a>
-        <a href="#" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 text-slate-500">
-            <i class="pi pi-users text-2xl"></i>
-            <span class="text-sm">Clientes</span>
-        </a>
-        <a href="#" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 text-slate-500">
-            <i class="pi pi-wallet text-2xl"></i>
-            <span class="text-sm">Vendas</span>
+    <div class="flex h-full overflow-x-auto scrollbar-hide font-medium">
+        <a *ngFor="let item of mobileMenuItems" 
+           [routerLink]="item.route"
+           routerLinkActive="text-teal-500"
+           [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+           class="inline-flex flex-col items-center justify-center px-4 min-w-[80px] hover:bg-gray-50 text-slate-500 transition-colors flex-shrink-0">
+            <i [class]="'pi ' + item.icon + ' text-xl'"></i>
+            <span class="text-xs truncate w-full text-center">{{ item.label }}</span>
         </a>
     </div>
 </nav>
