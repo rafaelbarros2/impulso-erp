@@ -7,6 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
@@ -39,6 +41,8 @@ interface Order {
     ButtonModule,
     TableModule,
     InputTextModule,
+    InputIconModule,
+    IconFieldModule,
     TagModule,
     DialogModule,
     ConfirmDialogModule,

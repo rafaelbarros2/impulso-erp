@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Table, TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -28,6 +30,8 @@ interface ClientDisplay extends Client {
     ButtonModule,
     TableModule,
     InputTextModule,
+    InputIconModule,
+    IconFieldModule,
     TagModule,
     DialogModule,
     ConfirmDialogModule,

@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -39,6 +41,8 @@ interface Product {
     ButtonModule,
     TableModule,
     InputTextModule,
+    InputIconModule,
+    IconFieldModule,
     TagModule,
     DialogModule,
     ConfirmDialogModule,
