@@ -1,40 +1,37 @@
 <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen flex flex-col">
   <p-toast></p-toast>
 
-  <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">{{ pageTitle }}</h2>
+  <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">{{ pageTitle() }}</h2>
 
   <!-- Container principal com scroll otimizado -->
   <div class="flex-1 overflow-auto">
     <p-card class="rounded-xl shadow-lg mb-4">
       <div [formGroup]="clientForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
 
+        <!-- General validation errors -->
+        <div *ngIf="generalErrors().length > 0" class="col-span-full">
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex">
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  Erros de validação encontrados:
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li *ngFor="let error of generalErrors()">{{ error }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Coluna Esquerda (Mobile: topo, Desktop: esquerda) -->
         <div class="col-span-1 flex flex-col gap-6">
-          <!-- Tipo de Cliente -->
-          <div class="p-field">
-            <label for="clientType" class="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Cliente <span class="text-red-500">*</span>
-            </label>
-            <p-dropdown 
-              id="clientType" 
-              [options]="clientTypes" 
-              formControlName="clientType" 
-              optionLabel="name" 
-              placeholder="Selecione o Tipo"
-              class="w-full" 
-              [style]="{'width': '100%'}"
-              [ngClass]="{'ng-invalid ng-dirty': clientForm.get('clientType')?.invalid && clientForm.get('clientType')?.touched}">
-            </p-dropdown>
-            <small *ngIf="clientForm.get('clientType')?.invalid && clientForm.get('clientType')?.touched" 
-                   class="p-error block mt-1">
-              Tipo de cliente é obrigatório.
-            </small>
-          </div>
-
           <!-- Nome do Cliente -->
           <div class="p-field">
             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-              Nome Completo / Razão Social <span class="text-red-500">*</span>
+              Nome <span class="text-red-500">*</span>
             </label>
             <input 
               id="name" 
@@ -42,50 +39,9 @@
               pInputText 
               formControlName="name" 
               class="w-full rounded-lg shadow-sm"
-              [ngClass]="{'ng-invalid ng-dirty': clientForm.get('name')?.invalid && clientForm.get('name')?.touched}" />
-            <small *ngIf="clientForm.get('name')?.invalid && clientForm.get('name')?.touched" 
-                   class="p-error block mt-1">
-              Nome é obrigatório.
-            </small>
-          </div>
-
-          <!-- CPF/CNPJ -->
-          <div class="p-field">
-            <label for="cpfCnpj" class="block text-sm font-medium text-gray-700 mb-2">
-              CPF / CNPJ <span class="text-red-500">*</span>
-            </label>
-            <p-inputMask 
-              id="cpfCnpj" 
-              formControlName="cpfCnpj"
-              [mask]="clientForm.get('clientType')?.value === 'PF' ? '999.999.999-99' : '99.999.999/9999-99'"
-              [placeholder]="clientForm.get('clientType')?.value === 'PF' ? '___.___.___-__' : '__.___.___/____-__'"
-              class="w-full" 
-              inputStyleClass="w-full rounded-lg shadow-sm"
-              [ngClass]="{'ng-invalid ng-dirty': clientForm.get('cpfCnpj')?.invalid && clientForm.get('cpfCnpj')?.touched}">
-            </p-inputMask>
-            <small *ngIf="clientForm.get('cpfCnpj')?.invalid && clientForm.get('cpfCnpj')?.touched" 
-                   class="p-error block mt-1">
-              CPF/CNPJ é obrigatório e deve ser válido.
-            </small>
-          </div>
-
-          <!-- Telefone -->
-          <div class="p-field">
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-              Telefone <span class="text-red-500">*</span>
-            </label>
-            <p-inputMask 
-              id="phone" 
-              formControlName="phone" 
-              mask="(99) 99999-9999" 
-              placeholder="(xx) xxxxx-xxxx"
-              class="w-full" 
-              inputStyleClass="w-full rounded-lg shadow-sm"
-              [ngClass]="{'ng-invalid ng-dirty': clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched}">
-            </p-inputMask>
-            <small *ngIf="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched" 
-                   class="p-error block mt-1">
-              Telefone é obrigatório.
+              [ngClass]="{'ng-invalid ng-dirty': hasFieldError('name')}" />
+            <small *ngIf="hasFieldError('name')" class="p-error block mt-1">
+              {{ getFieldError('name') }}
             </small>
           </div>
 
@@ -100,57 +56,62 @@
               pInputText 
               formControlName="email" 
               class="w-full rounded-lg shadow-sm"
-              [ngClass]="{'ng-invalid ng-dirty': clientForm.get('email')?.invalid && clientForm.get('email')?.touched}" />
-            <small *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched" 
-                   class="p-error block mt-1">
-              Email é obrigatório e deve ser válido.
+              [ngClass]="{'ng-invalid ng-dirty': hasFieldError('email')}" />
+            <small *ngIf="hasFieldError('email')" class="p-error block mt-1">
+              {{ getFieldError('email') }}
+            </small>
+          </div>
+
+          <!-- CPF/CNPJ -->
+          <div class="p-field">
+            <label for="cpfCnpj" class="block text-sm font-medium text-gray-700 mb-2">
+              CPF/CNPJ <span class="text-red-500">*</span>
+            </label>
+            <input 
+              id="cpfCnpj" 
+              type="text" 
+              pInputText 
+              formControlName="cpfCnpj" 
+              class="w-full rounded-lg shadow-sm"
+              [ngClass]="{'ng-invalid ng-dirty': hasFieldError('cpfCnpj')}" />
+            <small *ngIf="hasFieldError('cpfCnpj')" class="p-error block mt-1">
+              {{ getFieldError('cpfCnpj') }}
             </small>
           </div>
         </div>
 
         <!-- Coluna Direita (Mobile: abaixo, Desktop: direita) -->
         <div class="col-span-1 flex flex-col gap-6">
+          <!-- Telefone -->
+          <div class="p-field">
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+              Telefone
+            </label>
+            <input 
+              id="phone" 
+              type="text" 
+              pInputText 
+              formControlName="phone" 
+              class="w-full rounded-lg shadow-sm"
+              [ngClass]="{'ng-invalid ng-dirty': hasFieldError('phone')}" />
+            <small *ngIf="hasFieldError('phone')" class="p-error block mt-1">
+              {{ getFieldError('phone') }}
+            </small>
+          </div>
+
           <!-- Endereço -->
           <div class="p-field">
             <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Endereço</label>
-            <input id="address" type="text" pInputText formControlName="address" class="w-full rounded-lg shadow-sm" />
-          </div>
-
-          <!-- Cidade e Estado -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="p-field">
-              <label for="city" class="block text-sm font-medium text-gray-700 mb-2">Cidade</label>
-              <input id="city" type="text" pInputText formControlName="city" class="w-full rounded-lg shadow-sm" />
-            </div>
-            <div class="p-field">
-              <label for="state" class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-              <input id="state" type="text" pInputText formControlName="state" class="w-full rounded-lg shadow-sm" />
-            </div>
-          </div>
-
-          <!-- CEP -->
-          <div class="p-field">
-            <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-2">CEP</label>
-            <p-inputMask 
-              id="zipCode" 
-              formControlName="zipCode" 
-              mask="99999-999" 
-              placeholder="_____-___"
-              class="w-full" 
-              inputStyleClass="w-full rounded-lg shadow-sm">
-            </p-inputMask>
-          </div>
-
-          <!-- Observações -->
-          <div class="p-field">
-            <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
-            <textarea 
-              id="notes" 
-              pInputTextarea 
-              formControlName="notes" 
-              rows="3" 
-              class="w-full rounded-lg shadow-sm">
-            </textarea>
+            <input 
+              id="address" 
+              type="text" 
+              pInputText 
+              formControlName="address" 
+              class="w-full rounded-lg shadow-sm"
+              [ngClass]="{'ng-invalid ng-dirty': hasFieldError('address')}" />
+            <small *ngIf="hasFieldError('address')" class="p-error block mt-1">
+              {{ getFieldError('address') }}
+            </small>
           </div>
         </div>
       </div>
@@ -165,13 +126,15 @@
         icon="pi pi-times"
         styleClass="p-button-secondary w-full sm:w-auto rounded-lg shadow-md"
         (onClick)="onCancel()"
+        [disabled]="loading()"
         type="button">
       </p-button>
       <p-button
-        [label]="isEditMode ? 'Atualizar Cliente' : 'Salvar Cliente'"
-        icon="pi pi-check"
+        [label]="isEditMode() ? 'Atualizar Cliente' : 'Salvar Cliente'"
+        [icon]="loading() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
         styleClass="p-button-success w-full sm:w-auto rounded-lg shadow-md"
         (onClick)="onSaveClient()"
+        [disabled]="loading()"
         type="button">
       </p-button>
     </div>

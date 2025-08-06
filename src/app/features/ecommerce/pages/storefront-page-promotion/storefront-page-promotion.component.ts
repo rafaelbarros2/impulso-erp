@@ -185,7 +185,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
    */
   onThemeChange(event: any): void {
     const selectedThemeId = event.value.id;
-    this.themeService.applyTheme(selectedThemeId);
+    this.themeService.setTheme(selectedThemeId);
     
     this.messageService.add({
       severity: 'success',

@@ -24,7 +24,7 @@ export class StorefrontThemeSelectorComponent {
   private themeService = inject(ThemeService);
 
   // Opções do dropdown
-  themeOptions: ThemeOption[] = this.themeService.getAvailableThemes().map(theme => ({
+  themeOptions: ThemeOption[] = this.themeService.getAvailableThemes().map((theme: StoreTheme) => ({
     label: theme.name,
     value: theme.id,
     theme: theme
@@ -49,7 +49,7 @@ export class StorefrontThemeSelectorComponent {
     const selectedOption: ThemeOption = event.value;
     
     if (selectedOption && selectedOption.value) {
-      this.themeService.applyTheme(selectedOption.value);
+      this.themeService.setTheme(selectedOption.value);
       console.log(`Tema alterado para: ${selectedOption.label}`);
     }
   }

@@ -18,7 +18,39 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+  <!-- Loading Skeleton -->
+  <div *ngIf="getLoadingService().isLoading(LOADING_KEYS.CLIENTS)" class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <app-skeleton-loader 
+      type="table" 
+      [rows]="10" 
+      [columns]="6"
+      [showHeader]="true">
+    </app-skeleton-loader>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError && !getLoadingService().isLoading(LOADING_KEYS.CLIENTS)" class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <app-empty-state
+      [title]="EMPTY_STATES.ERROR_STATE.title"
+      [description]="EMPTY_STATES.ERROR_STATE.description"
+      [icon]="EMPTY_STATES.ERROR_STATE.icon"
+      [theme]="EMPTY_STATES.ERROR_STATE.theme"
+      [actionLabel]="EMPTY_STATES.ERROR_STATE.actionLabel"
+      [actionIcon]="EMPTY_STATES.ERROR_STATE.actionIcon"
+      (action)="onRetryLoad()">
+    </app-empty-state>
+  </div>
+
+  <!-- Data Table -->
+  <div *ngIf="!getLoadingService().isLoading(LOADING_KEYS.CLIENTS) && !hasError" class="bg-white rounded-xl shadow-lg overflow-hidden relative">
+    <!-- Loading overlay for actions -->
+    <app-loading-spinner
+      [loadingKey]="LOADING_KEYS.DELETING_CLIENT"
+      [overlay]="true"
+      text="Excluindo cliente..."
+      theme="primary">
+    </app-loading-spinner>
+
     <p-table
       #dt
       [value]="clients"
@@ -27,7 +59,7 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
       [rowsPerPageOptions]="[10, 25, 50]"
-      [globalFilterFields]="['name', 'cpfCnpj', 'phone', 'email', 'status']"
+      [globalFilterFields]="['name', 'document', 'phone', 'email', 'status']"
       [selection]="selectedClients"
       [(selection)]="selectedClients"
       [rowHover]="true"
@@ -92,7 +124,17 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="7" class="text-center py-5 text-gray-500">Nenhum cliente encontrado.</td>
+          <td colspan="7" class="p-0">
+            <app-empty-state
+              [title]="EMPTY_STATES.NO_CLIENTS.title"
+              [description]="EMPTY_STATES.NO_CLIENTS.description"
+              [icon]="EMPTY_STATES.NO_CLIENTS.icon"
+              [actionLabel]="EMPTY_STATES.NO_CLIENTS.actionLabel"
+              [actionIcon]="EMPTY_STATES.NO_CLIENTS.actionIcon"
+              size="sm"
+              (action)="onAddNewClient()">
+            </app-empty-state>
+          </td>
         </tr>
       </ng-template>
 

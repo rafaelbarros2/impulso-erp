@@ -132,10 +132,10 @@ export class BackgroundService {
   }
 
   /**
-   * Aplica um background predefinido
+   * Action: Aplica um background predefinido
    * @param backgroundType Tipo de background a ser aplicado
    */
-  applyBackground(backgroundType: BackgroundType): void {
+  setBackground(backgroundType: BackgroundType): void {
     console.log('🎨 Aplicando background:', backgroundType);
     const background = this.backgroundPresets.get(backgroundType);
     if (background) {
@@ -148,10 +148,10 @@ export class BackgroundService {
   }
 
   /**
-   * Aplica um background customizado
+   * Action: Aplica um background customizado
    * @param value Valor do background (URL, cor, gradiente, etc.)
    */
-  applyCustomBackground(value: string): void {
+  setCustomBackground(value: string): void {
     if (!value.trim()) return;
 
     console.log('🎨 Aplicando background customizado:', value);
@@ -196,7 +196,7 @@ export class BackgroundService {
   }
 
   /**
-   * Alterna o estado do overlay
+   * Action: Alterna o estado do overlay
    */
   toggleOverlay(): void {
     const currentState = this._overlayEnabled();
@@ -209,7 +209,7 @@ export class BackgroundService {
   }
 
   /**
-   * Define o estado do overlay
+   * Action: Define o estado do overlay
    * @param enabled Estado do overlay
    */
   setOverlayEnabled(enabled: boolean): void {
@@ -228,10 +228,10 @@ export class BackgroundService {
   }
 
   /**
-   * Remove o background aplicado (volta ao padrão)
+   * Action: Remove o background aplicado (volta ao padrão)
    */
   clearBackground(): void {
-    this.applyBackground('default');
+    this.setBackground('default');
   }
 
   /**
@@ -445,10 +445,10 @@ private clearAllBackgroundProperties(): void {
         console.log('📂 Background carregado do localStorage:', background.name);
       } catch (error) {
         console.warn('Erro ao carregar background salvo:', error);
-        this.applyBackground('default');
+        this.setBackground('default');
       }
     } else {
-      this.applyBackground('default');
+      this.setBackground('default');
     }
 
     // Carrega estado do overlay
@@ -465,7 +465,7 @@ private clearAllBackgroundProperties(): void {
   clearSavedConfig(): void {
     localStorage.removeItem('storefrontBackground');
     localStorage.removeItem('storefrontOverlayEnabled');
-    this.applyBackground('default');
+    this.setBackground('default');
     this.setOverlayEnabled(false);
   }
 

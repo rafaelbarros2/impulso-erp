@@ -1,0 +1,90 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <div class="relative">
+      <!-- Loading overlay -->
+      <app-loading-spinner
+        [loadingKey]="LOADING_KEYS.LOGIN"
+        [overlay]="true"
+        text="Fazendo login..."
+        theme="primary">
+      </app-loading-spinner>
+
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="login-header">
+            <h2>Impulso ERP</h2>
+            <p>Faça login em sua conta</p>
+          </div>
+        </ng-template>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input 
+            pInputText 
+            id="email" 
+            formControlName="email"
+            type="email"
+            placeholder="Digite seu email"
+            [class.ng-invalid]="isFieldInvalid('email')"
+            [class.ng-dirty]="loginForm.get('email')?.dirty"
+          />
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('email')"
+          >
+            {{ getFieldError('email') }}
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <p-password 
+            id="password"
+            formControlName="password"
+            placeholder="Digite sua senha"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+            [class.ng-invalid]="isFieldInvalid('password')"
+            [class.ng-dirty]="loginForm.get('password')?.dirty"
+          ></p-password>
+          <small 
+            class="p-error" 
+            *ngIf="isFieldInvalid('password')"
+          >
+            {{ getFieldError('password') }}
+          </small>
+        </div>
+
+        <p-message 
+          *ngIf="errorMessage" 
+          severity="error" 
+          [text]="errorMessage"
+          styleClass="w-full"
+        ></p-message>
+
+        <div class="login-actions">
+          <p-button 
+            type="submit"
+            label="Entrar"
+            icon="pi pi-sign-in"
+            [loading]="loading"
+            loadingIcon="pi pi-spinner pi-spin"
+            styleClass="w-full"
+            [disabled]="loginForm.invalid"
+          ></p-button>
+        </div>
+      </form>
+      </p-card>
+    </div>
+
+    <div class="login-footer">
+      <p>Ainda não tem uma conta? <a href="#" class="register-link">Cadastre-se aqui</a></p>
+    </div>
+  </div>
+
+  <!-- Toast for notifications -->
+  <p-toast></p-toast>
+</div>

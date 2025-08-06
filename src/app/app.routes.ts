@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout.component';
-// import { authGuard } from './core/guards/auth.guard';
+import { AuthGuard } from './core/guards/auth.guard';
 import { PosPageComponent } from './features/sales/pages/pos-page/pos-page.component';
 
 export const routes: Routes = [
-  // {
-  //   path: 'login',
-  //   loadComponent: () => import('./features/auth/pages/login-page/login-page.component').then(m => m.LoginPageComponent)
-  // },
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/pages/login-page/login-page.component').then(m => m.LoginPageComponent)
+  },
   {
     path: '',
     component: LayoutComponent,
-    // canActivate: [authGuard], // Protege as rotas filhas
+    canActivate: [AuthGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {

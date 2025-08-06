@@ -1,29 +1,57 @@
 <div class="p-4 md:p-8 pb-8 md:pb-12">
   <div class="mb-6">
     <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Painel de Controlo</h1>
-    <p class="text-slate-500">Bem-vindo de volta, Ana! Aqui está um resumo do seu negócio.</p>
+    <p class="text-slate-500">Bem-vindo de volta! Aqui está um resumo do seu negócio.</p>
   </div>
 
-  <!-- Grelha de KPIs -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <app-kpi-card *ngFor="let kpi of kpiData" [label]="kpi.label" [value]="kpi.value"></app-kpi-card>
+  <!-- Loading State -->
+  <div *ngIf="getLoadingService().isLoading(LOADING_KEYS.DASHBOARD)">
+    <app-skeleton-loader 
+      type="dashboard" 
+      [cards]="4">
+    </app-skeleton-loader>
   </div>
 
-  <!-- Grelha para os 3 Cards lado a lado com altura igual -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-    <!-- Card do Gráfico de Vendas -->
-    <div class="lg:col-span-1">
-      <app-sales-chart></app-sales-chart>
+  <!-- Error State -->
+  <div *ngIf="hasError && !getLoadingService().isLoading(LOADING_KEYS.DASHBOARD)">
+    <app-empty-state
+      [title]="EMPTY_STATES.ERROR_STATE.title"
+      [description]="EMPTY_STATES.ERROR_STATE.description"
+      [icon]="EMPTY_STATES.ERROR_STATE.icon"
+      [theme]="EMPTY_STATES.ERROR_STATE.theme"
+      [actionLabel]="EMPTY_STATES.ERROR_STATE.actionLabel"
+      [actionIcon]="EMPTY_STATES.ERROR_STATE.actionIcon"
+      (action)="onRetryLoad()">
+    </app-empty-state>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!getLoadingService().isLoading(LOADING_KEYS.DASHBOARD) && !hasError">
+    <!-- KPIs Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <app-kpi-card 
+        *ngFor="let kpi of kpiData" 
+        [label]="kpi.label" 
+        [value]="kpi.value">
+      </app-kpi-card>
     </div>
-    
-    <!-- Card do Gráfico de Categoria -->
-    <div class="lg:col-span-1">
-      <app-category-chart></app-category-chart>
-    </div>
-    
-    <!-- Card de Atividade Recente -->
-    <div class="lg:col-span-1">
-      <app-activity-feed [activities]="activityData"></app-activity-feed>
+
+    <!-- Charts and Activity Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Sales Chart Card -->
+      <div class="lg:col-span-1">
+        <app-sales-chart></app-sales-chart>
+      </div>
+      
+      <!-- Category Chart Card -->
+      <div class="lg:col-span-1">
+        <app-category-chart></app-category-chart>
+      </div>
+      
+      <!-- Activity Feed Card -->
+      <div class="lg:col-span-1">
+        <app-activity-feed [activities]="activityData"></app-activity-feed>
+      </div>
     </div>
   </div>
 </div>

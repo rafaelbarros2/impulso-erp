@@ -161,7 +161,7 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
     
     if (selectedOption.value !== 'custom') {
       try {
-        this.backgroundService.applyBackground(selectedOption.value);
+        this.backgroundService.setBackground(selectedOption.value);
         this.customBackgroundValue.set('');
         console.log(`✅ Background aplicado: ${selectedOption.label}`);
         
@@ -203,7 +203,7 @@ export class StorefrontBackgroundSelectorComponent implements OnInit, OnDestroy 
     this.isApplying.set(true);
 
     try {
-      this.backgroundService.applyCustomBackground(value);
+      this.backgroundService.setCustomBackground(value);
       console.log('✅ Background personalizado aplicado:', value);
       
       // Debug após aplicação

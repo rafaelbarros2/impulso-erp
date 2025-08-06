@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +10,10 @@ import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HttpClientModule } from '@angular/common/http'; // Necessário se for usar HttpClient
+import { ClientService, Client } from '../../../../core/services/client.service';
+import { FormValidationService, ValidationState } from '../../../../core/services/form-validation.service';
+import { Subscription } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface ClientType {
   name: string;
@@ -34,11 +38,25 @@ interface ClientType {
   templateUrl: './client-form.component.html',
   styleUrl: './client-form.component.scss'
 })
-export class ClientFormComponent implements OnInit {
+export class ClientFormComponent implements OnInit, OnDestroy {
   clientForm!: FormGroup;
-  isEditMode: boolean = false;
-  clientId: string | null = null;
-  pageTitle: string = 'Novo Cliente';
+  
+  // Signals for state management
+  private clientId = signal<string | null>(null);
+  private isLoading = signal<boolean>(false);
+  private currentClient = signal<Client | null>(null);
+  
+  // Computed signals
+  readonly isEditMode = computed(() => !!this.clientId());
+  readonly pageTitle = computed(() => this.isEditMode() ? 'Editar Cliente' : 'Novo Cliente');
+  readonly loading = computed(() => this.isLoading());
+  
+  // Form validation state from service
+  readonly validationState = computed(() => this.formValidationService.validationErrors());
+  readonly hasValidationErrors = computed(() => this.formValidationService.hasErrors());
+  readonly generalErrors = computed(() => this.formValidationService.generalErrors());
+
+  private subscriptions = new Subscription();
 
   clientTypes: ClientType[] = [
     { name: 'Pessoa Física', code: 'PF' },
@@ -49,84 +67,144 @@ export class ClientFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private clientService: ClientService,
+    private formValidationService: FormValidationService
+  ) {
+    // Effect to update form when client data changes
+    effect(() => {
+      const client = this.currentClient();
+      if (client && this.clientForm) {
+        this.clientForm.patchValue({
+          name: client.name,
+          email: client.email || '',
+          phone: client.phone || '',
+          cpfCnpj: client.cpfCnpj || '',
+          address: client.address || ''
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.clientId = this.route.snapshot.paramMap.get('id');
-    this.isEditMode = !!this.clientId;
-    this.pageTitle = this.isEditMode ? 'Editar Cliente' : 'Novo Cliente';
+    const clientIdParam = this.route.snapshot.paramMap.get('id');
+    this.clientId.set(clientIdParam);
 
     this.initForm();
 
-    if (this.isEditMode) {
-      this.loadClientData(this.clientId!);
+    if (this.isEditMode()) {
+      this.loadClientData(Number(clientIdParam!));
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+    this.formValidationService.resetValidation();
   }
 
   initForm(): void {
     this.clientForm = this.fb.group({
-      clientType: ['PF', Validators.required], // Default para Pessoa Física
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      phone: [''],
       cpfCnpj: ['', Validators.required],
-      phone: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      address: [''],
-      city: [''],
-      state: [''],
-      zipCode: [''],
-      notes: ['']
+      address: ['', Validators.maxLength(200)]
     });
 
-    // Adiciona ou remove validação de CPF/CNPJ baseada no tipo de cliente
-    this.clientForm.get('clientType')?.valueChanges.subscribe(type => {
-      const cpfCnpjControl = this.clientForm.get('cpfCnpj');
-      if (type === 'PF') {
-        cpfCnpjControl?.setValidators([Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]); // Exemplo de regex para CPF
-      } else {
-        cpfCnpjControl?.setValidators([Validators.required, Validators.pattern(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/)]); // Exemplo de regex para CNPJ
-      }
-      cpfCnpjControl?.updateValueAndValidity();
+    // Clear validation errors when form values change
+    this.clientForm.valueChanges.subscribe(() => {
+      this.formValidationService.clearServerValidationErrors(this.clientForm);
     });
   }
 
-  loadClientData(id: string): void {
-    // Simula o carregamento de dados de um cliente existente para o MVP
-    const mockClient = {
-      id: id,
-      clientType: 'PF',
-      name: 'Maria Silva',
-      cpfCnpj: '123.456.789-00',
-      phone: '(11) 98765-4321',
-      email: 'maria.s@email.com',
-      address: 'Rua das Flores, 123',
-      city: 'São Paulo',
-      state: 'SP',
-      zipCode: '01000-000',
-      notes: 'Cliente fiel desde 2020.'
-    };
-
-    this.clientForm.patchValue(mockClient);
+  loadClientData(id: number): void {
+    this.isLoading.set(true);
+    const loadSub = this.clientService.getClientById(id).subscribe({
+      next: (client) => {
+        this.currentClient.set(client);
+        this.isLoading.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        if (error.status === 404) {
+          this.messageService.add({ 
+            severity: 'error', 
+            summary: 'Erro', 
+            detail: 'Cliente não encontrado.' 
+          });
+          this.router.navigate(['/clients/list']);
+        }
+      }
+    });
+    this.subscriptions.add(loadSub);
   }
 
   onSaveClient(): void {
-    if (this.clientForm.valid) {
-      const clientData = this.clientForm.value;
-      console.log('Dados do cliente a serem salvos:', clientData);
+    // Clear previous validation errors
+    this.formValidationService.clearServerValidationErrors(this.clientForm);
 
-      if (this.isEditMode) {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Cliente atualizado com sucesso!' });
-      } else {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Cliente cadastrado com sucesso!' });
-      }
-      this.router.navigate(['/clients/list']);
-    } else {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Por favor, preencha todos os campos obrigatórios e válidos.' });
-      this.clientForm.markAllAsTouched();
+    // Validate client-side first
+    if (!this.formValidationService.validateAllFormFields(this.clientForm)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro de Validação',
+        detail: 'Por favor, corrija os erros nos campos destacados.'
+      });
+      return;
     }
+
+    this.isLoading.set(true);
+    const clientData: Client = {
+      name: this.clientForm.value.name,
+      email: this.clientForm.value.email,
+      phone: this.clientForm.value.phone,
+      cpfCnpj: this.clientForm.value.cpfCnpj,
+      address: this.clientForm.value.address
+    };
+
+    const operation = this.isEditMode() 
+      ? this.clientService.updateClient(Number(this.clientId()!), clientData)
+      : this.clientService.createClient(clientData);
+
+    const saveSub = operation.subscribe({
+      next: (client) => {
+        this.isLoading.set(false);
+        const message = this.isEditMode() ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!';
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: message
+        });
+        this.router.navigate(['/clients/list']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        if (error.status === 400 && error.error?.fieldErrors) {
+          // Handle validation errors from the backend
+          this.formValidationService.applyServerValidationErrors(
+            this.clientForm,
+            error.error.fieldErrors.map((fe: any) => ({ field: fe.field, message: fe.message })),
+            'Por favor, corrija os erros destacados.'
+          );
+        }
+        // The error interceptor will handle other error cases
+      }
+    });
+    this.subscriptions.add(saveSub);
   }
 
   onCancel(): void {
     this.router.navigate(['/clients/list']);
+  }
+
+  // Helper methods for template
+  getFieldError(fieldName: string): string | null {
+    const control = this.clientForm.get(fieldName);
+    return this.formValidationService.getFieldErrorMessage(control, fieldName);
+  }
+
+  hasFieldError(fieldName: string): boolean {
+    const control = this.clientForm.get(fieldName);
+    return this.formValidationService.hasFieldError(control);
   }
 }

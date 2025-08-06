@@ -82,18 +82,18 @@ export class ThemeService {
     // Tenta carregar o tema do localStorage ou aplica um padrão
     const savedThemeId = localStorage.getItem('currentThemeId');
     if (savedThemeId) {
-      this.applyTheme(savedThemeId);
+      this.setTheme(savedThemeId);
     } else {
       // Aplica o tema 'fashion-chic' como padrão se nenhum for salvo
-      this.applyTheme('fashion-chic');
+      this.setTheme('fashion-chic');
     }
   }
 
   /**
-   * Aplica um tema com base no seu ID.
+   * Action: Aplica um tema com base no seu ID.
    * @param themeId O ID do tema a ser aplicado.
    */
-  applyTheme(themeId: string): void {
+  setTheme(themeId: string): void {
     const theme = this.themes.find(t => t.id === themeId);
     if (theme) {
       this._currentTheme.set(theme);

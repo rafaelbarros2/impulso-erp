@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,11 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect'; // Adicionado para MultiSelect
 import { HttpClientModule } from '@angular/common/http';
+import { ProductService } from '../../../../core/services/product.service';
+import { FormValidationService } from '../../../../core/services/form-validation.service';
+import { Product } from '../../../../core/services/product-state.service';
+import { Subscription } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface Category {
   name: string;
@@ -48,11 +53,25 @@ interface Color {
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss'
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
-  isEditMode: boolean = false;
-  productId: string | null = null;
-  pageTitle: string = 'Novo Produto';
+  
+  // Signals for state management
+  private productId = signal<string | null>(null);
+  private isLoading = signal<boolean>(false);
+  private currentProduct = signal<Product | null>(null);
+  
+  // Computed signals
+  readonly isEditMode = computed(() => !!this.productId());
+  readonly pageTitle = computed(() => this.isEditMode() ? 'Editar Produto' : 'Novo Produto');
+  readonly loading = computed(() => this.isLoading());
+  
+  // Form validation state from service
+  readonly validationState = computed(() => this.formValidationService.validationErrors());
+  readonly hasValidationErrors = computed(() => this.formValidationService.hasErrors());
+  readonly generalErrors = computed(() => this.formValidationService.generalErrors());
+
+  private subscriptions = new Subscription();
 
   categories: Category[] = [
     { name: 'Vestidos', code: 'VSTD' },
@@ -83,92 +102,171 @@ export class ProductFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private productService: ProductService,
+    private formValidationService: FormValidationService
+  ) {
+    // Effect to update form when product data changes
+    effect(() => {
+      const product = this.currentProduct();
+      if (product && this.productForm) {
+        this.productForm.patchValue({
+          name: product.name,
+          description: product.description || '',
+          sku: product.sku,
+          category: this.categories.find(cat => cat.code === product.category) || null,
+          priceCost: product.priceCost,
+          priceSale: product.priceSale,
+          stockQuantity: product.stockQuantity,
+          minStock: product.minStock,
+          imageUrl: product.imageUrl || ''
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.productId = this.route.snapshot.paramMap.get('id');
-    this.isEditMode = !!this.productId;
-    this.pageTitle = this.isEditMode ? 'Editar Produto' : 'Novo Produto';
+    const productIdParam = this.route.snapshot.paramMap.get('id');
+    this.productId.set(productIdParam);
 
     this.initForm();
 
-    if (this.isEditMode) {
-      this.loadProductData(this.productId!);
+    if (this.isEditMode()) {
+      this.loadProductData(productIdParam!);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+    this.formValidationService.resetValidation();
   }
 
   initForm(): void {
     this.productForm = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      sku: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      description: ['', Validators.maxLength(500)],
+      sku: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       category: [null, Validators.required],
       priceCost: [null, [Validators.required, Validators.min(0)]],
       priceSale: [null, [Validators.required, Validators.min(0)]],
-      // Para MVP, vamos simplificar o estoque e variações
       stockQuantity: [0, [Validators.required, Validators.min(0)]],
       minStock: [0, [Validators.required, Validators.min(0)]],
-      imageUrl: [''], // Para MVP, uma URL simples
-      // Variações (simplificado para MVP)
-      selectedSizes: [[]],
-      selectedColors: [[]],
+      imageUrl: ['', Validators.maxLength(500)]
+    });
+
+    // Clear validation errors when form values change
+    this.productForm.valueChanges.subscribe(() => {
+      this.formValidationService.clearServerValidationErrors(this.productForm);
     });
   }
 
   loadProductData(id: string): void {
-    // Simula o carregamento de dados de um produto existente para o MVP
-    // Em um projeto real, isso viria de um serviço.
-    const mockProduct = {
-      id: id,
-      name: 'Vestido Floral Verão',
-      description: 'Vestido leve e confortável para o verão, com estampa floral vibrante.',
-      sku: 'VF1001',
-      category: { name: 'Vestidos', code: 'VSTD' },
-      priceCost: 60.00,
-      priceSale: 129.90,
-      stockQuantity: 50,
-      minStock: 10,
-      imageUrl: 'https://placehold.co/100x100/E0F2F1/000000?text=Vestido',
-      selectedSizes: [{ name: 'P', code: 'P' }, { name: 'M', code: 'M' }],
-      selectedColors: [{ name: 'Vermelho', hex: '#FF0000' }],
-    };
-
-    this.productForm.patchValue({
-      name: mockProduct.name,
-      description: mockProduct.description,
-      sku: mockProduct.sku,
-      category: mockProduct.category,
-      priceCost: mockProduct.priceCost,
-      priceSale: mockProduct.priceSale,
-      stockQuantity: mockProduct.stockQuantity,
-      minStock: mockProduct.minStock,
-      imageUrl: mockProduct.imageUrl,
-      selectedSizes: mockProduct.selectedSizes,
-      selectedColors: mockProduct.selectedColors,
+    this.isLoading.set(true);
+    const loadSub = this.productService.getProductById(id).subscribe({
+      next: (product) => {
+        // Convert the product to our interface format
+        const productData: Product = {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          sku: product.sku,
+          category: product.category,
+          priceCost: product.priceCost,
+          priceSale: product.priceSale,
+          stockQuantity: product.stockQuantity,
+          minStock: product.minStock,
+          imageUrl: product.imageUrl,
+          active: product.active
+        };
+        this.currentProduct.set(productData);
+        this.isLoading.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        if (error.status === 404) {
+          this.messageService.add({ 
+            severity: 'error', 
+            summary: 'Erro', 
+            detail: 'Produto não encontrado.' 
+          });
+          this.router.navigate(['/stock/products']);
+        }
+      }
     });
+    this.subscriptions.add(loadSub);
   }
 
   onSaveProduct(): void {
-    if (this.productForm.valid) {
-      const productData = this.productForm.value;
-      // Lógica para salvar/atualizar o produto no MVP (simulação)
-      console.log('Dados do produto a serem salvos:', productData);
+    // Clear previous validation errors
+    this.formValidationService.clearServerValidationErrors(this.productForm);
 
-      if (this.isEditMode) {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Produto atualizado com sucesso!' });
-      } else {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Produto cadastrado com sucesso!' });
-      }
-      this.router.navigate(['/stock/products']); // Redireciona para a lista de produtos
-    } else {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Por favor, preencha todos os campos obrigatórios.' });
-      this.productForm.markAllAsTouched(); // Marca todos os campos como "touched" para exibir erros
+    // Validate client-side first
+    if (!this.formValidationService.validateAllFormFields(this.productForm)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro de Validação',
+        detail: 'Por favor, corrija os erros nos campos destacados.'
+      });
+      return;
     }
+
+    this.isLoading.set(true);
+    const productData: Product = {
+      name: this.productForm.value.name,
+      description: this.productForm.value.description,
+      sku: this.productForm.value.sku,
+      category: this.productForm.value.category?.code,
+      priceCost: this.productForm.value.priceCost,
+      priceSale: this.productForm.value.priceSale,
+      stockQuantity: this.productForm.value.stockQuantity,
+      minStock: this.productForm.value.minStock,
+      imageUrl: this.productForm.value.imageUrl
+    };
+
+    const operation = this.isEditMode() 
+      ? this.productService.updateProduct(this.productId()!, productData)
+      : this.productService.createProduct(productData);
+
+    const saveSub = operation.subscribe({
+      next: (product) => {
+        this.isLoading.set(false);
+        const message = this.isEditMode() ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!';
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: message
+        });
+        this.router.navigate(['/stock/products']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        if (error.status === 400 && error.error?.fieldErrors) {
+          // Handle validation errors from the backend
+          this.formValidationService.applyServerValidationErrors(
+            this.productForm,
+            error.error.fieldErrors.map((fe: any) => ({ field: fe.field, message: fe.message })),
+            'Por favor, corrija os erros destacados.'
+          );
+        }
+        // The error interceptor will handle other error cases
+      }
+    });
+    this.subscriptions.add(saveSub);
   }
 
   onCancel(): void {
     this.router.navigate(['/stock/products']);
+  }
+
+  // Helper methods for template
+  getFieldError(fieldName: string): string | null {
+    const control = this.productForm.get(fieldName);
+    return this.formValidationService.getFieldErrorMessage(control, fieldName);
+  }
+
+  hasFieldError(fieldName: string): boolean {
+    const control = this.productForm.get(fieldName);
+    return this.formValidationService.hasFieldError(control);
   }
 
   // Simulação de upload de arquivo (para MVP, apenas exibe o nome)
