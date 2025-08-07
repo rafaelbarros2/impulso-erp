@@ -10,12 +10,10 @@ import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CalendarModule } from 'primeng/calendar';
-import { HttpClientModule } from '@angular/common/http'; // Necessário se for usar HttpClient
+import { finalize } from 'rxjs/operators';
 
-interface Supplier {
-  id: string;
-  name: string;
-}
+import { FinanceService, Payable } from '../../../../core/services/finance.service';
+import { ClientService, Client } from '../../../../core/services/client.service';
 
 @Component({
   selector: 'app-payable-form',
@@ -29,27 +27,19 @@ interface Supplier {
     ButtonModule,
     CardModule,
     ToastModule,
-    CalendarModule,
-    HttpClientModule
+    CalendarModule
   ],
   providers: [MessageService],
   templateUrl: './payable-form.component.html',
-  styleUrl: './payable-form.component.scss'
+  styleUrls: ['./payable-form.component.scss']
 })
 export class PayableFormComponent implements OnInit {
   payableForm!: FormGroup;
-  isEditMode: boolean = false;
-  payableId: string | null = null;
-  pageTitle: string = 'Nova Conta a Pagar';
-
-  // Dados mockados de fornecedores para o dropdown
-  suppliers: Supplier[] = [
-    { id: '1', name: 'Imobiliária Central' },
-    { id: '2', name: 'Energia Elétrica S.A.' },
-    { id: '3', name: 'Tecelagem Fina' },
-    { id: '4', name: 'Funcionário A' },
-    { id: '5', name: 'Tech Services' },
-  ];
+  isEditMode = false;
+  payableId: number | null = null;
+  pageTitle = 'Nova Conta a Pagar';
+  isLoading = false;
+  suppliers: Client[] = [];
 
   statusOptions = [
     { label: 'Pendente', value: 'Pendente' },
@@ -61,79 +51,108 @@ export class PayableFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private financeService: FinanceService,
+    private clientService: ClientService
   ) {}
 
   ngOnInit(): void {
-    this.payableId = this.route.snapshot.paramMap.get('id');
-    this.isEditMode = !!this.payableId;
-    this.pageTitle = this.isEditMode ? 'Editar Conta a Pagar' : 'Nova Conta a Pagar';
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.payableId = +id;
+      this.isEditMode = true;
+      this.pageTitle = 'Editar Conta a Pagar';
+      this.loadPayableData(this.payableId);
+    } else {
+      this.isEditMode = false;
+      this.pageTitle = 'Nova Conta a Pagar';
+    }
 
     this.initForm();
-
-    if (this.isEditMode) {
-      this.loadPayableData(this.payableId!);
-    }
+    this.loadSuppliers();
   }
 
   initForm(): void {
     this.payableForm = this.fb.group({
       description: ['', Validators.required],
-      supplier: [null, Validators.required], // Objeto Supplier
+      supplierId: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]],
       dueDate: [null, Validators.required],
       status: ['Pendente', Validators.required],
-      paymentDate: [null],
+      paymentDate: [{ value: null, disabled: true }],
       notes: ['']
     });
 
-    // Desabilitar campo de data de pagamento se o status não for "Pago"
     this.payableForm.get('status')?.valueChanges.subscribe(status => {
       const paymentDateControl = this.payableForm.get('paymentDate');
       if (status === 'Pago') {
         paymentDateControl?.enable();
       } else {
         paymentDateControl?.disable();
-        paymentDateControl?.setValue(null); // Limpa a data se o status mudar
+        paymentDateControl?.setValue(null);
       }
     });
   }
 
-  loadPayableData(id: string): void {
-    // Simula o carregamento de dados de uma conta a pagar existente para o MVP
-    const mockPayable = {
-      id: id,
-      description: 'Aluguel Escritório',
-      supplier: { id: '1', name: 'Imobiliária Central' },
-      amount: 1500.00,
-      dueDate: new Date('2025-07-05'),
-      status: 'Pago',
-      paymentDate: new Date('2025-07-04'),
-      notes: 'Referente ao mês de Junho.'
-    };
+  loadSuppliers(): void {
+    this.isLoading = true;
+    this.clientService.getAllClients()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (clients) => {
+          // Assuming suppliers are a type of client for now
+          this.suppliers = clients;
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível carregar os fornecedores.' });
+        }
+      });
+  }
 
-    // Ajusta o status para que o campo paymentDate seja habilitado se necessário
-    this.payableForm.patchValue({
-      ...mockPayable,
-      supplier: this.suppliers.find(s => s.id === mockPayable.supplier.id) // Garante que o objeto fornecedor seja o da lista
-    });
+  loadPayableData(id: number): void {
+    this.isLoading = true;
+    this.financeService.getPayableById(id)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (payable) => {
+          this.payableForm.patchValue({
+            ...payable,
+            dueDate: new Date(payable.dueDate),
+            paymentDate: payable.paymentDate ? new Date(payable.paymentDate) : null
+          });
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível carregar os dados da conta a pagar.' });
+        }
+      });
   }
 
   onSavePayable(): void {
-    if (this.payableForm.valid) {
-      const payableData = this.payableForm.value;
-      console.log('Dados da conta a pagar a serem salvos:', payableData);
-
-      if (this.isEditMode) {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Conta a pagar atualizada com sucesso!' });
-      } else {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Conta a pagar cadastrada com sucesso!' });
-      }
-      this.router.navigate(['/finance/payables']);
-    } else {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Por favor, preencha todos os campos obrigatórios e válidos.' });
+    if (this.payableForm.invalid) {
       this.payableForm.markAllAsTouched();
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Por favor, preencha todos os campos obrigatórios.' });
+      return;
     }
+
+    this.isLoading = true;
+    const payableData = this.payableForm.getRawValue();
+
+    const operation = this.isEditMode
+      ? this.financeService.updatePayable(this.payableId!, payableData)
+      : this.financeService.createPayable(payableData);
+
+    operation.pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      next: () => {
+        const successMessage = this.isEditMode ? 'Conta a pagar atualizada com sucesso!' : 'Conta a pagar cadastrada com sucesso!';
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: successMessage });
+        this.router.navigate(['/finance/payables']);
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível salvar a conta a pagar.' });
+      }
+    });
   }
 
   onCancel(): void {

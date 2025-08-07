@@ -71,14 +71,14 @@ export class CheckoutWhatsappPageComponent implements OnInit {
     if (cep && cep.replace(/\D/g, '').length === 8) {
       this.messageService.add({ severity: 'info', summary: 'Frete', detail: 'Calculando frete...' });
       
-      // Simulação de cálculo de distância e frete
-      // Em um cenário real, você usaria uma API de geolocalização.
-      const mockedDistanceKm = Math.floor(Math.random() * 20) + 1;
-      const pricePerKm = 10 / 5; // R$10 para 5km
-      this.shippingCost = mockedDistanceKm * pricePerKm;
+      // TODO: Implementar cálculo real de frete com API
+      // const mockedDistanceKm = Math.floor(Math.random() * 20) + 1;
+      // const pricePerKm = 10 / 5; // R$10 para 5km
+      // this.shippingCost = mockedDistanceKm * pricePerKm;
+      this.shippingCost = 0; // Removido cálculo mockado
       
       this.renderSummary();
-      this.messageService.add({ severity: 'success', summary: 'Frete Calculado', detail: `Distância: ${mockedDistanceKm}km. Custo: R$ ${this.shippingCost.toFixed(2).replace('.', ',')}` });
+      this.messageService.add({ severity: 'info', summary: 'Aviso', detail: 'Cálculo de frete temporariamente indisponível' });
     }
   }
 

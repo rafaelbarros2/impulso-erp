@@ -63,14 +63,15 @@ export class PayablesListPageComponent implements OnInit {
   }
 
   loadPayables(): void {
-    // Dados mockados para MVP. Em um projeto real, isso viria de um serviço.
-    this.payables = [
-      { id: '1', description: 'Aluguel Escritório', supplierName: 'Imobiliária Central', amount: 1500.00, dueDate: new Date('2025-07-05'), status: 'Pago', paymentDate: new Date('2025-07-04') },
-      { id: '2', description: 'Conta de Luz', supplierName: 'Energia Elétrica S.A.', amount: 250.50, dueDate: new Date('2025-07-28'), status: 'Atrasado' },
-      { id: '3', description: 'Compra de Tecidos', supplierName: 'Tecelagem Fina', amount: 800.00, dueDate: new Date('2025-08-10'), status: 'Pendente' },
-      { id: '4', description: 'Salário Funcionário A', supplierName: 'Funcionário A', amount: 2000.00, dueDate: new Date('2025-07-30'), status: 'Pendente' },
-      { id: '5', description: 'Manutenção de Equipamentos', supplierName: 'Tech Services', amount: 450.00, dueDate: new Date('2025-07-15'), status: 'Pago', paymentDate: new Date('2025-07-15') },
-    ];
+    // TODO: Implementar carregamento real de dados da API
+    // this.payables = [
+    //   { id: '1', description: 'Aluguel Escritório', supplierName: 'Imobiliária Central', amount: 1500.00, dueDate: new Date('2025-07-05'), status: 'Pago', paymentDate: new Date('2025-07-04') },
+    //   { id: '2', description: 'Conta de Luz', supplierName: 'Energia Elétrica S.A.', amount: 250.50, dueDate: new Date('2025-07-28'), status: 'Atrasado' },
+    //   { id: '3', description: 'Compra de Tecidos', supplierName: 'Tecelagem Fina', amount: 800.00, dueDate: new Date('2025-08-10'), status: 'Pendente' },
+    //   { id: '4', description: 'Salário Funcionário A', supplierName: 'Funcionário A', amount: 2000.00, dueDate: new Date('2025-07-30'), status: 'Pendente' },
+    //   { id: '5', description: 'Manutenção de Equipamentos', supplierName: 'Tech Services', amount: 450.00, dueDate: new Date('2025-07-15'), status: 'Pago', paymentDate: new Date('2025-07-15') },
+    // ];
+    this.payables = []; // Removido dados mockados
   }
 
   getSeverity(status: string): string {

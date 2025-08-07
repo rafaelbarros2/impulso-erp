@@ -8,7 +8,7 @@ import { LayoutService, LayoutType } from '../../../../core/services/layout.serv
 
 // Components & Models
 import { StorefrontItemCardComponent } from '../storefront-item-card/storefront-item-card.component';
-import { MOCK_PRODUCTS } from '../../model/roduct-mock.data';
+// import { MOCK_PRODUCTS } from '../../model/roduct-mock.data'; // Comentado: usando apenas dados reais
 import { BadgeType, Product } from '../../model/product.interface';
 
 @Component({
@@ -26,7 +26,7 @@ export class StorefrontItemGridComponent implements OnInit {
   private readonly backgroundService = inject(BackgroundService);
 
   // Inputs
-  @Input() products: Product[] = MOCK_PRODUCTS;
+  @Input() products: Product[] = []; // Removido MOCK_PRODUCTS
   @Input() loading: boolean = false;
   @Input() showActions: boolean = true;
   @Input() showRating: boolean = true;

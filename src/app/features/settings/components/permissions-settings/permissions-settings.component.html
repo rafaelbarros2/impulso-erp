@@ -1,1 +1,50 @@
-<p>permissions-settings works!</p>
+<p-toast></p-toast>
+
+<div class="p-4 sm:p-6 lg:p-8">
+  <p-card styleClass="rounded-xl shadow-lg">
+    <ng-template pTemplate="title">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800">Gerenciamento de Permissões</h2>
+        <p-button label="Salvar Alterações" icon="pi pi-save" (onClick)="savePermissions()" [loading]="isLoading"></p-button>
+      </div>
+    </ng-template>
+
+    <div *ngIf="isLoading && !permissions.length" class="flex justify-center items-center p-8">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+
+    <div *ngIf="error" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+      {{ error }}
+      <button (click)="loadData()" class="ml-4 font-semibold underline">Tentar novamente</button>
+    </div>
+
+    <div *ngIf="!isLoading || permissions.length" [formGroup]="permissionsForm">
+      <p-table [value]="permissions" responsiveLayout="scroll" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="w-1/3">Permissão</th>
+            <th *ngFor="let role of roles" class="text-center">{{ role }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-permission>
+          <tr>
+            <td>
+              <div class="font-medium">{{ permission.id }}</div>
+              <div class="text-sm text-gray-600">{{ permission.description }}</div>
+            </td>
+            <td *ngFor="let role of roles" class="text-center" [formGroupName]="role">
+              <p-checkbox [formControlName]="permission.id" [binary]="true"></p-checkbox>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="roles.length + 1" class="text-center p-4">
+              Nenhuma permissão encontrada.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+</div>

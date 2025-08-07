@@ -42,13 +42,14 @@ export class ReceivableFormComponent implements OnInit {
   receivableId: string | null = null;
   pageTitle: string = 'Nova Conta a Receber';
 
-  // Dados mockados de clientes para o dropdown
-  clients: Client[] = [
-    { id: '1', name: 'Maria Silva' },
-    { id: '2', name: 'João Santos' },
-    { id: '3', name: 'Empresa ABC' },
-    { id: '4', name: 'Ana Costa' },
-  ];
+  // TODO: Implementar carregamento real de clientes da API
+  // clients: Client[] = [
+  //   { id: '1', name: 'Maria Silva' },
+  //   { id: '2', name: 'João Santos' },
+  //   { id: '3', name: 'Empresa ABC' },
+  //   { id: '4', name: 'Ana Costa' },
+  // ];
+  clients: Client[] = []; // Removido dados mockados
 
   statusOptions = [
     { label: 'Pendente', value: 'Pendente' },
@@ -99,23 +100,23 @@ export class ReceivableFormComponent implements OnInit {
   }
 
   loadReceivableData(id: string): void {
-    // Simula o carregamento de dados de um recebível existente para o MVP
-    const mockReceivable = {
-      id: id,
-      description: 'Venda PDV - Cliente Maria',
-      client: { id: '1', name: 'Maria Silva' },
-      amount: 349.90,
-      dueDate: new Date('2025-07-30'),
-      status: 'Recebido',
-      paymentDate: new Date('2025-07-29'),
-      notes: 'Venda de roupas de verão.'
-    };
+    // TODO: Implementar carregamento real de dados da API
+    // const mockReceivable = {
+    //   id: id,
+    //   description: 'Venda PDV - Cliente Maria',
+    //   client: { id: '1', name: 'Maria Silva' },
+    //   amount: 349.90,
+    //   dueDate: new Date('2025-07-30'),
+    //   status: 'Recebido',
+    //   paymentDate: new Date('2025-07-29'),
+    //   notes: 'Venda de roupas de verão.'
+    // };
 
-    // Ajusta o status para que o campo paymentDate seja habilitado se necessário
-    this.receivableForm.patchValue({
-      ...mockReceivable,
-      client: this.clients.find(c => c.id === mockReceivable.client.id) // Garante que o objeto cliente seja o da lista
-    });
+    // // Ajusta o status para que o campo paymentDate seja habilitado se necessário
+    // this.receivableForm.patchValue({
+    //   ...mockReceivable,
+    //   client: this.clients.find(c => c.id === mockReceivable.client.id) // Garante que o objeto cliente seja o da lista
+    // });
   }
 
   onSaveReceivable(): void {

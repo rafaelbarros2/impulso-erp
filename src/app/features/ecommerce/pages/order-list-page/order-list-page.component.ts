@@ -72,54 +72,55 @@ export class OrderListPageComponent implements OnInit {
   }
 
   loadOrders(): void {
-    // Dados mockados para MVP. Em um projeto real, isso viria de um serviço.
-    this.orders = [
-      {
-        id: '1',
-        orderNumber: 'PED-2025-001',
-        clientName: 'Maria Silva',
-        totalAmount: 189.90,
-        orderDate: new Date('2025-08-01'),
-        status: 'Separacao',
-        items: [
-          { name: 'Vestido Floral Verão', sku: 'VF1001', quantity: 1, price: 119.90 },
-          { name: 'Saia Plissada Midi', sku: 'SP5005', quantity: 1, price: 95.00 }
-        ]
-      },
-      {
-        id: '2',
-        orderNumber: 'PED-2025-002',
-        clientName: 'João Santos',
-        totalAmount: 220.00,
-        orderDate: new Date('2025-07-30'),
-        status: 'Enviado',
-        items: [
-          { name: 'Tênis Esportivo Casual', sku: 'TE4004', quantity: 1, price: 189.99 }
-        ]
-      },
-      {
-        id: '3',
-        orderNumber: 'PED-2025-003',
-        clientName: 'Ana Costa',
-        totalAmount: 69.90,
-        orderDate: new Date('2025-07-28'),
-        status: 'Novo',
-        items: [
-          { name: 'Blusa de Seda Branca', sku: 'BS3003', quantity: 1, price: 69.90 }
-        ]
-      },
-      {
-        id: '4',
-        orderNumber: 'PED-2025-004',
-        clientName: 'Pedro Lima',
-        totalAmount: 89.50,
-        orderDate: new Date('2025-07-25'),
-        status: 'Entregue',
-        items: [
-          { name: 'Calça Jeans Skinny', sku: 'CJ2002', quantity: 1, price: 89.50 }
-        ]
-      },
-    ];
+    // TODO: Implementar carregamento real de dados da API
+    // this.orders = [
+    //   {
+    //     id: '1',
+    //     orderNumber: 'PED-2025-001',
+    //     clientName: 'Maria Silva',
+    //     totalAmount: 189.90,
+    //     orderDate: new Date('2025-08-01'),
+    //     status: 'Separacao',
+    //     items: [
+    //       { name: 'Vestido Floral Verão', sku: 'VF1001', quantity: 1, price: 119.90 },
+    //       { name: 'Saia Plissada Midi', sku: 'SP5005', quantity: 1, price: 95.00 }
+    //     ]
+    //   },
+    //   {
+    //     id: '2',
+    //     orderNumber: 'PED-2025-002',
+    //     clientName: 'João Santos',
+    //     totalAmount: 220.00,
+    //     orderDate: new Date('2025-07-30'),
+    //     status: 'Enviado',
+    //     items: [
+    //       { name: 'Tênis Esportivo Casual', sku: 'TE4004', quantity: 1, price: 189.99 }
+    //     ]
+    //   },
+    //   {
+    //     id: '3',
+    //     orderNumber: 'PED-2025-003',
+    //     clientName: 'Ana Costa',
+    //     totalAmount: 69.90,
+    //     orderDate: new Date('2025-07-28'),
+    //     status: 'Novo',
+    //     items: [
+    //       { name: 'Blusa de Seda Branca', sku: 'BS3003', quantity: 1, price: 69.90 }
+    //     ]
+    //   },
+    //   {
+    //     id: '4',
+    //     orderNumber: 'PED-2025-004',
+    //     clientName: 'Pedro Lima',
+    //     totalAmount: 89.50,
+    //     orderDate: new Date('2025-07-25'),
+    //     status: 'Entregue',
+    //     items: [
+    //       { name: 'Calça Jeans Skinny', sku: 'CJ2002', quantity: 1, price: 89.50 }
+    //     ]
+    //   },
+    // ];
+    this.orders = []; // Removido dados mockados
   }
 
   getSeverity(status: string): string {

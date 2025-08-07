@@ -92,29 +92,17 @@ export class ClientListPageComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading clients:', error);
         this.hasError = true;
-        
-        // Fallback to mock data for MVP
-        this.loadMockClients();
+        this.clients = []; // Clear any existing data
         
         this.messageService.add({ 
-          severity: 'warn', 
-          summary: 'Aviso', 
-          detail: 'Erro ao carregar clientes da API. Exibindo dados de exemplo.' 
+          severity: 'error', 
+          summary: 'Erro de Conexão', 
+          detail: 'Não foi possível carregar os clientes. Verifique sua conexão com a internet.' 
         });
       }
     });
   }
 
-  private loadMockClients(): void {
-    // Mock data as fallback
-    this.clients = [
-      { id: 1, name: 'Maria Silva', cpfCnpj: '123.456.789-00', phone: '(11) 98765-4321', email: 'maria.s@email.com', status: 'Ativo', active: true },
-      { id: 2, name: 'João Santos', cpfCnpj: '098.765.432-10', phone: '(21) 99876-5432', email: 'joao.s@email.com', status: 'Ativo', active: true },
-      { id: 3, name: 'Ana Costa', cpfCnpj: '111.222.333-44', phone: '(31) 97777-8888', email: 'ana.c@email.com', status: 'Potencial', active: true },
-      { id: 4, name: 'Empresa XYZ Ltda', cpfCnpj: '12.345.678/0001-90', phone: '(41) 3000-1234', email: 'contato@xyz.com', status: 'Ativo', active: true },
-      { id: 5, name: 'Pedro Lima', cpfCnpj: '555.444.333-22', phone: '(51) 91234-5678', email: 'pedro.l@email.com', status: 'Inativo', active: false },
-    ];
-  }
 
   onRetryLoad(): void {
     this.loadClients();

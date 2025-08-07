@@ -63,14 +63,15 @@ export class ReceivablesListPageComponent implements OnInit {
   }
 
   loadReceivables(): void {
-    // Dados mockados para MVP. Em um projeto real, isso viria de um serviço.
-    this.receivables = [
-      { id: '1', description: 'Venda PDV - Cliente Maria', clientName: 'Maria Silva', amount: 349.90, dueDate: new Date('2025-07-30'), status: 'Recebido', paymentDate: new Date('2025-07-29') },
-      { id: '2', description: 'Serviço de Consultoria', clientName: 'Empresa ABC', amount: 1200.00, dueDate: new Date('2025-08-15'), status: 'Pendente' },
-      { id: '3', description: 'Venda Online - Cliente João', clientName: 'João Santos', amount: 550.75, dueDate: new Date('2025-07-20'), status: 'Atrasado' },
-      { id: '4', description: 'Aluguel de Espaço', clientName: 'Imobiliária X', amount: 2500.00, dueDate: new Date('2025-08-05'), status: 'Pendente' },
-      { id: '5', description: 'Venda PDV - Cliente Ana', clientName: 'Ana Costa', amount: 199.90, dueDate: new Date('2025-07-25'), status: 'Recebido', paymentDate: new Date('2025-07-25') },
-    ];
+    // TODO: Implementar carregamento real de dados da API
+    // this.receivables = [
+    //   { id: '1', description: 'Venda PDV - Cliente Maria', clientName: 'Maria Silva', amount: 349.90, dueDate: new Date('2025-07-30'), status: 'Recebido', paymentDate: new Date('2025-07-29') },
+    //   { id: '2', description: 'Serviço de Consultoria', clientName: 'Empresa ABC', amount: 1200.00, dueDate: new Date('2025-08-15'), status: 'Pendente' },
+    //   { id: '3', description: 'Venda Online - Cliente João', clientName: 'João Santos', amount: 550.75, dueDate: new Date('2025-07-20'), status: 'Atrasado' },
+    //   { id: '4', description: 'Aluguel de Espaço', clientName: 'Imobiliária X', amount: 2500.00, dueDate: new Date('2025-08-05'), status: 'Pendente' },
+    //   { id: '5', description: 'Venda PDV - Cliente Ana', clientName: 'Ana Costa', amount: 199.90, dueDate: new Date('2025-07-25'), status: 'Recebido', paymentDate: new Date('2025-07-25') },
+    // ];
+    this.receivables = []; // Removido dados mockados
   }
 
   getSeverity(status: string): string {

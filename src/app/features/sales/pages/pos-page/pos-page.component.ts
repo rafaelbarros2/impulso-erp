@@ -67,88 +67,90 @@ export class PosPageComponent implements OnInit {
   @ViewChild('searchInput') searchInputRef!: ElementRef;
 
   // Data Properties
-  products: Product[] = [
-    {
-      id: '001',
-      name: 'Coca-Cola 350ml',
-      price: 4.50,
-      stock: 15,
-      emoji: '🥤',
-      categoryId: 'bebidas',
-      barcode: '7894900011517',
-      sku: 'COCA350'
-    },
-    {
-      id: '002',
-      name: 'Pão de Açúcar 500g',
-      price: 6.90,
-      stock: 8,
-      emoji: '🍞',
-      categoryId: 'alimentacao',
-      barcode: '7891000055557',
-      sku: 'PAO500'
-    },
-    {
-      id: '003',
-      name: 'Leite Integral 1L',
-      price: 5.20,
-      stock: 12,
-      emoji: '🥛',
-      categoryId: 'bebidas',
-      barcode: '7891000100103',
-      sku: 'LEITE1L'
-    },
-    {
-      id: '004',
-      name: 'Café Pilão 500g',
-      price: 12.90,
-      stock: 6,
-      emoji: '☕',
-      categoryId: 'alimentacao',
-      barcode: '7896005200551',
-      sku: 'CAFE500'
-    },
-    {
-      id: '005',
-      name: 'Arroz Tio João 5kg',
-      price: 22.50,
-      stock: 20,
-      emoji: '🍚',
-      categoryId: 'alimentacao',
-      barcode: '7896265400024',
-      sku: 'ARROZ5K'
-    },
-    {
-      id: '006',
-      name: 'Feijão Carioca 1kg',
-      price: 8.90,
-      stock: 10,
-      emoji: '🫘',
-      categoryId: 'alimentacao',
-      barcode: '7891000050010',
-      sku: 'FEIJAO1K'
-    },
-    {
-      id: '007',
-      name: 'Detergente Ypê 500ml',
-      price: 2.90,
-      stock: 25,
-      emoji: '🧽',
-      categoryId: 'limpeza',
-      barcode: '7891040244012',
-      sku: 'DET500'
-    },
-    {
-      id: '008',
-      name: 'Shampoo Seda 400ml',
-      price: 15.90,
-      stock: 7,
-      emoji: '🧴',
-      categoryId: 'higiene',
-      barcode: '7891150056411',
-      sku: 'SHAM400'
-    }
-  ];
+  // TODO: Implementar carregamento real de produtos da API
+  // products: Product[] = [
+  //   {
+  //     id: '001',
+  //     name: 'Coca-Cola 350ml',
+  //     price: 4.50,
+  //     stock: 15,
+  //     emoji: '🥤',
+  //     categoryId: 'bebidas',
+  //     barcode: '7894900011517',
+  //     sku: 'COCA350'
+  //   },
+  //   {
+  //     id: '002',
+  //     name: 'Pão de Açúcar 500g',
+  //     price: 6.90,
+  //     stock: 8,
+  //     emoji: '🍞',
+  //     categoryId: 'alimentacao',
+  //     barcode: '7891000055557',
+  //     sku: 'PAO500'
+  //   },
+  //   {
+  //     id: '003',
+  //     name: 'Leite Integral 1L',
+  //     price: 5.20,
+  //     stock: 12,
+  //     emoji: '🥛',
+  //     categoryId: 'bebidas',
+  //     barcode: '7891000100103',
+  //     sku: 'LEITE1L'
+  //   },
+  //   {
+  //     id: '004',
+  //     name: 'Café Pilão 500g',
+  //     price: 12.90,
+  //     stock: 6,
+  //     emoji: '☕',
+  //     categoryId: 'alimentacao',
+  //     barcode: '7896005200551',
+  //     sku: 'CAFE500'
+  //   },
+  //   {
+  //     id: '005',
+  //     name: 'Arroz Tio João 5kg',
+  //     price: 22.50,
+  //     stock: 20,
+  //     emoji: '🍚',
+  //     categoryId: 'alimentacao',
+  //     barcode: '7896265400024',
+  //     sku: 'ARROZ5K'
+  //   },
+  //   {
+  //     id: '006',
+  //     name: 'Feijão Carioca 1kg',
+  //     price: 8.90,
+  //     stock: 10,
+  //     emoji: '🫘',
+  //     categoryId: 'alimentacao',
+  //     barcode: '7891000050010',
+  //     sku: 'FEIJAO1K'
+  //   },
+  //   {
+  //     id: '007',
+  //     name: 'Detergente Ypê 500ml',
+  //     price: 2.90,
+  //     stock: 25,
+  //     emoji: '🧽',
+  //     categoryId: 'limpeza',
+  //     barcode: '7891040244012',
+  //     sku: 'DET500'
+  //   },
+  //   {
+  //     id: '008',
+  //     name: 'Shampoo Seda 400ml',
+  //     price: 15.90,
+  //     stock: 7,
+  //     emoji: '🧴',
+  //     categoryId: 'higiene',
+  //     barcode: '7891150056411',
+  //     sku: 'SHAM400'
+  //   }
+  // ];
+  products: Product[] = []; // Removido dados mockados
 
   paymentMethods: PaymentMethod[] = [
     { id: 'dinheiro', name: 'Dinheiro', icon: 'pi pi-money-bill' },

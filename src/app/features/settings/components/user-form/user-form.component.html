@@ -1,0 +1,31 @@
+<form [formGroup]="userForm" (ngSubmit)="saveUser()" class="p-fluid">
+  <div class="p-field mb-4">
+    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nome <span class="text-red-500">*</span></label>
+    <input id="name" type="text" pInputText formControlName="name" class="w-full" [ngClass]="{'ng-invalid ng-dirty': userForm.get('name')?.invalid && userForm.get('name')?.touched}">
+    <small *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" class="p-error block mt-1">Nome é obrigatório.</small>
+  </div>
+
+  <div class="p-field mb-4">
+    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+    <input id="email" type="email" pInputText formControlName="email" class="w-full" [ngClass]="{'ng-invalid ng-dirty': userForm.get('email')?.invalid && userForm.get('email')?.touched}">
+    <small *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="p-error block mt-1">
+      <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+      <span *ngIf="userForm.get('email')?.errors?.['email']">Formato de email inválido.</span>
+    </small>
+  </div>
+
+  <div class="p-field mb-4">
+    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Função <span class="text-red-500">*</span></label>
+    <p-dropdown id="role" [options]="roles" formControlName="role" class="w-full"></p-dropdown>
+  </div>
+
+  <div class="p-field flex items-center justify-between mb-6">
+    <label for="active" class="block text-sm font-medium text-gray-700">Ativo</label>
+    <p-toggleButton id="active" formControlName="active" onLabel="Sim" offLabel="Não"></p-toggleButton>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button type="button" label="Cancelar" styleClass="p-button-secondary" (onClick)="cancel()"></p-button>
+    <p-button type="submit" [label]="isEditMode ? 'Atualizar' : 'Salvar'" [loading]="isLoading"></p-button>
+  </div>
+</form>

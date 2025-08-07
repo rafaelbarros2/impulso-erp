@@ -1,1 +1,63 @@
-<p>users-settings works!</p>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+<div class="p-4 sm:p-6 lg:p-8">
+  <p-card styleClass="rounded-xl shadow-lg">
+    <ng-template pTemplate="title">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800">Gerenciamento de Usuários</h2>
+        <p-button label="Novo Usuário" icon="pi pi-plus" styleClass="p-button-success rounded-lg" (onClick)="openUserDialog()"></p-button>
+      </div>
+    </ng-template>
+
+    <div *ngIf="isLoading" class="flex justify-center items-center p-8">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+
+    <div *ngIf="error" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+      {{ error }}
+      <button (click)="loadUsers()" class="ml-4 font-semibold underline">Tentar novamente</button>
+    </div>
+
+    <div *ngIf="!isLoading && !error">
+      <p-table [value]="(users$ | async) || []" [columns]="cols" responsiveLayout="scroll" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+              {{ col.header }} <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              <ng-container [ngSwitch]="col.field">
+                <ng-container *ngSwitchCase="'active'">
+                  <span [ngClass]="{'bg-green-100 text-green-800': user.active, 'bg-red-100 text-red-800': !user.active}" class="px-2 py-1 rounded-full text-xs font-medium">
+                    {{ user.active ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'actions'">
+                  <div class="flex gap-2">
+                    <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-info p-button-text" (onClick)="openUserDialog(user)" pTooltip="Editar"></p-button>
+                    <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" (onClick)="deleteUser(user)" pTooltip="Excluir"></p-button>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{ user[col.field] }}
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="cols.length" class="text-center p-4">
+              Nenhum usuário encontrado.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+</div>

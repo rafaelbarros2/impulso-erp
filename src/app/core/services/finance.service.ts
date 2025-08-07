@@ -18,6 +18,7 @@ export interface Payable {
   dueDate: Date;
   status: string;
   supplierId?: number;
+  paymentDate?: Date;
 }
 
 @Injectable({

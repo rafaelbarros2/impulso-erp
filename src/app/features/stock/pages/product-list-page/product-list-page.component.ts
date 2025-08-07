@@ -103,14 +103,12 @@ export class ProductListPageComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading products:', error);
         this.hasError = true;
-        
-        // Fallback to mock data for MVP
-        this.loadMockProducts();
+        this.products = []; // Clear any existing data
         
         this.messageService.add({ 
-          severity: 'warn', 
-          summary: 'Aviso', 
-          detail: 'Erro ao carregar produtos da API. Exibindo dados de exemplo.' 
+          severity: 'error', 
+          summary: 'Erro de Conexão', 
+          detail: 'Não foi possível carregar os produtos. Verifique sua conexão com a internet.' 
         });
       }
     });
@@ -125,16 +123,6 @@ export class ProductListPageComponent implements OnInit {
     return 'Em Estoque';
   }
 
-  private loadMockProducts(): void {
-    // Mock data as fallback
-    this.products  = [
-      { id: 1, name: 'Vestido Floral Verão', sku: 'VF1001', category: 'Vestidos', priceCost: 80.00, priceSale: 129.90, stockQuantity: 50, minStock: 10, status: 'Em Estoque', imageUrl: 'https://placehold.co/100x100/E0F2F1/000000?text=Vestido' },
-      { id: 2, name: 'Calça Jeans Skinny', sku: 'CJ2002', category: 'Calças', priceCost: 50.00, priceSale: 89.50, stockQuantity: 10, minStock: 5, status: 'Baixo Estoque', imageUrl: 'https://placehold.co/100x100/FFF3E0/000000?text=Calça' },
-      { id: 3, name: 'Blusa de Seda Branca', sku: 'BS3003', category: 'Blusas', priceCost: 40.00, priceSale: 75.00, stockQuantity: 0, minStock: 2, status: 'Esgotado', imageUrl: 'https://placehold.co/100x100/FCE4EC/000000?text=Blusa' },
-      { id: 4, name: 'Tênis Esportivo Casual', sku: 'TE4004', category: 'Calçados', priceCost: 120.00, priceSale: 199.99, stockQuantity: 30, minStock: 8, status: 'Em Estoque', imageUrl: 'https://placehold.co/100x100/E8F5E8/000000?text=Tênis' },
-      { id: 5, name: 'Saia Plissada Midi', sku: 'SP5005', category: 'Saias', priceCost: 60.00, priceSale: 95.00, stockQuantity: 5, minStock: 3, status: 'Baixo Estoque', imageUrl: 'https://placehold.co/100x100/F3E5F5/000000?text=Saia' },
-    ];
-  }
 
   onRetryLoad(): void {
     this.loadProducts();
@@ -169,30 +157,26 @@ export class ProductListPageComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        // Show loading during delete operation
-        this.loadingService.setLoading(this.LOADING_KEYS.DELETING_PRODUCT, true);
-        
-        // Simulate API call with delay
-        setTimeout(() => {
-          try {
-            // In a real app, this would be: this.productService.deleteProduct(product.id)
-            this.products = this.products.filter(p => p.id !== product.id);
-            
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Sucesso', 
-              detail: 'Produto excluído com sucesso!' 
-            });
-          } catch (error) {
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Erro', 
-              detail: 'Erro ao excluir produto.' 
-            });
-          } finally {
-            this.loadingService.setLoading(this.LOADING_KEYS.DELETING_PRODUCT, false);
-          }
-        }, 1500); // Simulate network delay
+        if (product.id) {
+          this.productService.deleteProduct(product.id.toString()).subscribe({
+            next: () => {
+              this.products = this.products.filter(p => p.id !== product.id);
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: 'Sucesso', 
+                detail: 'Produto excluído com sucesso!' 
+              });
+            },
+            error: (error) => {
+              console.error('Error deleting product:', error);
+              this.messageService.add({ 
+                severity: 'error', 
+                summary: 'Erro', 
+                detail: 'Erro ao excluir produto.' 
+              });
+            }
+          });
+        }
       },
       reject: () => {
         this.messageService.add({ 

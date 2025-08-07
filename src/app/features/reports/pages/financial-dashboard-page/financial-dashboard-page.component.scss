@@ -24,29 +24,24 @@
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
-  height: 100vh; // Força altura fixa da viewport
-  max-height: 100vh; // Evita overflow da viewport
-  overflow: hidden; // Previne scroll duplo
   
-  // Fix específico para mobile
+  // Fix específico para mobile - remove height fixa que pode quebrar
   @media (max-width: 767px) {
-    min-height: 100dvh; // Usa dynamic viewport height em mobile
-    height: 100dvh;
-    max-height: 100dvh;
+    min-height: calc(100dvh - 5rem); // Considera bottom-nav (4rem) + margin
+    padding-bottom: 5rem; // Espaço para bottom-nav
+    overflow-x: hidden;
   }
   
   // Container do conteúdo scrollável
   .scrollable-content {
-    height: calc(100vh - 200px); // Subtrai altura do header
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 2rem; // Garante espaço no final
     
     @media (max-width: 767px) {
-      // Considera navigation bar inferior (aprox 60-80px)
-      height: calc(100dvh - 280px); // Mais espaço para nav inferior
-      padding-bottom: 5rem; // Muito mais espaço no final
-      margin-bottom: 1rem; // Margem extra
+      // Remove height fixa e deixa fluir naturalmente
+      padding-bottom: 6rem; // Espaço para bottom-nav
+      margin-bottom: 2rem;
       
       // Melhora o scroll touch em iOS
       -webkit-overflow-scrolling: touch;
@@ -54,14 +49,11 @@
     }
     
     @media (max-width: 640px) {
-      height: calc(100dvh - 300px); // Ainda mais espaço
-      padding-bottom: 6rem; // Padding generoso
+      padding-bottom: 7rem; // Mais padding para telas menores
     }
     
-    // Se há navigation fixa, ajusta mais ainda
     @media (max-width: 480px) {
-      height: calc(100dvh - 320px);
-      padding-bottom: 7rem;
+      padding-bottom: 8rem; // Ainda mais para telas muito pequenas
     }
   }
 }
@@ -275,14 +267,9 @@
     }
   }
   
-  // SOLUÇÃO ALTERNATIVA: Se o scroll ainda não funcionar
-  // Adicione esta classe ao container principal no HTML: "safe-area-mobile"
-  .safe-area-mobile {
-    .scrollable-content {
-      height: calc(100dvh - 350px) !important; // Valor mais conservador
-      padding-bottom: 8rem !important; // Padding muito generoso
-      margin-bottom: 2rem !important;
-    }
+  // Melhora a responsividade geral do mobile
+  .header-actions {
+    gap: 0.5rem;
   }
   
   // Reduz espaçamentos em mobile

@@ -11,6 +11,8 @@ import { ToastModule } from 'primeng/toast';
 import { Router } from '@angular/router';
 import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
 import { BackgroundService } from '../../../../core/services/background.service';
+import { OnlineProductService, OnlineProduct } from '../../../../core/services/online-product.service';
+import { CartService } from '../../../../core/services/cart.service';
 
 // Importa os componentes filhos e a interface Product
 import { StorefrontHeaderComponent } from '../../components/storefront-header/storefront-header.component';
@@ -57,6 +59,8 @@ export class StorefrontPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
   private readonly backgroundService = inject(BackgroundService);
+  private readonly onlineProductService = inject(OnlineProductService);
+  private readonly cartService = inject(CartService);
 
   // Propriedades reativas usando Signals do serviço
   currentTheme: Signal<StoreTheme | null> = this.themeService.currentTheme;
@@ -69,89 +73,10 @@ export class StorefrontPageComponent implements OnInit {
     return `storefront-page layout-${this.currentLayout()}`;
   }
 
-  // Produtos de exemplo
-  products: Product[] = [
-    {
-      id: '1',
-      name: 'Jaqueta de Couro Clássica',
-      description: 'Jaqueta de couro genuíno, perfeita para qualquer ocasião. Corte moderno com detalhes em zíper e bolsos laterais. Material de alta qualidade que oferece durabilidade e estilo atemporal.',
-      image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Jaqueta de Couro Clássica',
-      price: 1500.00,
-      oldPrice: 1800.00,
-      discountPercent: 15,
-      rating: { average: 4.5, count: 58, stars: 5 },
-      badges: [{ type: BadgeType.SALE, label: '-15%' }, { type: BadgeType.FEATURED, label: 'Destaque' }],
-      category: 'Jaquetas',
-      inStock: true,
-      featured: true,
-    },
-    {
-      id: '2',
-      name: 'Vestido Florido de Verão',
-      description: 'Vestido leve e confortável com estampa floral exclusiva, ideal para o verão. Tecido respirável e corte que valoriza a silhueta. Perfeito para ocasiões casuais e encontros especiais.',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Vestido Florido de Verão',
-      price: 350.00,
-      rating: { average: 4.8, count: 120, stars: 5 },
-      badges: [{ type: BadgeType.NEW, label: 'Novo' }],
-      category: 'Vestidos',
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: '3',
-      name: 'Tênis Esportivo Pro',
-      description: 'Tênis de alta performance para corrida e treino. Tecnologia de absorção de impacto, sola antiderrapante e design ergonômico. Conforto e performance em cada passo.',
-      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Tênis Esportivo Pro',
-      price: 890.00,
-      rating: { average: 4.2, count: 23, stars: 4 },
-      badges: [{ type: BadgeType.SALE, label: '-30%' }],
-      category: 'Calçados',
-      inStock: false,
-      featured: false,
-    },
-    {
-      id: '4',
-      name: 'Calça Jeans Slim',
-      description: 'Calça jeans com corte slim moderno e versátil. Tecido de alta qualidade com elastano para maior conforto. Disponível em lavagem stone com acabamento premium.',
-      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Calça Jeans Slim',
-      price: 280.00,
-      rating: { average: 4.6, count: 75, stars: 5 },
-      badges: [],
-      category: 'Calças',
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: '5',
-      name: 'Camiseta Básica de Algodão',
-      description: 'Camiseta 100% algodão pré-encolhido, macia e durável. Corte clássico unissex, essencial no guarda-roupa. Disponível em várias cores básicas.',
-      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Camiseta Básica de Algodão',
-      price: 80.00,
-      rating: { average: 4.9, count: 200, stars: 5 },
-      badges: [{ type: BadgeType.NEW, label: 'Novo' }],
-      category: 'Camisetas',
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: '6',
-      name: 'Óculos de Sol Aviador',
-      description: 'Óculos de sol estilo aviador clássico com proteção UV 400. Armação resistente e lentes polarizadas. Design atemporal que combina com qualquer estilo.',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&q=80&w=400&h=400',
-      imageAlt: 'Óculos de Sol Aviador',
-      price: 450.00,
-      rating: { average: 4.7, count: 42, stars: 5 },
-      badges: [{ type: BadgeType.FEATURED, label: 'Destaque' }],
-      category: 'Acessórios',
-      inStock: true,
-      featured: true,
-    }
-  ];
+  // Products loaded from API
+  products: Product[] = [];
+  isLoadingProducts = false;
+  hasError = false;
 
   cartItems: CartItem[] = [];
   cartTotalValue = 0;
@@ -171,6 +96,12 @@ export class StorefrontPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load products from API
+    this.loadProducts();
+    
+    // Load current cart
+    this.loadCart();
+    
     // Mensagem de boas-vindas
     this.showWelcomeMessage();
     
@@ -181,6 +112,81 @@ export class StorefrontPageComponent implements OnInit {
     setTimeout(() => {
       this.debugLayoutState();
     }, 2000);
+  }
+
+  /**
+   * Load products from API
+   */
+  loadProducts(): void {
+    this.isLoadingProducts = true;
+    this.hasError = false;
+    
+    this.onlineProductService.getAllOnlineProducts().subscribe({
+      next: (onlineProducts: OnlineProduct[]) => {
+        this.products = onlineProducts.map(product => this.convertOnlineProductToProduct(product));
+        this.isLoadingProducts = false;
+      },
+      error: (error) => {
+        console.error('Error loading online products:', error);
+        this.hasError = true;
+        this.isLoadingProducts = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro de Conexão',
+          detail: 'Não foi possível carregar os produtos da loja online.',
+          life: 5000
+        });
+      }
+    });
+  }
+
+  /**
+   * Load current cart from API
+   */
+  loadCart(): void {
+    this.cartService.getCart().subscribe({
+      next: (cart) => {
+        this.cartItemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+        this.cartTotalValue = cart.total;
+      },
+      error: (error) => {
+        console.error('Error loading cart:', error);
+        // Don't show error message for cart loading, it's not critical
+      }
+    });
+  }
+
+  /**
+   * Convert OnlineProduct to Product interface
+   */
+  private convertOnlineProductToProduct(onlineProduct: OnlineProduct): Product {
+    const hasDiscount = onlineProduct.discountPrice && onlineProduct.discountPrice < onlineProduct.price;
+    const badges = [];
+    
+    if (hasDiscount) {
+      const discountPercent = Math.round(((onlineProduct.price - onlineProduct.discountPrice!) / onlineProduct.price) * 100);
+      badges.push({ type: BadgeType.SALE, label: `-${discountPercent}%` });
+    }
+    
+    if (onlineProduct.featured) {
+      badges.push({ type: BadgeType.FEATURED, label: 'Destaque' });
+    }
+
+    return {
+      id: onlineProduct.id?.toString() || '',
+      name: onlineProduct.title,
+      description: onlineProduct.description || '',
+      image: onlineProduct.imageUrl || `https://placehold.co/400x400/E0F2F1/000000?text=${encodeURIComponent(onlineProduct.title.substring(0, 8))}`,
+      imageAlt: onlineProduct.title,
+      price: onlineProduct.discountPrice || onlineProduct.price,
+      oldPrice: hasDiscount ? onlineProduct.price : undefined,
+      discountPercent: hasDiscount ? Math.round(((onlineProduct.price - onlineProduct.discountPrice!) / onlineProduct.price) * 100) : undefined,
+      rating: { average: 4.5, count: Math.floor(Math.random() * 100) + 10, stars: 5 }, // Mock rating for now
+      badges,
+      category: onlineProduct.category || 'Produto',
+      inStock: (onlineProduct.stock || 0) > 0,
+      featured: onlineProduct.featured || false,
+    };
   }
 
   /**
@@ -236,36 +242,42 @@ export class StorefrontPageComponent implements OnInit {
       return;
     }
 
-    const existingItem = this.cartItems.find(item => item.product.id === product.id);
-
-    if (existingItem) {
-      existingItem.quantity++;
+    // Use API to add to cart
+    const productId = parseInt(product.id);
+    if (isNaN(productId)) {
       this.messageService.add({
-        severity: 'info',
-        summary: 'Quantidade Atualizada',
-        detail: `${product.name} - Quantidade: ${existingItem.quantity}`,
-        life: 2000
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'ID do produto inválido.',
+        life: 3000
       });
-    } else {
-      this.cartItems.push({ product, quantity: 1 });
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Adicionado ao Carrinho',
-        detail: `${product.name} foi adicionado ao carrinho!`,
-        life: 2000
-      });
+      return;
     }
 
-    this.updateCartInfo();
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: (cart) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Adicionado ao Carrinho',
+          detail: `${product.name} foi adicionado ao carrinho!`,
+          life: 2000
+        });
+        // Update local cart info from API response
+        this.cartItemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+        this.cartTotalValue = cart.total;
+      },
+      error: (error) => {
+        console.error('Error adding to cart:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível adicionar o produto ao carrinho.',
+          life: 3000
+        });
+      }
+    });
   }
   
-  /**
-   * Atualiza a contagem de itens e o valor total do carrinho.
-   */
-  updateCartInfo(): void {
-    this.cartItemCount = this.cartItems.reduce((acc, item) => acc + item.quantity, 0);
-    this.cartTotalValue = this.cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
-  }
 
   /**
    * Abre o quick view do produto
@@ -301,24 +313,43 @@ export class StorefrontPageComponent implements OnInit {
         return;
       }
 
-      const existingItem = this.cartItems.find(item => item.product.id === this.quickViewProduct!.id);
-
-      if (existingItem) {
-        existingItem.quantity += this.quickViewQuantity;
-      } else {
-        this.cartItems.push({ product: this.quickViewProduct!, quantity: this.quickViewQuantity });
+      // Use API to add to cart
+      const productId = parseInt(this.quickViewProduct.id);
+      if (isNaN(productId)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'ID do produto inválido.',
+          life: 3000
+        });
+        this.closeQuickView();
+        return;
       }
 
-      this.updateCartInfo();
-
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Adicionado ao Carrinho',
-        detail: `${this.quickViewProduct.name} foi adicionado ao carrinho!`,
-        life: 2500
+      this.cartService.addToCart(productId, this.quickViewQuantity).subscribe({
+        next: (cart) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Adicionado ao Carrinho',
+            detail: `${this.quickViewProduct!.name} foi adicionado ao carrinho!`,
+            life: 2500
+          });
+          // Update local cart info from API response
+          this.cartItemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+          this.cartTotalValue = cart.total;
+          this.closeQuickView();
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível adicionar o produto ao carrinho.',
+            life: 3000
+          });
+          this.closeQuickView();
+        }
       });
-
-      this.closeQuickView();
     }
   }
 

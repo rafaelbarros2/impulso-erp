@@ -2,38 +2,39 @@
   <p-toast></p-toast>
 
   <!-- Header FIXADO -->
-  <div class="mb-4 sm:mb-6 lg:mb-8 flex-shrink-0">
+  <div class="mb-3 sm:mb-6 lg:mb-8 flex-shrink-0">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-      <div class="mb-4 lg:mb-0">
-        <h1 class="text-3xl sm:text-4xl font-bold gradient-text mb-2">Dashboard de Relatórios</h1>
-        <p class="text-gray-600 text-base sm:text-lg">Visão geral das métricas financeiras e contábeis</p>
-        <div class="flex items-center gap-2 mt-2 text-sm text-gray-500">
+      <div class="mb-3 lg:mb-0">
+        <h1 class="text-2xl sm:text-4xl font-bold gradient-text mb-1 sm:mb-2">Dashboard de Relatórios</h1>
+        <p class="text-gray-600 text-sm sm:text-lg hidden sm:block">Visão geral das métricas financeiras e contábeis</p>
+        <div class="flex items-center gap-2 mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
           <i class="pi pi-clock"></i>
-          <span>Última atualização: {{ lastUpdate | date:'shortTime' }}</span>
+          <span class="hidden sm:inline">Última atualização: {{ lastUpdate | date:'shortTime' }}</span>
+          <span class="sm:hidden">{{ lastUpdate | date:'shortTime' }}</span>
           <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse-slow"></div>
         </div>
       </div>
       
       <!-- Filtros e Ações -->
-      <div class="flex flex-col sm:flex-row gap-3 header-actions">
-        <div class="glassmorphism flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg">
-          <i class="pi pi-calendar text-blue-500"></i>
-          <select class="bg-transparent border-none outline-none text-sm font-medium text-gray-700">
-            <option>Últimos 30 dias</option>
-            <option>Últimos 90 dias</option>
+      <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 header-actions">
+        <div class="glassmorphism flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow-lg">
+          <i class="pi pi-calendar text-blue-500 text-sm"></i>
+          <select class="bg-transparent border-none outline-none text-xs sm:text-sm font-medium text-gray-700">
+            <option>30 dias</option>
+            <option>90 dias</option>
             <option>Este ano</option>
             <option>Personalizado</option>
           </select>
         </div>
         
-        <div class="flex gap-3 w-full sm:w-auto">
-          <button class="action-button bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-xl hover:bg-blue-700 shadow-lg hover:shadow-xl flex items-center gap-2 font-medium">
-            <i class="pi pi-download"></i>
-            <span>Exportar</span>
+        <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
+          <button class="action-button bg-blue-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl hover:bg-blue-700 shadow-lg hover:shadow-xl flex items-center gap-1 sm:gap-2 font-medium text-xs sm:text-sm flex-1 sm:flex-initial">
+            <i class="pi pi-download text-sm"></i>
+            <span class="hidden sm:inline">Exportar</span>
           </button>
-          <button class="action-button glassmorphism text-gray-700 px-4 sm:px-6 py-3 rounded-xl hover:bg-white shadow-lg flex items-center gap-2 font-medium" (click)="updateLastRefreshTime()">
-            <i class="pi pi-refresh"></i>
-            <span>Atualizar</span>
+          <button class="action-button glassmorphism text-gray-700 px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl hover:bg-white shadow-lg flex items-center gap-1 sm:gap-2 font-medium text-xs sm:text-sm flex-1 sm:flex-initial" (click)="onRefreshData()">
+            <i class="pi pi-refresh text-sm"></i>
+            <span class="hidden sm:inline">Atualizar</span>
           </button>
         </div>
       </div>
@@ -43,24 +44,28 @@
   <!-- Conteúdo Principal SCROLLÁVEL -->
   <div class="scrollable-content">
     <!-- Navegação por Abas -->
-    <div class="mb-6 sm:mb-8">
+    <div class="mb-4 sm:mb-8">
       <div class="border-b-2 border-gray-200">
-        <nav class="flex space-x-4 sm:space-x-8 overflow-x-auto">
-          <button class="tab-button active py-3 px-2 text-sm font-semibold text-blue-600 whitespace-nowrap">
-            <i class="pi pi-chart-line mr-2"></i>
-            Financeiro
+        <nav class="flex space-x-2 sm:space-x-8 overflow-x-auto pb-2 -mb-2">
+          <button class="tab-button active py-2 sm:py-3 px-2 text-xs sm:text-sm font-semibold text-blue-600 whitespace-nowrap flex-shrink-0">
+            <i class="pi pi-chart-line mr-1 sm:mr-2 text-xs"></i>
+            <span class="hidden sm:inline">Financeiro</span>
+            <span class="sm:hidden">Fin.</span>
           </button>
-          <button class="tab-button py-3 px-2 text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap">
-            <i class="pi pi-book mr-2"></i>
-            Contábil
+          <button class="tab-button py-2 sm:py-3 px-2 text-xs sm:text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap flex-shrink-0">
+            <i class="pi pi-book mr-1 sm:mr-2 text-xs"></i>
+            <span class="hidden sm:inline">Contábil</span>
+            <span class="sm:hidden">Cont.</span>
           </button>
-          <button class="tab-button py-3 px-2 text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap">
-            <i class="pi pi-money-bill mr-2"></i>
-            Fluxo de Caixa
+          <button class="tab-button py-2 sm:py-3 px-2 text-xs sm:text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap flex-shrink-0">
+            <i class="pi pi-money-bill mr-1 sm:mr-2 text-xs"></i>
+            <span class="hidden sm:inline">Fluxo de Caixa</span>
+            <span class="sm:hidden">Fluxo</span>
           </button>
-          <button class="tab-button py-3 px-2 text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap">
-            <i class="pi pi-bookmark mr-2"></i>
-            Relatórios Salvos
+          <button class="tab-button py-2 sm:py-3 px-2 text-xs sm:text-sm font-semibold text-gray-500 hover:text-gray-700 whitespace-nowrap flex-shrink-0">
+            <i class="pi pi-bookmark mr-1 sm:mr-2 text-xs"></i>
+            <span class="hidden sm:inline">Relatórios Salvos</span>
+            <span class="sm:hidden">Salvos</span>
           </button>
         </nav>
       </div>
