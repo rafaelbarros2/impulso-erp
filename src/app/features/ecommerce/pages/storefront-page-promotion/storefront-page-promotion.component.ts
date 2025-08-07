@@ -7,19 +7,22 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
+import { ThemeService } from '../../../../core/services/theme-service.service';
+import { StoreTheme } from '../../../../core/models';
 import { Router } from '@angular/router';
-import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
-import { BackgroundConfig, BackgroundService } from '../../../../core/services/background.service';
+import { LayoutService } from '../../../../core/services/layout.service';
+import { LayoutType } from '../../../../core/models';
+import { BackgroundService } from '../../../../core/services/background.service';
+import { BackgroundConfig } from '../../../../core/models';
 
 // Importar nossa interface Product correta
-import { BadgeType, Product } from '../../model/product.interface';
+import { OnlineProduct, Product, BadgeType } from '../../../../core/models';
 
 // Importar nossos componentes
 import { StorefrontItemGridComponent } from '../../components/storefront-item-grid/storefront-item-grid.component';
 
 interface CartItem {
-  product: Product;
+  product: OnlineProduct;
   quantity: number;
 }
 
@@ -133,7 +136,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   //     featured: true,
   //   }
   // ];
-  products: Product[] = []; // Removido dados mockados
+  products: OnlineProduct[] = []; // Removido dados mockados
 
   cartItems: CartItem[] = [];
   cartTotalValue = 0;
@@ -141,7 +144,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
 
   // Estado do Quick View
   showQuickView = false;
-  quickViewProduct: Product | null = null;
+  quickViewProduct: OnlineProduct | null = null;
   quickViewQuantity = 1;
 
   // Estado do layout
@@ -199,7 +202,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Adiciona um produto ao carrinho (CORRIGIDO)
    */
-  addToCart(product: Product): void {
+  addToCart(product: OnlineProduct): void {
     // Verifica se produto está em estoque
     if (!product.inStock) {
       this.messageService.add({
@@ -245,7 +248,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Abre o quick view do produto
    */
-  openQuickView(product: Product): void {
+  openQuickView(product: OnlineProduct): void {
     this.quickViewProduct = product;
     this.quickViewQuantity = 1;
     this.showQuickView = true;
@@ -300,21 +303,21 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Verifica se o produto está fora de estoque (CORRIGIDO)
    */
-  isOutOfStock(product: Product): boolean {
+  isOutOfStock(product: OnlineProduct): boolean {
     return !product.inStock;
   }
 
   /**
    * Verifica se produto tem desconto
    */
-  hasDiscount(product: Product): boolean {
+  hasDiscount(product: OnlineProduct): boolean {
     return !!product.oldPrice && product.oldPrice > product.price;
   }
 
   /**
    * Calcula porcentagem de desconto
    */
-  getDiscountPercentage(product: Product): number {
+  getDiscountPercentage(product: OnlineProduct): number {
     if (!this.hasDiscount(product)) return 0;
     return Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100);
   }
@@ -391,30 +394,30 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Produtos em promoção (com desconto)
    */
-  get promotedProducts(): Product[] {
+  get promotedProducts(): OnlineProduct[] {
     return this.products.filter(p => this.hasDiscount(p));
   }
 
   /**
    * Produtos regulares (sem desconto)
    */
-  get regularProducts(): Product[] {
+  get regularProducts(): OnlineProduct[] {
     return this.products.filter(p => !this.hasDiscount(p));
   }
 
   /**
    * Produtos em destaque
    */
-  get featuredProducts(): Product[] {
+  get featuredProducts(): OnlineProduct[] {
     return this.products.filter(p => p.featured);
   }
 
   /**
    * Produtos novos
    */
-  get newProducts(): Product[] {
+  get newProducts(): OnlineProduct[] {
     return this.products.filter(p => 
-      p.badges.some(badge => badge.type === BadgeType.NEW)
+      p.badges && p.badges.some((badge: any) => badge.type === BadgeType.NEW)
     );
   }
 
@@ -423,7 +426,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Manipula clique no produto
    */
-  onProductClick(product: Product): void {
+  onProductClick(product: OnlineProduct): void {
     console.log('Produto clicado:', product.name);
     // Navegar para página do produto
     // this.router.navigate(['/ecommerce/product', product.id]);
@@ -432,7 +435,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Manipula evento de favoritar
    */
-  onFavoriteToggle(product: Product): void {
+  onFavoriteToggle(product: OnlineProduct): void {
     console.log('Produto favoritado:', product.name);
     this.messageService.add({
       severity: 'info',
@@ -445,7 +448,7 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * Manipula evento de comparar
    */
-  onCompareProduct(product: Product): void {
+  onCompareProduct(product: OnlineProduct): void {
     console.log('Produto para comparação:', product.name);
     this.messageService.add({
       severity: 'info',
@@ -458,8 +461,8 @@ export class StorefrontPagePromotionComponent implements OnInit {
   /**
    * TrackBy function para performance
    */
-  trackByProductId(index: number, product: Product): string {
-    return product.id;
+  trackByProductId(index: number, product: OnlineProduct): string {
+    return product.id.toString();
   }
 
   /**
@@ -477,9 +480,9 @@ export class StorefrontPagePromotionComponent implements OnInit {
   }
 
   onImageError(event: Event): void {
-  const img = event.target as HTMLImageElement | null;
-  if (img) {
-    img.src = 'https://placehold.co/600x400/E0E7FF/3B82F6?text=Produto';
+    const img = event.target as HTMLImageElement | null;
+    if (img) {
+      img.src = 'https://placehold.co/600x400/E0E7FF/3B82F6?text=Produto';
+    }
   }
-}
 }

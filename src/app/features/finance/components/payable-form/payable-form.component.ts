@@ -12,8 +12,9 @@ import { ToastModule } from 'primeng/toast';
 import { CalendarModule } from 'primeng/calendar';
 import { finalize } from 'rxjs/operators';
 
-import { FinanceService, Payable } from '../../../../core/services/finance.service';
-import { ClientService, Client } from '../../../../core/services/client.service';
+import { FinanceService } from '../../../../core/services/finance.service';
+import { ClientService } from '../../../../core/services/client.service';
+import { Payable, Client } from '../../../../core/models';
 
 @Component({
   selector: 'app-payable-form',

@@ -3,26 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  user: {
-    id: number;
-    email: string;
-    name: string;
-  };
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-}
+import { AuthCredentials, AuthResponse, User } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -43,8 +24,8 @@ export class AuthService {
     private router: Router
   ) {}
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/users/login`, credentials)
+  login(credentials: AuthCredentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/users/login`, credentials)
       .pipe(
         tap(response => {
           this.setSession(response);
@@ -74,7 +55,7 @@ export class AuthService {
 
   
 
-  private setSession(authResult: LoginResponse): void {
+  private setSession(authResult: AuthResponse): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.tokenKey, authResult.token);
       localStorage.setItem(this.userKey, JSON.stringify(authResult.user));

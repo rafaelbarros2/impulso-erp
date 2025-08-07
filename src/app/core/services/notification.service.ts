@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
-
-export interface NotificationOptions {
-  life?: number;
-  closable?: boolean;
-  data?: any;
-}
+import { NotificationOptions } from '../models';
 
 @Injectable({
   providedIn: 'root'

@@ -1,16 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface Permission {
-  id: string; // e.g., 'dashboard.view', 'products.edit'
-  description: string;
-}
-
-export interface RolePermissions {
-  role: 'Admin' | 'Manager' | 'Employee';
-  permissions: string[]; // Array of permission IDs
-}
+import { Permission, RolePermissions } from '../models';
 
 @Injectable({
   providedIn: 'root'

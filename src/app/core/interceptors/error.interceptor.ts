@@ -5,20 +5,7 @@ import { catchError, retry } from 'rxjs/operators';
 import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-
-export interface ApiErrorResponse {
-  status: number;
-  error: string;
-  message: string;
-  path: string;
-  timestamp: string;
-  errorCode?: string;
-  fieldErrors?: Array<{
-    field: string;
-    rejectedValue: any;
-    message: string;
-  }>;
-}
+import { ApiErrorResponse } from '../models';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {

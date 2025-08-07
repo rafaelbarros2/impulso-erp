@@ -1,9 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface LoadingState {
-  [key: string]: boolean;
-}
+import { LoadingState } from '../models';
 
 @Injectable({
   providedIn: 'root'

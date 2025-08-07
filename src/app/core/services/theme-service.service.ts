@@ -1,19 +1,5 @@
 import { Injectable, signal, Signal } from '@angular/core';
-
-// Interface para definir a estrutura de um tema
-export interface StoreTheme {
-  id: string;
-  name: string;
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  backgroundColor: string;
-  cardBackground: string;
-  textColor: string;
-  fontFamily: string;
-  backgroundImage?: string; // URL da imagem de fundo (opcional)
-  cardStyle?: 'default' | 'minimal' | 'bordered' | 'glassmorphism'; // Estilo do card
-}
+import { StoreTheme } from '../models';
 
 @Injectable({
   providedIn: 'root'

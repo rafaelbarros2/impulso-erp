@@ -8,21 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
-interface OrderItem {
-  name: string;
-  sku: string;
-  quantity: number;
-  price: number;
-}
+import { Order, OrderItem } from '../../../../core/models';
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  clientName: string;
-  totalAmount: number;
-  orderDate: Date;
+interface OrderDisplay extends Omit<Order, 'status'> {
   status: 'Novo' | 'Separacao' | 'Embalagem' | 'Enviado' | 'Entregue' | 'Cancelado';
-  items: OrderItem[];
 }
 
 @Component({

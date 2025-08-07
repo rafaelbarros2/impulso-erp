@@ -12,8 +12,8 @@ export * from './pipes/price.pipe';
 // Validators
 export * from './validators/custom-validators';
 
-// Interfaces
-export * from './interfaces/common.interface';
+// Interfaces - now centralized in core/models
+export * from '../core/models';
 
 // Utils (when created)
 // export * from './utils/...';

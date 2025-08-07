@@ -9,19 +9,8 @@ import { RippleModule } from 'primeng/ripple';
 // Services
 import { LayoutService } from '../../../../core/services/layout.service';
 
-export interface CategoryItem {
-  id: string;
-  name: string;
-  description?: string;
-  icon?: string;
-  image?: string;
-  itemCount?: number;
-  featured?: boolean;
-  color?: string;
-  route?: string;
-}
-
-export type StoreType = 'fashion' | 'tech' | 'beauty' | 'marketplace' | 'food' | 'home';
+// Models
+import { CategoryItem, StoreType } from '../../../../core/models';
 
 @Component({
   selector: 'app-storefront-categories',

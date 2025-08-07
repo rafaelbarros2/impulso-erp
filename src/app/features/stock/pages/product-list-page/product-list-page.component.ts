@@ -14,21 +14,11 @@ import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 import { LoadingService } from '../../../../core/services/loading.service';
 import { ProductService } from '../../../../core/services/product.service';
+import { Product } from '../../../../core/models';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
 import { finalize } from 'rxjs/operators';
 
-interface Product {
-  id?: number;
-  name: string;
-  description?: string;
-  sku: string;
-  category?: string;
-  priceCost: number;
-  priceSale: number;
-  stockQuantity: number;
-  minStock: number;
-  imageUrl?: string;
-  active?: boolean;
+interface ProductDisplay extends Product {
   status?: 'Em Estoque' | 'Baixo Estoque' | 'Esgotado';
 }
 

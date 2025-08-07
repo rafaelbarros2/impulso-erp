@@ -1,16 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface Client {
-  id?: number;
-  name: string;
-  email?: string;
-  phone?: string;
-  cpfCnpj?: string;
-  address?: string;
-  active?: boolean;
-}
+import { Client } from '../models';
 
 @Injectable({
   providedIn: 'root'

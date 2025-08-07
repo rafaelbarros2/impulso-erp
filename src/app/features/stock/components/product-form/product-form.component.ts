@@ -14,7 +14,7 @@ import { MultiSelectModule } from 'primeng/multiselect'; // Adicionado para Mult
 import { HttpClientModule } from '@angular/common/http';
 import { ProductService } from '../../../../core/services/product.service';
 import { FormValidationService } from '../../../../core/services/form-validation.service';
-import { Product } from '../../../../core/services/product-state.service';
+import { Product } from '../../../../core/models';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -176,7 +176,9 @@ export class ProductFormComponent implements OnInit, OnDestroy {
           stockQuantity: product.stockQuantity,
           minStock: product.minStock,
           imageUrl: product.imageUrl,
-          active: product.active
+          active: product.active,
+          unitOfMeasure: product.unitOfMeasure || 'UN',
+          taxable: product.taxable || false
         };
         this.currentProduct.set(productData);
         this.isLoading.set(false);
@@ -212,6 +214,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
     const productData: Product = {
+      id: this.isEditMode() ? this.currentProduct()!.id : 0,
       name: this.productForm.value.name,
       description: this.productForm.value.description,
       sku: this.productForm.value.sku,
@@ -220,7 +223,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       priceSale: this.productForm.value.priceSale,
       stockQuantity: this.productForm.value.stockQuantity,
       minStock: this.productForm.value.minStock,
-      imageUrl: this.productForm.value.imageUrl
+      imageUrl: this.productForm.value.imageUrl,
+      unitOfMeasure: this.productForm.value.unitOfMeasure || 'UN',
+      active: this.productForm.value.active !== false,
+      taxable: this.productForm.value.taxable || false
     };
 
     const operation = this.isEditMode() 

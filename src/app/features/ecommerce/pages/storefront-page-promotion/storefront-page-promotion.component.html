@@ -208,12 +208,13 @@
   >
     <div class="modal-content" *ngIf="quickViewProduct">
       <div class="modal-image-container">
-        <img 
-          [src]="quickViewProduct.image" 
-          [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
-          class="modal-product-image"
-          (error)="onImageError($event)"
-        />
+      <img 
+        [src]="quickViewProduct.image" 
+        [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
+        class="modal-product-image"
+        (error)="onImageError($event)"
+      />
+
         
         <!-- Badges do produto -->
         <div class="modal-badges" *ngIf="quickViewProduct.badges && quickViewProduct.badges.length > 0">

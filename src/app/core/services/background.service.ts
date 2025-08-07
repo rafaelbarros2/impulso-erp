@@ -1,22 +1,5 @@
 import { Injectable, signal, Signal, effect } from '@angular/core';
-
-// Interface para definir a estrutura de um background
-export interface BackgroundConfig {
-  id: string;
-  name: string;
-  type: 'solid' | 'gradient' | 'pattern' | 'image' | 'custom';
-  value?: string; // CSS value (gradient, url, color, etc.)
-  overlayOpacity?: number;
-  overlayColor?: string;
-  backgroundSize?: string;
-  backgroundPosition?: string;
-  backgroundRepeat?: string;
-  backgroundAttachment?: string;
-}
-
-// Tipos de background disponíveis
-export type BackgroundType = 'default' | 'gradient-1' | 'gradient-2' | 'gradient-3' | 
-                            'pattern-1' | 'pattern-2' | 'image-1' | 'image-2' | 'image-3' | 'custom';
+import { BackgroundConfig, BackgroundType } from '../models';
 
 @Injectable({
   providedIn: 'root'
