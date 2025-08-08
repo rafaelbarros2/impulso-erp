@@ -7,7 +7,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { ThemeService } from '../../../../core/services/theme-service.service';
+import { ThemeService } from '../../../../core/services/legacy-theme.service';
 import { StoreTheme } from '../../../../core/models';
 import { Router } from '@angular/router';
 import { LayoutService } from '../../../../core/services/layout.service';

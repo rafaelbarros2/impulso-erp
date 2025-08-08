@@ -20,7 +20,7 @@ import { StorefrontHeroComponent } from '../../components/storefront-hero/storef
 import { StorefrontCategoriesComponent } from '../../components/storefront-categories/storefront-categories.component';
 import { StorefrontItemGridComponent } from '../../components/storefront-item-grid/storefront-item-grid.component';
 import { OnlineProduct, CartItem, BadgeType, LayoutType, StoreTheme } from '../../../../core/models';
-import { ThemeService } from '../../../../core/services/theme-service.service';
+import { ThemeService } from '../../../../core/services/legacy-theme.service';
 
 @Component({
   selector: 'app-storefront-page',

@@ -8,6 +8,7 @@ import { LoadingService } from '../../../../core/services/loading.service';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
 import { DashboardService, DashboardData } from '../../../../core/services/dashboard.service';
 import { finalize } from 'rxjs/operators';
+import { ThemeTestComponent } from '../../../../core/components/theme-test.component';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -19,7 +20,8 @@ import { finalize } from 'rxjs/operators';
     ActivityFeedComponent,
     CategoryChartComponent,
     SkeletonLoaderComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    ThemeTestComponent
 ],
   templateUrl: './dashboard-page.component.html',
 })

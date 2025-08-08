@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetect
 import { CommonModule } from '@angular/common';
 
 // Services
-import { ThemeService } from '../../../../core/services/theme-service.service';
+import { ThemeService } from '../../../../core/services/legacy-theme.service';
 import { BackgroundService } from '../../../../core/services/background.service';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { StoreTheme, BackgroundConfig, LayoutType } from '../../../../core/models';

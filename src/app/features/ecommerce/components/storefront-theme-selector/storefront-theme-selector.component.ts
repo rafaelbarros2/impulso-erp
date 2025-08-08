@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
-import { ThemeService } from '../../../../core/services/theme-service.service';
+import { ThemeService } from '../../../../core/services/legacy-theme.service';
 import { StoreTheme } from '../../../../core/models';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';

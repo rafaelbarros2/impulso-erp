@@ -11,6 +11,7 @@ export * from './app.model';
 export * from './ecommerce.model';
 export * from './state.model';
 export * from './store.model';
+export * from './theme.model';
 
 // Type aliases for convenience
 export type ID = number | string;

@@ -210,8 +210,8 @@
       <div class="modal-image-container">
       <img 
         *ngIf="quickViewProduct"
-        [src]="quickViewProduct?.image" 
-        [alt]="quickViewProduct?.imageAlt || quickViewProduct?.name" 
+        [src]="quickViewProduct.image" 
+        [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
         class="modal-product-image"
         (error)="onImageError($event)"
       />
