@@ -1,4 +1,5 @@
 import { BaseEntity } from './core.model';
+import { Store } from './store.model';
 
 export interface User extends BaseEntity {
   id: number;
@@ -10,6 +11,7 @@ export interface User extends BaseEntity {
   permissions: string[];
   active: boolean;
   lastLogin?: Date;
+  store?: Store;
 }
 
 export interface AuthCredentials {

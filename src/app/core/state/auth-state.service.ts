@@ -119,4 +119,8 @@ export class AuthStateService extends BaseStateService<AuthState> {
   getStateSnapshot(): AuthState {
     return this.state();
   }
+
+  getCurrentUser(): User | null {
+    return this.state().user;
+  }
 }

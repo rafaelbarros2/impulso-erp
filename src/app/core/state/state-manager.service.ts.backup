@@ -7,6 +7,7 @@ import {
   UIState,
   ProductFilters,
   FinancialReport,
+  FinancialReport,
   ClientFilters,
   CartItem
 } from '../models';
@@ -36,7 +37,7 @@ export class StateManagerService {
         status: 'all' as const
       },
       currentPage: 0,
-      pageSize: 10,
+      pageSize: 0,
       loading: false,
       error: null,
       lastUpdated: null
@@ -54,7 +55,7 @@ export class StateManagerService {
       },
       categories: [],
       currentPage: 0,
-      pageSize: 10,
+      pageSize: 0,
       loading: false,
       error: null,
       lastUpdated: null
@@ -81,32 +82,14 @@ export class StateManagerService {
           start: null,
           end: null
         },
-        clientId: undefined
+        clientId: ''
       },
       stats: {
-        totalOrders: 0,
-        totalRevenue: 0,
-        averageOrderValue: 0,
-        ordersByStatus: {
-          pending: 0,
-          confirmed: 0,
-          preparing: 0,
-          ready: 0,
-          shipped: 0,
-          delivered: 0,
-          cancelled: 0,
-          refunded: 0
-        },
-        ordersByPaymentStatus: {
-          pending: 0,
-          paid: 0,
-          refunded: 0,
-          failed: 0
-        },
-        ordersBySource: {},
-        monthlyRevenue: [],
-        topProducts: [],
-        topClients: []
+        total: 0,
+        pending: 0,
+        confirmed: 0,
+        delivered: 0,
+        cancelled: 0
       },
       currentPage: 0,
       pageSize: 10,
@@ -151,7 +134,6 @@ export class StateManagerService {
         isOpen: true,
         isCollapsed: false
       },
-      loading: false,
       loadingState: {
         global: false,
         components: {}
@@ -166,7 +148,7 @@ export class StateManagerService {
         numberFormat: 'pt-BR',
         theme: 'light',
         sidebar: {
-          defaultOpen: true,
+          defaultOpen: false,
           defaultCollapsed: false
         },
         notifications: {
@@ -181,6 +163,10 @@ export class StateManagerService {
           denseMode: false,
           showBorders: true
         }
+      },
+      loadingState: {
+        global: false,
+        components: {}
       },
       layout: {
         header: { fixed: true, height: 64 },
@@ -446,10 +432,10 @@ export class StateManagerService {
       ...state,
       ui: {
         ...state.ui,
-        loadingState: {
-          ...state.ui.loadingState,
+        loading: {
+          ...(typeof state.ui['loading'] === 'object' && state.ui['loading'] !== null ? state.ui['loading'] : {}),
           components: {
-            ...state.ui.loadingState.components,
+            ...(state.ui['loading'] && typeof state.ui['loading'] === 'object' && 'components' in state.ui['loading'] ? state.ui['loading']['components'] : {}),
             [component]: loading
           }
         }
@@ -462,15 +448,15 @@ export class StateManagerService {
       ...state,
       ui: {
         ...state.ui,
-        loadingState: {
-          ...state.ui.loadingState,
+        loading: {
+          ...state.ui.loading,
           global: loading
         }
       }
     }));
   }
 
-  addNotification(notification: any): void {
+  addNotification(notification: Omit<Notification, 'id' | 'timestamp'>): void {
     this.state.update(state => ({
       ...state,
       ui: {
@@ -481,6 +467,8 @@ export class StateManagerService {
             ...notification,
             id: Date.now().toString(),
             timestamp: new Date(),
+            type: 'error',
+            message: '',
             read: false
           }
         ]
@@ -518,14 +506,14 @@ export class StateManagerService {
   reset(): void {
     this.state.set({
       auth: {
-        loading: false,
-        error: null,
-        lastUpdated: null,
         isAuthenticated: false,
         user: null,
         token: null,
         permissions: [],
-        roles: []
+        roles: [],
+        loading: false,
+        error: null,
+        lastUpdated: null
       },
       clients: {
         clients: [],
@@ -537,7 +525,7 @@ export class StateManagerService {
           status: 'all' as const
         },
         currentPage: 0,
-        pageSize: 10,
+        pageSize: 0,
         loading: false,
         error: null,
         lastUpdated: null
@@ -555,7 +543,7 @@ export class StateManagerService {
         },
         categories: [],
         currentPage: 0,
-        pageSize: 10,
+        pageSize: 0,
         loading: false,
         error: null,
         lastUpdated: null
@@ -582,32 +570,14 @@ export class StateManagerService {
             start: null,
             end: null
           },
-          clientId: undefined
+          clientId: ''
         },
         stats: {
-          totalOrders: 0,
-          totalRevenue: 0,
-          averageOrderValue: 0,
-          ordersByStatus: {
-            pending: 0,
-            confirmed: 0,
-            preparing: 0,
-            ready: 0,
-            shipped: 0,
-            delivered: 0,
-            cancelled: 0,
-            refunded: 0
-          },
-          ordersByPaymentStatus: {
-            pending: 0,
-            paid: 0,
-            refunded: 0,
-            failed: 0
-          },
-          ordersBySource: {},
-          monthlyRevenue: [],
-          topProducts: [],
-          topClients: []
+          total: 0,
+          pending: 0,
+          confirmed: 0,
+          delivered: 0,
+          cancelled: 0
         },
         currentPage: 0,
         pageSize: 10,
@@ -619,6 +589,105 @@ export class StateManagerService {
         payables: [],
         receivables: [],
         reports: [],
+          length: 0,
+          pop: function (): FinancialReport | undefined {
+            throw new Error('Function not implemented.');
+          },
+          push: function (...items: FinancialReport[]): number {
+            throw new Error('Function not implemented.');
+          },
+          concat: function (...items: ConcatArray<FinancialReport>[]): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          join: function (separator?: string): string {
+            throw new Error('Function not implemented.');
+          },
+          reverse: function (): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          shift: function (): FinancialReport | undefined {
+            throw new Error('Function not implemented.');
+          },
+          slice: function (start?: number, end?: number): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          sort: function (compareFn?: ((a: FinancialReport, b: FinancialReport) => number) | undefined): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          splice: function (start: number, deleteCount?: number): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          unshift: function (...items: FinancialReport[]): number {
+            throw new Error('Function not implemented.');
+          },
+          indexOf: function (searchElement: FinancialReport, fromIndex?: number): number {
+            throw new Error('Function not implemented.');
+          },
+          lastIndexOf: function (searchElement: FinancialReport, fromIndex?: number): number {
+            throw new Error('Function not implemented.');
+          },
+          every: function <S extends FinancialReport>(predicate: (value: FinancialReport, index: number, array: FinancialReport[]) => value is S, thisArg?: any): this is S[] {
+            throw new Error('Function not implemented.');
+          },
+          some: function (predicate: (value: FinancialReport, index: number, array: FinancialReport[]) => unknown, thisArg?: any): boolean {
+            throw new Error('Function not implemented.');
+          },
+          forEach: function (callbackfn: (value: FinancialReport, index: number, array: FinancialReport[]) => void, thisArg?: any): void {
+            throw new Error('Function not implemented.');
+          },
+          map: function <U>(callbackfn: (value: FinancialReport, index: number, array: FinancialReport[]) => U, thisArg?: any): U[] {
+            throw new Error('Function not implemented.');
+          },
+          filter: function <S extends FinancialReport>(predicate: (value: FinancialReport, index: number, array: FinancialReport[]) => value is S, thisArg?: any): S[] {
+            throw new Error('Function not implemented.');
+          },
+          reduce: function (callbackfn: (previousValue: FinancialReport, currentValue: FinancialReport, currentIndex: number, array: FinancialReport[]) => FinancialReport): FinancialReport {
+            throw new Error('Function not implemented.');
+          },
+          reduceRight: function (callbackfn: (previousValue: FinancialReport, currentValue: FinancialReport, currentIndex: number, array: FinancialReport[]) => FinancialReport): FinancialReport {
+            throw new Error('Function not implemented.');
+          },
+          find: function <S extends FinancialReport>(predicate: (value: FinancialReport, index: number, obj: FinancialReport[]) => value is S, thisArg?: any): S | undefined {
+            throw new Error('Function not implemented.');
+          },
+          findIndex: function (predicate: (value: FinancialReport, index: number, obj: FinancialReport[]) => unknown, thisArg?: any): number {
+            throw new Error('Function not implemented.');
+          },
+          fill: function (value: FinancialReport, start?: number, end?: number): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          copyWithin: function (target: number, start: number, end?: number): FinancialReport[] {
+            throw new Error('Function not implemented.');
+          },
+          entries: function (): ArrayIterator<[number, FinancialReport]> {
+            throw new Error('Function not implemented.');
+          },
+          keys: function (): ArrayIterator<number> {
+            throw new Error('Function not implemented.');
+          },
+          values: function (): ArrayIterator<FinancialReport> {
+            throw new Error('Function not implemented.');
+          },
+          includes: function (searchElement: FinancialReport, fromIndex?: number): boolean {
+            throw new Error('Function not implemented.');
+          },
+          flatMap: function <U, This = undefined>(callback: (this: This, value: FinancialReport, index: number, array: FinancialReport[]) => U | readonly U[], thisArg?: This | undefined): U[] {
+            throw new Error('Function not implemented.');
+          },
+          flat: function <A, D extends number = 1>(this: A, depth?: D | undefined): FlatArray<A, D>[] {
+            throw new Error('Function not implemented.');
+          },
+          at: function (index: number): FinancialReport | undefined {
+            throw new Error('Function not implemented.');
+          },
+          [Symbol.iterator]: function (): ArrayIterator<FinancialReport> {
+            throw new Error('Function not implemented.');
+          },
+          [Symbol
+            // UI state
+            .
+            unscopables]: undefined
+        },
         summary: {
           totalReceivables: 0,
           totalPayables: 0,
@@ -631,20 +700,7 @@ export class StateManagerService {
           pendingPayables: 0,
           projectedRevenue: 0,
           projectedExpenses: 0
-        },
-        filters: {
-          dateRange: {
-            start: null,
-            end: null
-          },
-          status: 'all' as const,
-          type: 'all' as const
-        },
-        currentPage: 0,
-        pageSize: 10,
-        loading: false,
-        error: null,
-        lastUpdated: null
+        }
       },
       ui: {
         theme: 'light',
@@ -653,42 +709,37 @@ export class StateManagerService {
           isCollapsed: false
         },
         loading: false,
-        loadingState: {
-          global: false,
-          components: {}
-        },
         notifications: [],
         modals: {},
         preferences: {
           language: 'pt-BR',
           dateFormat: 'DD/MM/YYYY',
           timezone: 'America/Sao_Paulo',
-          currency: 'BRL',
-          numberFormat: 'pt-BR',
+          currency: '',
+          numberFormat: '',
           theme: 'light',
           sidebar: {
-            defaultOpen: true,
+            defaultOpen: false,
             defaultCollapsed: false
           },
           notifications: {
-            enabled: true,
+            enabled: false,
             sound: false,
             desktop: false,
-            autoClose: true,
-            defaultDuration: 3000
+            autoClose: false,
+            defaultDuration: 0
           },
           table: {
-            defaultPageSize: 10,
+            defaultPageSize: 0,
             denseMode: false,
-            showBorders: true
+            showBorders: false
           }
         },
-        layout: {
-          header: { fixed: true, height: 64 },
-          sidebar: { fixed: true, width: 256, collapsedWidth: 64 },
-          footer: { fixed: false, height: 48 },
-          content: { padding: 16 }
+        loadingState: {
+          global: false,
+          components: undefined
         },
+        layout: undefined,
         error: null,
         lastUpdated: null
       }

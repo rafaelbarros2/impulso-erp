@@ -10,6 +10,7 @@ export * from './ui.model';
 export * from './app.model';
 export * from './ecommerce.model';
 export * from './state.model';
+export * from './store.model';
 
 // Type aliases for convenience
 export type ID = number | string;

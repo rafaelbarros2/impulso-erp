@@ -4,16 +4,18 @@ import { Observable, of } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
 
 import { UserService, User } from '../../../../core/services/user.service';
+import { StoreService } from '../../../../core/services/store.service';
+import { AuthStateService } from '../../../../core/state/auth-state.service';
 import { LoadingSpinnerComponent } from '../../../../shared';
-import { UserFormComponent } from '../user-form/user-form.component';
+import { StoreUser } from '../../../../core/models/store.model';
 
 @Component({
   selector: 'app-users-settings',
@@ -26,25 +28,25 @@ import { UserFormComponent } from '../user-form/user-form.component';
     ConfirmDialogModule,
     CardModule,
     TooltipModule,
-    LoadingSpinnerComponent,
-    UserFormComponent
+    TagModule,
+    LoadingSpinnerComponent
   ],
-  providers: [DialogService, ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './users-settings.component.html',
   styleUrls: ['./users-settings.component.scss']
 })
 export class UsersSettingsComponent implements OnInit {
-  users$: Observable<User[]> | undefined;
+  users$: Observable<StoreUser[]> | undefined;
   isLoading = false;
   error: string | null = null;
+  currentStoreId: string | null = null;
 
   cols: { field: string; header: string }[];
 
-  private dialogRef: DynamicDialogRef | undefined;
-
   constructor(
     private userService: UserService,
-    private dialogService: DialogService,
+    private storeService: StoreService,
+    private authState: AuthStateService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
@@ -52,7 +54,7 @@ export class UsersSettingsComponent implements OnInit {
       { field: 'name', header: 'Nome' },
       { field: 'email', header: 'Email' },
       { field: 'role', header: 'Função' },
-      { field: 'active', header: 'Status' },
+      { field: 'isActive', header: 'Status' },
       { field: 'actions', header: 'Ações' }
     ];
   }
@@ -62,9 +64,18 @@ export class UsersSettingsComponent implements OnInit {
   }
 
   loadUsers(): void {
+    const currentUser = this.authState.getCurrentUser();
+    if (!currentUser?.store?.subdomain) {
+      this.error = 'Usuário não possui loja associada';
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.error });
+      return;
+    }
+
+    this.currentStoreId = currentUser.store.subdomain;
     this.isLoading = true;
     this.error = null;
-    this.users$ = this.userService.getUsers().pipe(
+    
+    this.users$ = this.storeService.getStoreUsers(this.currentStoreId).pipe(
       tap(() => this.isLoading = false),
       catchError(err => {
         this.isLoading = false;
@@ -75,26 +86,16 @@ export class UsersSettingsComponent implements OnInit {
     );
   }
 
-  openUserDialog(user?: User): void {
-    const header = user ? 'Editar Usuário' : 'Novo Usuário';
-    this.dialogRef = this.dialogService.open(UserFormComponent, {
-      header,
-      width: '500px',
-      contentStyle: { 'max-height': '90vh', 'overflow': 'auto' },
-      baseZIndex: 10000,
-      data: { user }
-    });
-
-    this.dialogRef.onClose.subscribe((result) => {
-      if (result) {
-        this.loadUsers();
-        const summary = user ? 'Usuário atualizado com sucesso' : 'Usuário criado com sucesso';
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: summary });
-      }
+  openUserDialog(user?: StoreUser): void {
+    // TODO: Implement user dialog functionality
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Info',
+      detail: 'Funcionalidade de edição de usuário será implementada em breve'
     });
   }
 
-  deleteUser(user: User): void {
+  deleteUser(user: StoreUser): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir o usuário ${user.name}?`,
       header: 'Confirmar Exclusão',
@@ -103,7 +104,7 @@ export class UsersSettingsComponent implements OnInit {
       rejectLabel: 'Não',
       accept: () => {
         this.isLoading = true;
-        this.userService.deleteUser(user.id!)
+        this.storeService.deleteUser(user.id)
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({
             next: () => {
@@ -116,5 +117,23 @@ export class UsersSettingsComponent implements OnInit {
           });
       }
     });
+  }
+
+  getRoleSeverity(role: string): 'success' | 'info' | 'warning' | 'danger' {
+    switch (role) {
+      case 'ADMIN': return 'danger';
+      case 'MANAGER': return 'warning';
+      case 'USER': return 'info';
+      default: return 'info';
+    }
+  }
+
+  getRoleLabel(role: string): string {
+    switch (role) {
+      case 'ADMIN': return 'Administrador';
+      case 'MANAGER': return 'Gerente';
+      case 'USER': return 'Usuário';
+      default: return role;
+    }
   }
 }

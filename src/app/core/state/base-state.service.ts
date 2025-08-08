@@ -1,8 +1,8 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
-import { BaseState, StateOperations } from '../models';
+import { Injectable, signal, computed, effect, WritableSignal } from '@angular/core';
+import { BaseState } from '../models';
 
 export abstract class BaseStateService<TState extends BaseState> {
-  protected abstract state: signal<TState>;
+  protected abstract state: WritableSignal<TState>;
   
   // Common computed signals
   readonly loading = computed(() => this.state().loading);
@@ -12,11 +12,11 @@ export abstract class BaseStateService<TState extends BaseState> {
   
   // Common actions
   protected setLoading(loading: boolean): void {
-    this.state.update(state => ({ ...state, loading }));
+    this.state.update((state: TState) => ({ ...state, loading }));
   }
   
   protected setError(error: string | null): void {
-    this.state.update(state => ({ 
+    this.state.update((state: TState) => ({ 
       ...state, 
       error, 
       loading: false,
@@ -25,11 +25,11 @@ export abstract class BaseStateService<TState extends BaseState> {
   }
   
   protected clearError(): void {
-    this.state.update(state => ({ ...state, error: null }));
+    this.state.update((state: TState) => ({ ...state, error: null }));
   }
   
   protected updateLastUpdated(): void {
-    this.state.update(state => ({ ...state, lastUpdated: new Date() }));
+    this.state.update((state: TState) => ({ ...state, lastUpdated: new Date() }));
   }
   
   // Abstract methods to be implemented by child classes

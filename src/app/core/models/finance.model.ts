@@ -161,23 +161,45 @@ export interface RecurringTransaction {
 }
 
 export interface FinancialReport {
-  period: {
-    start: Date;
-    end: Date;
-  };
-  summary: FinanceSummary;
-  payables: Payable[];
-  receivables: Receivable[];
-  payments: Payment[];
-  categories: Array<{
-    name: string;
-    payableAmount: number;
-    receivableAmount: number;
+  totalReceivables: number;
+  totalPayables: number;
+  netCashFlow: number;
+  receivablesByStatus: Array<{
+    status: string;
     count: number;
+    totalAmount: number;
+    percentage: number;
+    items: Array<{
+      receivableId: string;
+      clientName: string;
+      description: string;
+      amount: number;
+      dueDate: string;
+      paidDate?: string;
+      status: string;
+      daysOverdue?: number;
+    }>;
   }>;
-  trends: {
-    revenue: Array<{ date: string; amount: number }>;
-    expenses: Array<{ date: string; amount: number }>;
-    balance: Array<{ date: string; amount: number }>;
-  };
+  payablesByStatus: Array<{
+    status: string;
+    count: number;
+    totalAmount: number;
+    percentage: number;
+    items: Array<{
+      payableId: string;
+      description: string;
+      amount: number;
+      dueDate: string;
+      paidDate?: string;
+      status: string;
+      daysOverdue?: number;
+    }>;
+  }>;
+  cashFlowByPeriod: Array<{
+    date: string;
+    income: number;
+    expenses: number;
+    balance: number;
+    cumulativeBalance: number;
+  }>;
 }

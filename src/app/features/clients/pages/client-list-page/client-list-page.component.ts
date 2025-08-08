@@ -84,8 +84,10 @@ export class ClientListPageComponent implements OnInit {
       })
     ).subscribe({
       next: (clients: Client[]) => {
+        // Ensure clients is an array before mapping
+        const clientsArray = Array.isArray(clients) ? clients : [];
         // Map the clients to include status property for display
-        this.clients = clients.map((client: Client) => ({
+        this.clients = clientsArray.map((client: Client) => ({
           ...client,
           status: client.active ? 'Ativo' : 'Inativo' as 'Ativo' | 'Inativo' | 'Potencial'
         }));

@@ -2,6 +2,7 @@ import { BaseEntity } from './core.model';
 import { DeliveryAddress } from './order.model';
 
 export interface CartItem extends BaseEntity {
+  price: number;
   id: number;
   productId: number;
   product: {

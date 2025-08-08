@@ -32,10 +32,13 @@
           <tr>
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.field">
-                <ng-container *ngSwitchCase="'active'">
-                  <span [ngClass]="{'bg-green-100 text-green-800': user.active, 'bg-red-100 text-red-800': !user.active}" class="px-2 py-1 rounded-full text-xs font-medium">
-                    {{ user.active ? 'Ativo' : 'Inativo' }}
+                <ng-container *ngSwitchCase="'isActive'">
+                  <span [ngClass]="{'bg-green-100 text-green-800': user.isActive, 'bg-red-100 text-red-800': !user.isActive}" class="px-2 py-1 rounded-full text-xs font-medium">
+                    {{ user.isActive ? 'Ativo' : 'Inativo' }}
                   </span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'role'">
+                  <p-tag [value]="getRoleLabel(user.role)" [severity]="getRoleSeverity(user.role)"></p-tag>
                 </ng-container>
                 <ng-container *ngSwitchCase="'actions'">
                   <div class="flex gap-2">

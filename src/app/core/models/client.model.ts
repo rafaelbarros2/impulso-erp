@@ -23,7 +23,7 @@ export interface Client extends BaseEntity {
 export interface ClientFilters {
   search?: string;
   category?: string;
-  status?: 'all' | 'active' | 'inactive';
+  status?: 'all' | 'active' | 'inactive' | '';
   city?: string;
   state?: string;
   dateRange?: {

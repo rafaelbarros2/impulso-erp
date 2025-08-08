@@ -209,11 +209,13 @@
     <div class="modal-content" *ngIf="quickViewProduct">
       <div class="modal-image-container">
       <img 
-        [src]="quickViewProduct.image" 
-        [alt]="quickViewProduct.imageAlt || quickViewProduct.name" 
+        *ngIf="quickViewProduct"
+        [src]="quickViewProduct?.image" 
+        [alt]="quickViewProduct?.imageAlt || quickViewProduct?.name" 
         class="modal-product-image"
         (error)="onImageError($event)"
       />
+
 
         
         <!-- Badges do produto -->

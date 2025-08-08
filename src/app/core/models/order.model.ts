@@ -65,7 +65,7 @@ export interface DeliveryAddress {
 }
 
 export interface OrderFilters {
-  status?: OrderStatus | 'all';
+  status?: OrderStatus | 'all' | '';
   paymentStatus?: PaymentStatus | 'all';
   clientId?: number;
   dateRange?: {
