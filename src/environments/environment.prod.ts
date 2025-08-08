@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api' // Change this to your production API URL
+  apiUrl: (import.meta as any).env['NG_APP_API_URL'] ?? 'http://localhost:8080/api'
 };
