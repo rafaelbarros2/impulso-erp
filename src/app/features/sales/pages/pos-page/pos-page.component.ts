@@ -181,7 +181,7 @@ export class PosPageComponent implements OnInit {
   ngOnInit(): void {
     // Focus on search input when component loads
     setTimeout(() => {
-      if (this.searchInputRef) {
+      if (this.searchInputRef && this.searchInputRef.nativeElement) {
         this.searchInputRef.nativeElement.focus();
       }
     }, 100);

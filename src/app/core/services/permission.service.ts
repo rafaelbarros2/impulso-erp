@@ -1,16 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface Permission {
-  id: string; // e.g., 'dashboard.view', 'products.edit'
-  description: string;
-}
-
-export interface RolePermissions {
-  role: 'Admin' | 'Manager' | 'Employee';
-  permissions: string[]; // Array of permission IDs
-}
+import { Permission, Role } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +13,11 @@ export class PermissionService extends BaseApiService {
     return this.get<Permission[]>(this.endpoint);
   }
 
-  getRolePermissions(): Observable<RolePermissions[]> {
-    return this.get<RolePermissions[]>(`${this.endpoint}/roles`);
+  getRoles(): Observable<Role[]> {
+    return this.get<Role[]>(`${this.endpoint}/roles`);
   }
 
-  updateRolePermissions(rolePermissions: RolePermissions): Observable<RolePermissions> {
-    return this.put<RolePermissions>(`${this.endpoint}/roles/${rolePermissions.role}`, rolePermissions);
+  updateRole(role: Role): Observable<Role> {
+    return this.put<Role>(`${this.endpoint}/roles/${role.id}`, role);
   }
 }

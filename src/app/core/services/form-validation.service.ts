@@ -1,10 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
-
-export interface FieldError {
-  field: string;
-  message: string;
-}
+import { FormFieldError } from '../models';
 
 export interface ValidationState {
   hasErrors: boolean;
@@ -31,7 +27,7 @@ export class FormValidationService {
   /**
    * Applies server-side validation errors to a form
    */
-  applyServerValidationErrors(form: FormGroup, fieldErrors: FieldError[], generalError?: string): void {
+  applyServerValidationErrors(form: FormGroup, fieldErrors: FormFieldError[], generalError?: string): void {
     const errors: Record<string, string> = {};
     const generalErrors: string[] = generalError ? [generalError] : [];
 

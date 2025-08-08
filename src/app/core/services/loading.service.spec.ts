@@ -190,17 +190,17 @@ describe('LoadingService', () => {
     expect(LoadingService.KEYS.CREATING_PRODUCT).toBe('creating-product');
     expect(LoadingService.KEYS.DELETING_PRODUCT).toBe('deleting-product');
   });
-
-  // Helper methods for testing
-  private simulateApiCall() {
-    return new Promise(resolve => {
-      setTimeout(() => resolve('api-result'), 100);
-    });
-  }
-
-  private simulateApiError() {
-    return new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('API Error')), 100);
-    });
-  }
 });
+
+// Helper functions for testing
+function simulateApiCall() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve('api-result'), 100);
+  });
+}
+
+function simulateApiError() {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('API Error')), 100);
+  });
+}

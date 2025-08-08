@@ -1,25 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface Receivable {
-  id?: number;
-  description: string;
-  amount: number;
-  dueDate: Date;
-  status: string;
-  clientId?: number;
-}
-
-export interface Payable {
-  id?: number;
-  description: string;
-  amount: number;
-  dueDate: Date;
-  status: string;
-  supplierId?: number;
-  paymentDate?: Date;
-}
+import { Receivable, Payable } from '../models';
 
 @Injectable({
   providedIn: 'root'

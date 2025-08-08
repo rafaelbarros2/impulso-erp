@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, inject, Signal, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product, BadgeType } from '../../model/product.interface';
-import { LayoutType } from '../../../../core/services/layout.service';
+import { OnlineProduct, LayoutType, BadgeType } from '../../../../core/models';
 
 @Component({
   selector: 'app-storefront-item-card',
@@ -14,16 +13,14 @@ import { LayoutType } from '../../../../core/services/layout.service';
       
       <!-- Image Container -->
       <div class="product-image-container">
-        <img [src]="product.image" 
-             [alt]="product.imageAlt || product.name" 
-             class="product-image">
+        <img [src]="product.images[0]" 
+             [alt]="product.name" 
+             class="product-image" />
         
         <!-- Badges -->
-        <div class="product-badges" *ngIf="product.badges && product.badges.length > 0">
-          <span *ngFor="let badge of product.badges" 
-                [ngClass]="getBadgeClass(badge.type)"
-                class="product-badge">
-            {{ badge.label }}
+        <div class="product-badges" *ngIf="product.featured">
+          <span class="product-badge badge-featured">
+            Destaque
           </span>
         </div>
         
@@ -96,17 +93,17 @@ import { LayoutType } from '../../../../core/services/layout.service';
   styleUrls: ['./storefront-item-card.component.scss']
 })
 export class StorefrontItemCardComponent implements OnInit {
-  @Input() product!: Product;
+  @Input() product!: OnlineProduct;
   @Input() layout: LayoutType = 'grid';
   @Input() showActions: boolean = true;
   @Input() showRating: boolean = true;
   @Input() showDescription: boolean = true;
 
-  @Output() addToCart = new EventEmitter<Product>();
-  @Output() favorite = new EventEmitter<Product>();
-  @Output() compare = new EventEmitter<Product>();
-  @Output() quickView = new EventEmitter<Product>();
-  @Output() productClick = new EventEmitter<Product>();
+  @Output() addToCart = new EventEmitter<OnlineProduct>();
+  @Output() favorite = new EventEmitter<OnlineProduct>();
+  @Output() compare = new EventEmitter<OnlineProduct>();
+  @Output() quickView = new EventEmitter<OnlineProduct>();
+  @Output() productClick = new EventEmitter<OnlineProduct>();
 
   // Estados internos
   isLoading: boolean = false;
@@ -164,7 +161,7 @@ export class StorefrontItemCardComponent implements OnInit {
    * Verifica se estrela deve estar preenchida
    */
   isStarFilled(starIndex: number): boolean {
-    return starIndex <= this.product.rating.stars;
+    return starIndex <= Math.floor(this.product.rating.average);
   }
 
   /**

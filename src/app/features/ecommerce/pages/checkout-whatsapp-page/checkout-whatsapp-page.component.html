@@ -33,14 +33,24 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="cep">CEP</label>
-                    <input 
-                      pInputText 
-                      class="form-input" 
-                      type="text" 
-                      id="cep" 
-                      formControlName="cep"
-                      placeholder="00000-000"
-                      (blur)="calculateShipping()">
+                    <div class="flex gap-2">
+                        <input 
+                          pInputText 
+                          class="form-input flex-1" 
+                          type="text" 
+                          id="cep" 
+                          formControlName="cep"
+                          placeholder="00000-000">
+                        <button 
+                          type="button"
+                          pButton 
+                          class="p-button-outlined"
+                          label="Calcular Frete"
+                          icon="pi pi-calculator"
+                          (click)="calculateShipping()"
+                          [disabled]="!isCepValid()">
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="address">Endereço Completo</label>

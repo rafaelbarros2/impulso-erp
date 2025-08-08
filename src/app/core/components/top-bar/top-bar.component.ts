@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
-import { AuthService, User } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models';
 
 @Component({
   selector: 'app-top-bar',

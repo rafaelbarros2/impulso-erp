@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { BackgroundConfig, BackgroundService, BackgroundType } from '../../../../core/services/background.service';
+import { BackgroundService } from '../../../../core/services/background.service';
+import { BackgroundConfig, BackgroundType } from '../../../../core/models';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';

@@ -76,7 +76,7 @@
           <td class="text-center">
             <p-tag [value]="product.status" [severity]="getSeverity(product.status)"></p-tag>
             <p-toggleButton
-                [(ngModel)]="product.status"
+                [ngModel]="product.status === 'Ativo'"
                 onLabel="Ativo"
                 offLabel="Inativo"
                 [onIcon]="'pi pi-check'"

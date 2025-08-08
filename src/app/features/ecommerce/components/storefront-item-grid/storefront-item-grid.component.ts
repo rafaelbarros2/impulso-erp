@@ -2,14 +2,15 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetect
 import { CommonModule } from '@angular/common';
 
 // Services
-import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
-import { BackgroundService, BackgroundConfig } from '../../../../core/services/background.service';
-import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
+import { ThemeService } from '../../../../core/services/theme-service.service';
+import { BackgroundService } from '../../../../core/services/background.service';
+import { LayoutService } from '../../../../core/services/layout.service';
+import { StoreTheme, BackgroundConfig, LayoutType } from '../../../../core/models';
 
 // Components & Models
 import { StorefrontItemCardComponent } from '../storefront-item-card/storefront-item-card.component';
-// import { MOCK_PRODUCTS } from '../../model/roduct-mock.data'; // Comentado: usando apenas dados reais
-import { BadgeType, Product } from '../../model/product.interface';
+// import { MOCK_PRODUCTS } from '../../mock/roduct-mock.data'; // Comentado: usando apenas dados reais
+import { OnlineProduct, Product, BadgeType } from '../../../../core/models';
 
 @Component({
   selector: 'app-storefront-item-grid',
@@ -26,7 +27,7 @@ export class StorefrontItemGridComponent implements OnInit {
   private readonly backgroundService = inject(BackgroundService);
 
   // Inputs
-  @Input() products: Product[] = []; // Removido MOCK_PRODUCTS
+  @Input() products: OnlineProduct[] = []; // Removido MOCK_PRODUCTS
   @Input() loading: boolean = false;
   @Input() showActions: boolean = true;
   @Input() showRating: boolean = true;
@@ -35,11 +36,11 @@ export class StorefrontItemGridComponent implements OnInit {
   @Input() minCardWidth: string = '320px';
 
   // Outputs para eventos dos cards
-  @Output() productClick = new EventEmitter<Product>();
-  @Output() addToCart = new EventEmitter<Product>();
-  @Output() favoriteToggle = new EventEmitter<Product>();
-  @Output() compareProduct = new EventEmitter<Product>();
-  @Output() quickView = new EventEmitter<Product>();
+  @Output() productClick = new EventEmitter<OnlineProduct>();
+  @Output() addToCart = new EventEmitter<OnlineProduct>();
+  @Output() favoriteToggle = new EventEmitter<OnlineProduct>();
+  @Output() compareProduct = new EventEmitter<OnlineProduct>();
+  @Output() quickView = new EventEmitter<OnlineProduct>();
 
   // Estados reativos usando Signals
   currentLayout: Signal<LayoutType> = this.layoutService.currentLayout;
@@ -115,27 +116,27 @@ export class StorefrontItemGridComponent implements OnInit {
   /**
    * Handlers para eventos dos cards
    */
-  onProductClick(product: Product): void {
+  onProductClick(product: OnlineProduct): void {
     this.productClick.emit(product);
     //console.log('Produto clicado:', product.name);
   }
 
-  onAddToCart(product: Product): void {
+  onAddToCart(product: OnlineProduct): void {
     this.addToCart.emit(product);
     //console.log('Adicionado ao carrinho:', product.name);
   }
 
-  onFavoriteToggle(product: Product): void {
+  onFavoriteToggle(product: OnlineProduct): void {
     this.favoriteToggle.emit(product);
     //console.log('Favorito alternado:', product.name);
   }
 
-  onCompareProduct(product: Product): void {
+  onCompareProduct(product: OnlineProduct): void {
     this.compareProduct.emit(product);
     //console.log('Produto para comparação:', product.name);
   }
 
-  onQuickView(product: Product): void {
+  onQuickView(product: OnlineProduct): void {
     this.quickView.emit(product);
     //console.log('Visualização rápida:', product.name);
   }
@@ -143,32 +144,32 @@ export class StorefrontItemGridComponent implements OnInit {
   /**
    * Filtra produtos por categoria (exemplo de funcionalidade adicional)
    */
-  getProductsByCategory(category: string): Product[] {
+  getProductsByCategory(category: string): OnlineProduct[] {
     return this.products.filter(product => 
-      product.category.toLowerCase() === category.toLowerCase()
+      product.category && product.category.toLowerCase() === category.toLowerCase()
     );
   }
 
   /**
    * Retorna produtos em destaque
    */
-  get featuredProducts(): Product[] {
+  get featuredProducts(): OnlineProduct[] {
     return this.products.filter(product => product.featured);
   }
 
   /**
    * Retorna produtos em promoção
    */
-  get saleProducts(): Product[] {
+  get saleProducts(): OnlineProduct[] {
     return this.products.filter(product => product.oldPrice && product.oldPrice > product.price);
   }
 
   /**
    * Retorna produtos novos
    */
-  get newProducts(): Product[] {
+  get newProducts(): OnlineProduct[] {
     return this.products.filter(product => 
-      product.badges.some(badge => badge.type === BadgeType.NEW)
+      product.badges && product.badges.some((badge: any) => badge.type === BadgeType.NEW)
     );
   }
 
@@ -198,8 +199,8 @@ export class StorefrontItemGridComponent implements OnInit {
   /**
    * TrackBy function para otimizar o *ngFor
    */
-  trackByProductId(index: number, product: Product): string {
-    return product.id;
+  trackByProductId(index: number, product: OnlineProduct): string {
+    return product.id.toString();
   }
 
   /**

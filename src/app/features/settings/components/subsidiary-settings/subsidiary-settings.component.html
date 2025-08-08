@@ -1,0 +1,186 @@
+
+<div class="p-4">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+  
+  <!-- Main Store Section -->
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-slate-700 mb-3">Loja Principal</h3>
+    <div class="bg-slate-50 p-4 rounded-lg border">
+      <div class="flex items-center justify-between">
+        <div>
+          <h4 class="font-medium text-slate-800">{{ mainStore?.name || 'Carregando...' }}</h4>
+          <p class="text-sm text-slate-600">Subdomínio: {{ mainStore?.subdomain || 'N/A' }}</p>
+        </div>
+        <p-button 
+          icon="pi pi-pencil" 
+          severity="secondary" 
+          size="small"
+          label="Editar"
+          [disabled]="!mainStore">
+        </p-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subsidiaries Section -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-slate-700">Lojas Subsidiárias</h3>
+      <p-button 
+        icon="pi pi-plus" 
+        label="Nova Subsidiária"
+        (onClick)="openCreateDialog()"
+        [disabled]="!mainStore">
+      </p-button>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-8">
+      <i class="pi pi-spinner pi-spin text-2xl text-slate-400"></i>
+      <p class="text-slate-500 mt-2">Carregando subsidiárias...</p>
+    </div>
+
+    <div *ngIf="!loading && subsidiaries.length === 0" class="text-center py-8">
+      <i class="pi pi-building text-4xl text-slate-300"></i>
+      <p class="text-slate-500 mt-2">Nenhuma subsidiária cadastrada</p>
+      <p class="text-sm text-slate-400">Clique em "Nova Subsidiária" para começar</p>
+    </div>
+
+    <p-table 
+      *ngIf="!loading && subsidiaries.length > 0"
+      [value]="subsidiaries" 
+      styleClass="p-datatable-striped p-datatable-gridlines"
+      [paginator]="true" 
+      [rows]="10">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nome</th>
+          <th>Subdomínio</th>
+          <th>Criada em</th>
+          <th width="120">Ações</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-subsidiary>
+        <tr>
+          <td>{{ subsidiary.name }}</td>
+          <td>{{ subsidiary.subdomain }}</td>
+          <td>{{ subsidiary.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="flex gap-2">
+              <p-button 
+                icon="pi pi-pencil" 
+                severity="secondary" 
+                size="small"
+                [text]="true"
+                (onClick)="openEditDialog(subsidiary)"
+                pTooltip="Editar">
+              </p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                size="small"
+                [text]="true"
+                (onClick)="confirmDelete(subsidiary)"
+                pTooltip="Excluir">
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Create Subsidiary Dialog -->
+  <p-dialog 
+    header="Nova Subsidiária" 
+    [(visible)]="showCreateDialog" 
+    [modal]="true" 
+    [style]="{width: '500px'}"
+    [closable]="true">
+    
+    <form [formGroup]="createForm" (ngSubmit)="createSubsidiary()">
+      <div class="field">
+        <label for="create-name" class="block text-sm font-medium text-slate-700 mb-2">Nome da Loja</label>
+        <input 
+          pInputText 
+          id="create-name"
+          formControlName="name" 
+          class="w-full"
+          placeholder="Digite o nome da subsidiária" />
+        <div *ngIf="createForm.get('name')?.invalid && createForm.get('name')?.touched" 
+             class="text-red-500 text-sm mt-1">
+          O nome é obrigatório e deve ter pelo menos 2 caracteres
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="create-subdomain" class="block text-sm font-medium text-slate-700 mb-2">Subdomínio</label>
+        <input 
+          pInputText 
+          id="create-subdomain"
+          formControlName="subdomain" 
+          class="w-full"
+          placeholder="Digite o subdomínio (apenas letras, números e hífen)" />
+        <div *ngIf="createForm.get('subdomain')?.invalid && createForm.get('subdomain')?.touched" 
+             class="text-red-500 text-sm mt-1">
+          Subdomínio obrigatório (apenas letras, números e hífen)
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-4">
+        <p-button 
+          label="Cancelar" 
+          severity="secondary" 
+          (onClick)="showCreateDialog = false"
+          type="button">
+        </p-button>
+        <p-button 
+          label="Criar" 
+          type="submit"
+          [disabled]="createForm.invalid">
+        </p-button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Edit Subsidiary Dialog -->
+  <p-dialog 
+    header="Editar Subsidiária" 
+    [(visible)]="showEditDialog" 
+    [modal]="true" 
+    [style]="{width: '500px'}"
+    [closable]="true">
+    
+    <form [formGroup]="editForm" (ngSubmit)="updateSubsidiary()">
+      <div class="field">
+        <label for="edit-name" class="block text-sm font-medium text-slate-700 mb-2">Nome da Loja</label>
+        <input 
+          pInputText 
+          id="edit-name"
+          formControlName="name" 
+          class="w-full"
+          placeholder="Digite o novo nome da subsidiária" />
+        <div *ngIf="editForm.get('name')?.invalid && editForm.get('name')?.touched" 
+             class="text-red-500 text-sm mt-1">
+          O nome é obrigatório e deve ter pelo menos 2 caracteres
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-4">
+        <p-button 
+          label="Cancelar" 
+          severity="secondary" 
+          (onClick)="showEditDialog = false"
+          type="button">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          type="submit"
+          [disabled]="editForm.invalid">
+        </p-button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

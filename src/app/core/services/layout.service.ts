@@ -1,7 +1,5 @@
 import { Injectable, signal, Signal, effect } from '@angular/core';
-
-// Tipos de layout predefinidos
-export type LayoutType = 'grid' | 'minimal' | 'list';
+import { LayoutType } from '../models';
 
 @Injectable({
   providedIn: 'root'

@@ -9,20 +9,8 @@ import { RippleModule } from 'primeng/ripple';
 // Services
 import { LayoutService } from '../../../../core/services/layout.service';
 
-interface HeroContent {
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  buttonIcon?: string;
-  backgroundImage?: string;
-  textColor?: 'light' | 'dark';
-}
-
-interface HeroSlide {
-  id: string;
-  content: HeroContent;
-  isActive?: boolean;
-}
+// Models
+import { HeroContent, HeroSlide, StoreType } from '../../../../core/models';
 
 @Component({
   selector: 'app-storefront-hero',
@@ -532,7 +520,7 @@ export class StorefrontHeroComponent implements OnInit, OnDestroy {
    * Carrega slides baseado em uma categoria de loja
    * @param storeType Tipo da loja
    */
-  loadSlidesByStoreType(storeType: 'fashion' | 'tech' | 'beauty' | 'marketplace' | 'promo'): void {
+  loadSlidesByStoreType(storeType: StoreType | 'promo'): void {
     switch (storeType) {
       case 'fashion':
         this.loadFashionSlides();

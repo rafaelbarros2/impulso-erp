@@ -4,11 +4,7 @@ import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS, Va
 import { InputMaskModule } from 'primeng/inputmask';
 import { DropdownModule } from 'primeng/dropdown';
 import { CustomValidators } from '../../../validators/custom-validators';
-
-export interface ClientType {
-  name: string;
-  code: 'PF' | 'PJ';
-}
+import { ClientType } from '../../../../core/models';
 
 @Component({
   selector: 'app-cpf-cnpj-input',

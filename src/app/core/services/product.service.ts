@@ -1,20 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface Product {
-  id?: number;
-  name: string;
-  description?: string;
-  sku: string;
-  category?: string;
-  priceCost: number;
-  priceSale: number;
-  stockQuantity: number;
-  minStock: number;
-  imageUrl?: string;
-  active?: boolean;
-}
+import { Product } from '../models';
 
 @Injectable({
   providedIn: 'root'

@@ -1,29 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-
-export interface CartItem {
-  id?: number;
-  productId: number;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-}
-
-export interface Cart {
-  id?: number;
-  userId?: number;
-  items: CartItem[];
-  total: number;
-}
-
-export interface CheckoutRequest {
-  clientName: string;
-  clientEmail?: string;
-  clientPhone?: string;
-  paymentMethod: string;
-  deliveryAddress?: string;
-}
+import { CartItem, Cart, CheckoutRequest } from '../models';
 
 @Injectable({
   providedIn: 'root'

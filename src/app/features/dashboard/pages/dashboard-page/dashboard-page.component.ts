@@ -6,8 +6,8 @@ import { ActivityFeedComponent } from '../../components/activity-feed/activity-f
 import { CategoryChartComponent } from '../../components/category-chart/category-chart.component';
 import { LoadingService } from '../../../../core/services/loading.service';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
+import { DashboardService, DashboardData } from '../../../../core/services/dashboard.service';
 import { finalize } from 'rxjs/operators';
-import { Observable, of, delay } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -32,7 +32,10 @@ export class DashboardPageComponent implements OnInit {
   readonly LOADING_KEYS = LoadingService.KEYS;
   readonly EMPTY_STATES = EMPTY_STATES;
 
-  constructor(private loadingService: LoadingService) {}
+  constructor(
+    private loadingService: LoadingService,
+    private dashboardService: DashboardService
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -45,25 +48,39 @@ export class DashboardPageComponent implements OnInit {
   loadDashboardData(): void {
     this.hasError = false;
     
-    // Simulate API call to load dashboard data
+    // Real API call to dashboard service
     this.loadingService.withLoadingObservable(
       this.LOADING_KEYS.DASHBOARD,
-      () => {throw new Error('Dashboard API não implementada');} // TODO: Implementar service real
+      () => this.dashboardService.getDashboardData()
     ).pipe(
       finalize(() => {
         // This will be called after loading completes or errors
       })
     ).subscribe({
-      next: (data: any) => {
+      next: (data: DashboardData) => {
         this.kpiData = data.kpis;
         this.activityData = data.activities;
       },
       error: (error: any) => {
         console.error('Error loading dashboard data:', error);
         this.hasError = true;
-        // this.loadMockData(); // Comentado: usando apenas dados reais da API
+        this.loadMockData(); // Fallback to mock data if API fails
       }
     });
+  }
+
+  private loadMockData(): void {
+    this.kpiData = [
+      { title: 'Vendas Hoje', value: 'R$ 1.250,00', icon: 'pi-dollar', trend: '+15%' },
+      { title: 'Pedidos', value: '23', icon: 'pi-shopping-cart', trend: '+8%' },
+      { title: 'Clientes', value: '156', icon: 'pi-users', trend: '+12%' },
+      { title: 'Produtos', value: '89', icon: 'pi-box', trend: '+3%' }
+    ];
+    this.activityData = [
+      { type: 'sale', message: 'Nova venda realizada', time: '10:30', amount: 'R$ 125,00' },
+      { type: 'client', message: 'Cliente cadastrado', time: '09:15', client: 'João Silva' },
+      { type: 'product', message: 'Produto adicionado', time: '08:45', product: 'Notebook Dell' }
+    ];
   }
 
   // private simulateDashboardDataLoad(): Observable<any> {

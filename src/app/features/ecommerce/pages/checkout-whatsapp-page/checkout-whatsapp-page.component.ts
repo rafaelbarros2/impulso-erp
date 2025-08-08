@@ -65,6 +65,12 @@ export class CheckoutWhatsappPageComponent implements OnInit {
     });
   }
 
+  // Verifica se o CEP está válido para calcular frete
+  isCepValid(): boolean {
+    const cep = this.checkoutForm.get('cep')?.value;
+    return cep && cep.replace(/\D/g, '').length === 8;
+  }
+
   // Simula o cálculo de frete
   calculateShipping(): void {
     const cep = this.checkoutForm.get('cep')?.value;

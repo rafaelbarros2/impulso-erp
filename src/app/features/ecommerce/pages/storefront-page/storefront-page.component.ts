@@ -9,9 +9,9 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 import { Router } from '@angular/router';
-import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
+import { LayoutService } from '../../../../core/services/layout.service';
 import { BackgroundService } from '../../../../core/services/background.service';
-import { OnlineProductService, OnlineProduct } from '../../../../core/services/online-product.service';
+import { OnlineProductService } from '../../../../core/services/online-product.service';
 import { CartService } from '../../../../core/services/cart.service';
 
 // Importa os componentes filhos e a interface Product
@@ -19,16 +19,8 @@ import { StorefrontHeaderComponent } from '../../components/storefront-header/st
 import { StorefrontHeroComponent } from '../../components/storefront-hero/storefront-hero.component';
 import { StorefrontCategoriesComponent } from '../../components/storefront-categories/storefront-categories.component';
 import { StorefrontItemGridComponent } from '../../components/storefront-item-grid/storefront-item-grid.component';
-import { BadgeType, Product } from '../../model/product.interface';
-import { StoreTheme, ThemeService } from '../../../../core/services/theme-service.service';
-
-/**
- * Interface para um item no carrinho de compras.
- */
-interface CartItem {
-  product: Product;
-  quantity: number;
-}
+import { OnlineProduct, CartItem, BadgeType, LayoutType, StoreTheme } from '../../../../core/models';
+import { ThemeService } from '../../../../core/services/theme-service.service';
 
 @Component({
   selector: 'app-storefront-page',
@@ -74,7 +66,7 @@ export class StorefrontPageComponent implements OnInit {
   }
 
   // Products loaded from API
-  products: Product[] = [];
+  products: any[] = [];
   isLoadingProducts = false;
   hasError = false;
 
@@ -84,7 +76,7 @@ export class StorefrontPageComponent implements OnInit {
 
   // Estado do Quick View
   showQuickView = false;
-  quickViewProduct: Product | null = null;
+  quickViewProduct: any | null = null;
   quickViewQuantity = 1;
 
   constructor() {
@@ -159,12 +151,12 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Convert OnlineProduct to Product interface
    */
-  private convertOnlineProductToProduct(onlineProduct: OnlineProduct): Product {
-    const hasDiscount = onlineProduct.discountPrice && onlineProduct.discountPrice < onlineProduct.price;
+  private convertOnlineProductToProduct(onlineProduct: OnlineProduct): any {
+    const hasDiscount = onlineProduct.oldPrice && onlineProduct.oldPrice > onlineProduct.price;
     const badges = [];
     
     if (hasDiscount) {
-      const discountPercent = Math.round(((onlineProduct.price - onlineProduct.discountPrice!) / onlineProduct.price) * 100);
+      const discountPercent = Math.round(((onlineProduct.oldPrice! - onlineProduct.price) / onlineProduct.oldPrice!) * 100);
       badges.push({ type: BadgeType.SALE, label: `-${discountPercent}%` });
     }
     
@@ -174,17 +166,17 @@ export class StorefrontPageComponent implements OnInit {
 
     return {
       id: onlineProduct.id?.toString() || '',
-      name: onlineProduct.title,
+      name: onlineProduct.name,
       description: onlineProduct.description || '',
-      image: onlineProduct.imageUrl || `https://placehold.co/400x400/E0F2F1/000000?text=${encodeURIComponent(onlineProduct.title.substring(0, 8))}`,
-      imageAlt: onlineProduct.title,
-      price: onlineProduct.discountPrice || onlineProduct.price,
+      image: onlineProduct.images?.[0] || `https://placehold.co/400x400/E0F2F1/000000?text=${encodeURIComponent(onlineProduct.name.substring(0, 8))}`,
+      imageAlt: onlineProduct.name,
+      price: onlineProduct.price,
       oldPrice: hasDiscount ? onlineProduct.price : undefined,
-      discountPercent: hasDiscount ? Math.round(((onlineProduct.price - onlineProduct.discountPrice!) / onlineProduct.price) * 100) : undefined,
+      discountPercent: hasDiscount ? Math.round(((onlineProduct.oldPrice! - onlineProduct.price) / onlineProduct.oldPrice!) * 100) : undefined,
       rating: { average: 4.5, count: Math.floor(Math.random() * 100) + 10, stars: 5 }, // Mock rating for now
       badges,
       category: onlineProduct.category || 'Produto',
-      inStock: (onlineProduct.stock || 0) > 0,
+      inStock: onlineProduct.inStock,
       featured: onlineProduct.featured || false,
     };
   }
@@ -230,7 +222,7 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Adiciona um produto ao carrinho
    */
-  addToCart(product: Product): void {
+  addToCart(product: OnlineProduct): void {
     // Verifica se produto está em estoque
     if (!product.inStock) {
       this.messageService.add({
@@ -243,7 +235,7 @@ export class StorefrontPageComponent implements OnInit {
     }
 
     // Use API to add to cart
-    const productId = parseInt(product.id);
+    const productId = typeof product.id === 'string' ? parseInt(product.id) : product.id;
     if (isNaN(productId)) {
       this.messageService.add({
         severity: 'error',
@@ -282,7 +274,7 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Abre o quick view do produto
    */
-  openQuickView(product: Product): void {
+  openQuickView(product: OnlineProduct): void {
     this.quickViewProduct = product;
     this.quickViewQuantity = 1; // Reseta a quantidade
     this.showQuickView = true;
@@ -314,7 +306,7 @@ export class StorefrontPageComponent implements OnInit {
       }
 
       // Use API to add to cart
-      const productId = parseInt(this.quickViewProduct.id);
+      const productId = typeof this.quickViewProduct.id === 'string' ? parseInt(this.quickViewProduct.id) : this.quickViewProduct.id;
       if (isNaN(productId)) {
         this.messageService.add({
           severity: 'error',
@@ -356,14 +348,14 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Retorna se o produto tem desconto
    */
-  hasDiscount(product: Product): boolean {
+  hasDiscount(product: OnlineProduct): boolean {
     return !!product.oldPrice && product.oldPrice > product.price;
   }
 
   /**
    * Calcula a porcentagem de desconto
    */
-  getDiscountPercentage(product: Product): number {
+  getDiscountPercentage(product: OnlineProduct): number {
     if (!this.hasDiscount(product)) return 0;
     return Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100);
   }
@@ -395,7 +387,7 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Manipula clique no produto para ir para página de detalhes
    */
-  onProductClick(product: Product): void {
+  onProductClick(product: OnlineProduct): void {
     //console.log('Navegando para produto:', product.name);
     // this.router.navigate(['/ecommerce/product', product.id]);
   }
@@ -403,7 +395,7 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Manipula evento de favoritar produto
    */
-  onFavoriteToggle(product: Product): void {
+  onFavoriteToggle(product: OnlineProduct): void {
     //console.log('Produto favoritado:', product.name);
     this.messageService.add({
       severity: 'info',
@@ -416,7 +408,7 @@ export class StorefrontPageComponent implements OnInit {
   /**
    * Manipula evento de comparar produto
    */
-  onCompareProduct(product: Product): void {
+  onCompareProduct(product: OnlineProduct): void {
     //console.log('Produto para comparação:', product.name);
     this.messageService.add({
       severity: 'info',

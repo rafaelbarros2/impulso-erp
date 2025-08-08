@@ -10,14 +10,19 @@
         <app-company-settings></app-company-settings>
       </ng-template>
     </p-tabPanel>
+    <p-tabPanel header="Subsidiárias">
+      <ng-template pTemplate="content">
+        <app-subsidiary-settings></app-subsidiary-settings>
+      </ng-template>
+    </p-tabPanel>
     <p-tabPanel header="Utilizadores">
       <ng-template pTemplate="content">
-        <p>Aqui você poderá gerir os utilizadores do sistema.</p>
+        <app-users-settings></app-users-settings>
       </ng-template>
     </p-tabPanel>
     <p-tabPanel header="Permissões">
       <ng-template pTemplate="content">
-        <p>Aqui você poderá definir os perfis de acesso (Gerente, Vendedor, etc.).</p>
+        <app-permissions-settings></app-permissions-settings>
       </ng-template>
     </p-tabPanel>
   </p-tabView>

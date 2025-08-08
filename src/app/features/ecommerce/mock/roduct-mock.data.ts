@@ -1,4 +1,4 @@
-import { Product, BadgeType } from './product.interface';
+import { OnlineProduct } from '../../../core/models';
 
 // MOCK DATA COMENTADO - Usando apenas dados reais da API
 // export const MOCK_PRODUCTS: Product[] = [

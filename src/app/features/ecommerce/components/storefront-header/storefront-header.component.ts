@@ -6,7 +6,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { TooltipModule } from 'primeng/tooltip';
 
 // Services
-import { LayoutService, LayoutType } from '../../../../core/services/layout.service';
+import { LayoutService } from '../../../../core/services/layout.service';
+import { LayoutType } from '../../../../core/models';
 import { StorefrontThemeSelectorComponent } from '../storefront-theme-selector/storefront-theme-selector.component';
 import { StorefrontBackgroundSelectorComponent } from '../storefront-background-selector/storefront-background-selector.component';
 

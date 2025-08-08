@@ -10,8 +10,10 @@ import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 
-import { PermissionService, Permission, RolePermissions } from '../../../../core/services/permission.service';
+
 import { LoadingSpinnerComponent } from '../../../../shared';
+import { PermissionService } from '../../../../core/services/permission.service';
+import { Permission, Role } from '../../../../core/models';
 
 @Component({
   selector: 'app-permissions-settings',
@@ -54,30 +56,31 @@ export class PermissionsSettingsComponent implements OnInit {
 
     forkJoin({
       permissions: this.permissionService.getPermissions(),
-      rolePermissions: this.permissionService.getRolePermissions()
+      roles: this.permissionService.getRoles()
     }).pipe(
       finalize(() => this.isLoading = false),
       catchError(err => {
         this.error = 'Não foi possível carregar as permissões. Tente novamente mais tarde.';
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.error });
-        return of({ permissions: [], rolePermissions: [] });
+        return of({ permissions: [], roles: [] });
       })
     ).subscribe(data => {
       this.permissions = data.permissions;
-      this.buildForm(data.permissions, data.rolePermissions);
+      this.buildForm(data.permissions, data.roles);
     });
   }
 
-  buildForm(permissions: Permission[], rolePermissions: RolePermissions[]): void {
+  buildForm(permissions: Permission[], roles: Role[]): void {
     const formControls: { [key: string]: FormGroup } = {};
 
-    this.roles.forEach(role => {
-      const rolePerms = rolePermissions.find(rp => rp.role === role);
+    this.roles.forEach(roleName => {
+      const role = roles.find(r => r.name === roleName);
       const roleGroup: { [key: string]: any } = {};
       permissions.forEach(permission => {
-        roleGroup[permission.id] = [rolePerms?.permissions.includes(permission.id) ?? false];
+        const hasPermission = role?.permissions.some(p => p.id === permission.id) ?? false;
+        roleGroup[permission.id] = [hasPermission];
       });
-      formControls[role] = this.fb.group(roleGroup);
+      formControls[roleName] = this.fb.group(roleGroup);
     });
 
     this.permissionsForm = this.fb.group(formControls);
@@ -96,12 +99,14 @@ export class PermissionsSettingsComponent implements OnInit {
     this.isLoading = true;
     const formValue = this.permissionsForm.value;
 
-    const updateObservables = this.roles.map(role => {
-      const rolePermissions: RolePermissions = {
-        role: role as 'Admin' | 'Manager' | 'Employee',
-        permissions: Object.keys(formValue[role]).filter(permissionId => formValue[role][permissionId])
+    const updateObservables = this.roles.map(roleName => {
+      const roleData: Role = {
+        id: roleName.toLowerCase(),
+        name: roleName,
+        description: `${roleName} role`,
+        permissions: this.permissions.filter(p => formValue[roleName][p.id])
       };
-      return this.permissionService.updateRolePermissions(rolePermissions);
+      return this.permissionService.updateRole(roleData);
     });
 
     forkJoin(updateObservables).pipe(

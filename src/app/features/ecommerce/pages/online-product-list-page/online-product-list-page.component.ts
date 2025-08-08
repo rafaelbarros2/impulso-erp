@@ -138,8 +138,11 @@ export class OnlineProductListPageComponent implements OnInit {
     });
   }
 
-  onImageError(event: any): void {
+  onImageError(event: Event): void {
     // Fallback image if original fails to load
-    event.target.src = 'https://placehold.co/100x100/E0F2F1/000000?text=Sem+Imagem';
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.src = 'https://placehold.co/100x100/E0F2F1/000000?text=Sem+Imagem';
+    }
   }
 }

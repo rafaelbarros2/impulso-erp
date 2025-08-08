@@ -10,7 +10,8 @@ import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HttpClientModule } from '@angular/common/http'; // Necessário se for usar HttpClient
-import { ClientService, Client } from '../../../../core/services/client.service';
+import { ClientService } from '../../../../core/services/client.service';
+import { Client } from '../../../../core/models';
 import { FormValidationService, ValidationState } from '../../../../core/services/form-validation.service';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -155,11 +156,13 @@ export class ClientFormComponent implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
     const clientData: Client = {
+      id: this.isEditMode() ? this.currentClient()!.id : 0,
       name: this.clientForm.value.name,
       email: this.clientForm.value.email,
       phone: this.clientForm.value.phone,
       cpfCnpj: this.clientForm.value.cpfCnpj,
-      address: this.clientForm.value.address
+      address: this.clientForm.value.address,
+      active: this.clientForm.value.active !== false
     };
 
     const operation = this.isEditMode() 

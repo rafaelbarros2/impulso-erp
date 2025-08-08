@@ -12,7 +12,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
-import { ClientService, Client } from '../../../../core/services/client.service';
+import { ClientService } from '../../../../core/services/client.service';
+import { Client } from '../../../../core/models';
 import { LoadingService } from '../../../../core/services/loading.service';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
 import { finalize } from 'rxjs/operators';
@@ -83,8 +84,10 @@ export class ClientListPageComponent implements OnInit {
       })
     ).subscribe({
       next: (clients: Client[]) => {
+        // Ensure clients is an array before mapping
+        const clientsArray = Array.isArray(clients) ? clients : [];
         // Map the clients to include status property for display
-        this.clients = clients.map((client: Client) => ({
+        this.clients = clientsArray.map((client: Client) => ({
           ...client,
           status: client.active ? 'Ativo' : 'Inativo' as 'Ativo' | 'Inativo' | 'Potencial'
         }));
