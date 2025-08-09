@@ -14,8 +14,8 @@ import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 import { ClientService } from '../../../../core/services/client.service';
 import { Client } from '../../../../core/models';
-import { LoadingService } from '../../../../core/services/loading.service';
-import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
+import { LoadingService } from 'shared-lib';
+import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from 'shared-lib';
 import { finalize } from 'rxjs/operators';
 
 interface ClientDisplay extends Client {

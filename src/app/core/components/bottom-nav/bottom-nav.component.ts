@@ -16,7 +16,6 @@ export class BottomNavComponent {
     { label: 'Estoque', route: '/stock', icon: 'pi-box' },
     { label: 'Financeiro', route: '/finance', icon: 'pi-wallet' },
     { label: 'Relatórios', route: '/reports', icon: 'pi-chart-bar' },
-    { label: 'E-commerce', route: '/ecommerce', icon: 'pi-globe' },
     { label: 'Configurações', route: '/settings', icon: 'pi-cog' }
   ];
 }

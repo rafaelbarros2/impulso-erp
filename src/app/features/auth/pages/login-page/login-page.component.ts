@@ -10,8 +10,8 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/services/auth.service';
-import { LoadingService } from '../../../../core/services/loading.service';
-import { LoadingSpinnerComponent } from '../../../../shared';
+import { LoadingService } from 'shared-lib';
+import { LoadingSpinnerComponent } from 'shared-lib';
 
 @Component({
   selector: 'app-login-page',

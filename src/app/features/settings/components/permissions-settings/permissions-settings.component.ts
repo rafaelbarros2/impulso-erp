@@ -11,7 +11,7 @@ import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 
 
-import { LoadingSpinnerComponent } from '../../../../shared';
+import { LoadingSpinnerComponent } from 'shared-lib';
 import { PermissionService } from '../../../../core/services/permission.service';
 import { Permission, Role } from '../../../../core/models';
 

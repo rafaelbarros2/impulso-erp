@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -11,7 +11,7 @@ import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
-import { themeInitializerFactory } from './core/initializers/theme.initializer'; 
+ 
 
 registerLocaleData(localePt);
  export const appConfig: ApplicationConfig = {
@@ -34,7 +34,6 @@ registerLocaleData(localePt);
      MessageService,
      { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
      { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-     { provide: APP_INITIALIZER, useFactory: themeInitializerFactory, multi: true }
-   ]
+     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    ]
  };

@@ -4,11 +4,12 @@ import { KpiCardComponent } from '../../components/kpi-card/kpi-card.component';
 import { SalesChartComponent } from '../../components/sales-chart/sales-chart.component';
 import { ActivityFeedComponent } from '../../components/activity-feed/activity-feed.component';
 import { CategoryChartComponent } from '../../components/category-chart/category-chart.component';
-import { LoadingService } from '../../../../core/services/loading.service';
-import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from '../../../../shared';
+import { LoadingService } from 'shared-lib';
+import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from 'shared-lib';
 import { DashboardService, DashboardData } from '../../../../core/services/dashboard.service';
 import { finalize } from 'rxjs/operators';
-import { ThemeTestComponent } from '../../../../core/components/theme-test.component';
+// import { ThemeTestComponent } from '../../../../core/components/theme-test.component';
+// import { ThemeSwitcherComponent } from '../../../../core/components/theme-switcher.component';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -21,7 +22,8 @@ import { ThemeTestComponent } from '../../../../core/components/theme-test.compo
     CategoryChartComponent,
     SkeletonLoaderComponent,
     EmptyStateComponent,
-    ThemeTestComponent
+    // ThemeTestComponent,
+    // ThemeSwitcherComponent
 ],
   templateUrl: './dashboard-page.component.html',
 })

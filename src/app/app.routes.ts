@@ -46,10 +46,6 @@ export const routes: Routes = [
         path: 'reports', // Nova rota para o módulo de relatórios
         loadChildren: () => import('./features/reports/reports.routes').then(m => m.REPORTS_ROUTES)
       },
-      {
-        path: 'ecommerce', // Nova rota para o módulo de e-commerce
-        loadChildren: () => import('./features/ecommerce/ecommerce.routes').then(m => m.ECOMMERCE_ROUTES)
-      }
     ]
   },
   { path: '**', redirectTo: 'dashboard' } // Redireciona rotas não encontradas

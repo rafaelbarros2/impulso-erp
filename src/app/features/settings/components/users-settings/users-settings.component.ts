@@ -14,7 +14,7 @@ import { TagModule } from 'primeng/tag';
 import { UserService, User } from '../../../../core/services/user.service';
 import { StoreService } from '../../../../core/services/store.service';
 import { AuthStateService } from '../../../../core/state/auth-state.service';
-import { LoadingSpinnerComponent } from '../../../../shared';
+import { LoadingSpinnerComponent } from 'shared-lib';
 import { StoreUser } from '../../../../core/models/store.model';
 
 @Component({

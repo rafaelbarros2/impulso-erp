@@ -1,0 +1,14 @@
+
+// projects/ui/src/lib/ui-theme.scss
+
+// This file contains the theme-aware styles for the components in the ui library.
+// It uses the CSS variables provided by the ThemeService in the main application.
+
+.ui-component-themed {
+  background-color: var(--primary-color, #673AB7); // Fallback color
+  color: var(--text-color, #ffffff);
+  padding: 20px;
+  border-radius: var(--card-border-radius, 16px);
+  box-shadow: var(--card-shadow, 0 8px 25px rgba(0, 0, 0, 0.1));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

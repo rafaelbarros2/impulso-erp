@@ -1,0 +1,365 @@
+// _theme-vars.scss
+// E-commerce Theme Variables Mapping
+// This file provides semantic mappings for CSS variables generated from theme tokens
+// Use these variables throughout the application for consistency
+
+// ============================================================================
+// BRAND COLORS
+// ============================================================================
+:root {
+  // Primary Brand Colors
+  --ecom-primary: var(--color-brand-primary-500);
+  --ecom-primary-hover: var(--color-brand-primary-600);
+  --ecom-primary-active: var(--color-brand-primary-700);
+  --ecom-primary-light: var(--color-brand-primary-50);
+  --ecom-primary-dark: var(--color-brand-primary-900);
+
+  // Secondary Colors
+  --ecom-secondary: var(--color-brand-secondary-500);
+  --ecom-secondary-light: var(--color-brand-secondary-100);
+  --ecom-secondary-dark: var(--color-brand-secondary-900);
+
+  // ============================================================================
+  // SEMANTIC COLORS
+  // ============================================================================
+  
+  // Success States
+  --ecom-success: var(--color-semantic-success-500);
+  --ecom-success-bg: var(--color-semantic-success-50);
+  --ecom-success-dark: var(--color-semantic-success-600);
+
+  // Warning States
+  --ecom-warning: var(--color-semantic-warning-500);
+  --ecom-warning-bg: var(--color-semantic-warning-50);
+  --ecom-warning-dark: var(--color-semantic-warning-600);
+
+  // Error States
+  --ecom-error: var(--color-semantic-error-500);
+  --ecom-error-bg: var(--color-semantic-error-50);
+  --ecom-error-dark: var(--color-semantic-error-600);
+
+  // ============================================================================
+  // NEUTRAL COLORS
+  // ============================================================================
+  
+  --ecom-white: var(--color-neutral-0);
+  --ecom-gray-50: var(--color-neutral-50);
+  --ecom-gray-100: var(--color-neutral-100);
+  --ecom-gray-200: var(--color-neutral-200);
+  --ecom-gray-300: var(--color-neutral-300);
+  --ecom-gray-400: var(--color-neutral-400);
+  --ecom-gray-500: var(--color-neutral-500);
+  --ecom-gray-600: var(--color-neutral-600);
+  --ecom-gray-700: var(--color-neutral-700);
+  --ecom-gray-800: var(--color-neutral-800);
+  --ecom-gray-900: var(--color-neutral-900);
+  --ecom-black: var(--color-neutral-950);
+
+  // ============================================================================
+  // SURFACE COLORS
+  // ============================================================================
+  
+  --ecom-bg: var(--color-surface-background);
+  --ecom-text: var(--color-surface-foreground);
+  --ecom-card-bg: var(--color-surface-card);
+  --ecom-card-hover: var(--color-surface-card-hover);
+  --ecom-border: var(--color-surface-border);
+  --ecom-border-hover: var(--color-surface-border-hover);
+  --ecom-muted: var(--color-surface-muted);
+  --ecom-accent-bg: var(--color-surface-accent);
+
+  // ============================================================================
+  // TYPOGRAPHY
+  // ============================================================================
+  
+  // Font Families
+  --ecom-font-display: var(--typography-family-display);
+  --ecom-font-body: var(--typography-family-body);
+  --ecom-font-mono: var(--typography-family-mono);
+
+  // Font Sizes
+  --ecom-text-xs: var(--typography-size-xs);
+  --ecom-text-sm: var(--typography-size-sm);
+  --ecom-text-base: var(--typography-size-base);
+  --ecom-text-lg: var(--typography-size-lg);
+  --ecom-text-xl: var(--typography-size-xl);
+  --ecom-text-2xl: var(--typography-size-2xl);
+  --ecom-text-3xl: var(--typography-size-3xl);
+  --ecom-text-4xl: var(--typography-size-4xl);
+
+  // Font Weights
+  --ecom-font-normal: var(--typography-weight-normal);
+  --ecom-font-medium: var(--typography-weight-medium);
+  --ecom-font-semibold: var(--typography-weight-semibold);
+  --ecom-font-bold: var(--typography-weight-bold);
+
+  // Line Heights
+  --ecom-leading-tight: var(--typography-lineheight-tight);
+  --ecom-leading-normal: var(--typography-lineheight-normal);
+  --ecom-leading-relaxed: var(--typography-lineheight-relaxed);
+
+  // ============================================================================
+  // SPACING
+  // ============================================================================
+  
+  --ecom-space-1: var(--spacing-1);
+  --ecom-space-2: var(--spacing-2);
+  --ecom-space-3: var(--spacing-3);
+  --ecom-space-4: var(--spacing-4);
+  --ecom-space-5: var(--spacing-5);
+  --ecom-space-6: var(--spacing-6);
+  --ecom-space-8: var(--spacing-8);
+  --ecom-space-10: var(--spacing-10);
+  --ecom-space-12: var(--spacing-12);
+  --ecom-space-16: var(--spacing-16);
+  --ecom-space-20: var(--spacing-20);
+  --ecom-space-24: var(--spacing-24);
+
+  // ============================================================================
+  // BORDER RADIUS
+  // ============================================================================
+  
+  --ecom-radius-none: var(--radius-none);
+  --ecom-radius-sm: var(--radius-sm);
+  --ecom-radius-md: var(--radius-md);
+  --ecom-radius-lg: var(--radius-lg);
+  --ecom-radius-xl: var(--radius-xl);
+  --ecom-radius-2xl: var(--radius-2xl);
+  --ecom-radius-full: var(--radius-full);
+
+  // ============================================================================
+  // SHADOWS
+  // ============================================================================
+  
+  --ecom-shadow-sm: var(--shadow-sm);
+  --ecom-shadow-md: var(--shadow-md);
+  --ecom-shadow-lg: var(--shadow-lg);
+  --ecom-shadow-xl: var(--shadow-xl);
+
+  // ============================================================================
+  // COMPONENT TOKENS
+  // ============================================================================
+
+  // Buttons
+  --ecom-btn-primary-bg: var(--component-button-primary-background);
+  --ecom-btn-primary-bg-hover: var(--component-button-primary-background-hover);
+  --ecom-btn-primary-bg-active: var(--component-button-primary-background-active);
+  --ecom-btn-primary-text: var(--component-button-primary-foreground);
+  --ecom-btn-primary-border: var(--component-button-primary-border);
+  --ecom-btn-primary-border-hover: var(--component-button-primary-border-hover);
+
+  --ecom-btn-secondary-bg: var(--component-button-secondary-background);
+  --ecom-btn-secondary-bg-hover: var(--component-button-secondary-background-hover);
+  --ecom-btn-secondary-bg-active: var(--component-button-secondary-background-active);
+  --ecom-btn-secondary-text: var(--component-button-secondary-foreground);
+  --ecom-btn-secondary-border: var(--component-button-secondary-border);
+  --ecom-btn-secondary-border-hover: var(--component-button-secondary-border-hover);
+
+  --ecom-btn-ghost-bg: var(--component-button-ghost-background);
+  --ecom-btn-ghost-bg-hover: var(--component-button-ghost-background-hover);
+  --ecom-btn-ghost-bg-active: var(--component-button-ghost-background-active);
+  --ecom-btn-ghost-text: var(--component-button-ghost-foreground);
+  --ecom-btn-ghost-border: var(--component-button-ghost-border);
+
+  // Button Sizes
+  --ecom-btn-height-sm: var(--component-button-height-sm);
+  --ecom-btn-height-md: var(--component-button-height-md);
+  --ecom-btn-height-lg: var(--component-button-height-lg);
+  --ecom-btn-padding-sm: var(--component-button-padding-sm);
+  --ecom-btn-padding-md: var(--component-button-padding-md);
+  --ecom-btn-padding-lg: var(--component-button-padding-lg);
+  --ecom-btn-text-sm: var(--component-button-fontsize-sm);
+  --ecom-btn-text-md: var(--component-button-fontsize-md);
+  --ecom-btn-text-lg: var(--component-button-fontsize-lg);
+  --ecom-btn-font-weight: var(--component-button-fontweight);
+
+  // Product Cards
+  --ecom-card-bg: var(--component-card-product-background);
+  --ecom-card-bg-hover: var(--component-card-product-background-hover);
+  --ecom-card-border: var(--component-card-product-border);
+  --ecom-card-border-hover: var(--component-card-product-border-hover);
+  --ecom-card-shadow: var(--component-card-product-shadow);
+  --ecom-card-shadow-hover: var(--component-card-product-shadow-hover);
+  --ecom-card-padding: var(--component-card-product-padding);
+  --ecom-card-radius: var(--component-card-product-radius);
+
+  // Header
+  --ecom-header-bg: var(--component-header-background);
+  --ecom-header-text: var(--component-header-foreground);
+  --ecom-header-border: var(--component-header-border);
+  --ecom-header-shadow: var(--component-header-shadow);
+  --ecom-header-height: var(--component-header-height);
+  --ecom-header-padding: var(--component-header-padding);
+
+  // Input
+  --ecom-input-bg: var(--component-input-background);
+  --ecom-input-text: var(--component-input-foreground);
+  --ecom-input-border: var(--component-input-border);
+  --ecom-input-border-focus: var(--component-input-border-focus);
+  --ecom-input-placeholder: var(--component-input-placeholder);
+  --ecom-input-height: var(--component-input-height);
+  --ecom-input-padding: var(--component-input-padding);
+  --ecom-input-radius: var(--component-input-radius);
+
+  // Badges
+  --ecom-badge-success-bg: var(--component-badge-success-background);
+  --ecom-badge-success-text: var(--component-badge-success-foreground);
+  --ecom-badge-success-border: var(--component-badge-success-border);
+  --ecom-badge-warning-bg: var(--component-badge-warning-background);
+  --ecom-badge-warning-text: var(--component-badge-warning-foreground);
+  --ecom-badge-warning-border: var(--component-badge-warning-border);
+  --ecom-badge-error-bg: var(--component-badge-error-background);
+  --ecom-badge-error-text: var(--component-badge-error-foreground);
+  --ecom-badge-error-border: var(--component-badge-error-border);
+  --ecom-badge-padding: var(--component-badge-padding);
+  --ecom-badge-text-size: var(--component-badge-fontsize);
+  --ecom-badge-radius: var(--component-badge-radius);
+
+  // Price Display
+  --ecom-price-current-color: var(--component-price-current-color);
+  --ecom-price-current-size: var(--component-price-current-fontsize);
+  --ecom-price-current-weight: var(--component-price-current-fontweight);
+  --ecom-price-original-color: var(--component-price-original-color);
+  --ecom-price-original-size: var(--component-price-original-fontsize);
+  --ecom-price-original-weight: var(--component-price-original-fontweight);
+  --ecom-price-original-decoration: var(--component-price-original-decoration);
+  --ecom-price-discount-bg: var(--component-price-discount-background);
+  --ecom-price-discount-text: var(--component-price-discount-foreground);
+  --ecom-price-discount-size: var(--component-price-discount-fontsize);
+  --ecom-price-discount-weight: var(--component-price-discount-fontweight);
+
+  // ============================================================================
+  // ANIMATIONS
+  // ============================================================================
+  
+  --ecom-transition-fast: var(--animation-transition-fast);
+  --ecom-transition-normal: var(--animation-transition-normal);
+  --ecom-transition-slow: var(--animation-transition-slow);
+}
+
+// ============================================================================
+// SCSS MIXINS FOR CONVENIENCE
+// ============================================================================
+
+@mixin ecom-button-base {
+  font-family: var(--ecom-font-body);
+  font-weight: var(--ecom-btn-font-weight);
+  border-radius: var(--ecom-radius-md);
+  transition: all var(--ecom-transition-normal);
+  cursor: pointer;
+  border: 1px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+
+  &:focus {
+    outline: 2px solid var(--ecom-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin ecom-button-primary {
+  @include ecom-button-base;
+  background-color: var(--ecom-btn-primary-bg);
+  color: var(--ecom-btn-primary-text);
+  border-color: var(--ecom-btn-primary-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--ecom-btn-primary-bg-hover);
+    border-color: var(--ecom-btn-primary-border-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ecom-btn-primary-bg-active);
+  }
+}
+
+@mixin ecom-button-secondary {
+  @include ecom-button-base;
+  background-color: var(--ecom-btn-secondary-bg);
+  color: var(--ecom-btn-secondary-text);
+  border-color: var(--ecom-btn-secondary-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--ecom-btn-secondary-bg-hover);
+    border-color: var(--ecom-btn-secondary-border-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ecom-btn-secondary-bg-active);
+  }
+}
+
+@mixin ecom-button-ghost {
+  @include ecom-button-base;
+  background-color: var(--ecom-btn-ghost-bg);
+  color: var(--ecom-btn-ghost-text);
+  border-color: var(--ecom-btn-ghost-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--ecom-btn-ghost-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ecom-btn-ghost-bg-active);
+  }
+}
+
+@mixin ecom-button-size($size: md) {
+  @if $size == sm {
+    height: var(--ecom-btn-height-sm);
+    padding: var(--ecom-btn-padding-sm);
+    font-size: var(--ecom-btn-text-sm);
+  } @else if $size == lg {
+    height: var(--ecom-btn-height-lg);
+    padding: var(--ecom-btn-padding-lg);
+    font-size: var(--ecom-btn-text-lg);
+  } @else {
+    height: var(--ecom-btn-height-md);
+    padding: var(--ecom-btn-padding-md);
+    font-size: var(--ecom-btn-text-md);
+  }
+}
+
+@mixin ecom-card {
+  background-color: var(--ecom-card-bg);
+  border: 1px solid var(--ecom-card-border);
+  border-radius: var(--ecom-card-radius);
+  padding: var(--ecom-card-padding);
+  box-shadow: var(--ecom-card-shadow);
+  transition: all var(--ecom-transition-normal);
+
+  &:hover {
+    background-color: var(--ecom-card-bg-hover);
+    border-color: var(--ecom-card-border-hover);
+    box-shadow: var(--ecom-card-shadow-hover);
+  }
+}
+
+@mixin ecom-input {
+  background-color: var(--ecom-input-bg);
+  color: var(--ecom-input-text);
+  border: 1px solid var(--ecom-input-border);
+  border-radius: var(--ecom-input-radius);
+  height: var(--ecom-input-height);
+  padding: var(--ecom-input-padding);
+  font-family: var(--ecom-font-body);
+  font-size: var(--ecom-text-base);
+  transition: border-color var(--ecom-transition-normal);
+
+  &::placeholder {
+    color: var(--ecom-input-placeholder);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--ecom-input-border-focus);
+    box-shadow: 0 0 0 3px rgb(249 115 22 / 0.1);
+  }
+}
