@@ -1,13 +1,13 @@
-import { Component, inject, signal, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { PLATFORM_ID } from '@angular/core';
 
 import { RemoteHtmlInlineSectionComponent } from '../../sections/remote-html-inline-section.component';
-import { RemoteHtmlIframeSectionComponent } from '../../sections/remote-html-iframe-section.component';
 import { PromoListSectionComponent } from '../../sections/promo-list-section.component';
 
-type RemoteHtmlInline = { type: 'remoteHtmlInline', src: string, height?: string };
+type RemoteHtmlInline = { type: 'remoteHtmlInline', src: string, height?: string, hoistAssets?: boolean, copyBodyClasses?: boolean, executeScripts?: boolean };
 type RemoteHtml = { type: 'remoteHtml', src: string, height?: string };
 type PromoList = { type: 'promotionList', title?: string };
 type Section = RemoteHtmlInline | RemoteHtml | PromoList;
@@ -18,19 +18,22 @@ type PageData = { layout?: Layout, sections: Section[] };
   standalone: true,
   selector: 'promotion-page',
   imports: [CommonModule, RouterModule, HttpClientModule,
-    RemoteHtmlInlineSectionComponent, RemoteHtmlIframeSectionComponent, PromoListSectionComponent],
+    RemoteHtmlInlineSectionComponent, PromoListSectionComponent],
   templateUrl: './promotion.component.html'
 })
 export class PromotionComponent {
   private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
 
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly doc = inject(DOCUMENT);
+
   page = signal<PageData | null>(null);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
   constructor() {
-    // Recarrega quando o query param mudar
     this.route.queryParamMap.subscribe(async (params) => {
       const url = params.get('pageUrl');
       if (!url) {
@@ -47,7 +50,6 @@ export class PromotionComponent {
     this.error.set(null);
     try {
       const page = await this.http.get<PageData>(url, { withCredentials: false }).toPromise();
-      // Opcional: aplicar vars de layout como CSS custom properties
       this.applyLayoutVars(page?.layout?.vars || {});
       this.page.set(page || { sections: [] });
     } catch (e: any) {
@@ -59,10 +61,9 @@ export class PromotionComponent {
   }
 
   private applyLayoutVars(vars: Record<string,string>) {
-    const root = document.documentElement;
-    Object.entries(vars || {}).forEach(([k,v]) => {
-      root.style.setProperty(k, String(v));
-    });
+    if (!this.isBrowser) return;
+    const root = (this.doc?.documentElement) || document.documentElement;
+    Object.entries(vars || {}).forEach(([k,v]) => root.style.setProperty(k, String(v)));
   }
 
   getSrc(section: Section): string {
@@ -84,5 +85,33 @@ export class PromotionComponent {
       return section.title || 'Ofertas';
     }
     return '';
+  }
+
+  getHoistAssets(section: Section): boolean {
+    if (section.type === 'remoteHtmlInline') {
+      return section.hoistAssets ?? true;
+    }
+    return true;
+  }
+
+  getCopyBodyClasses(section: Section): boolean {
+    if (section.type === 'remoteHtmlInline') {
+      return section.copyBodyClasses ?? true;
+    }
+    return true;
+  }
+
+  getExecuteScripts(section: Section): boolean {
+    if (section.type === 'remoteHtmlInline') {
+      return section.executeScripts ?? true;
+    }
+    return true;
+  }
+
+  getFullBleedClass(section: Section): string {
+    const fullBleed = (section as any).fullBleed;
+    return fullBleed 
+      ? 'w-screen relative left-1/2 right-1/2 -mx-[50vw] pl-[50vw] pr-[50vw]'
+      : 'mx-auto max-w-screen-xl px-4';
   }
 }

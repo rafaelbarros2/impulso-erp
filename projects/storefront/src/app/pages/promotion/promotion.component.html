@@ -1,29 +1,46 @@
-<div class="container mx-auto px-4 py-6">
-  <ng-container *ngIf="loading(); else ready">
-    <div class="p-8 text-gray-500">Carregando promoções…</div>
-  </ng-container>
-  <ng-template #ready>
-    <ng-container *ngIf="error(); else content">
+<!-- Full-bleed promotion page: sections podem ocupar 100vw -->
+<ng-container *ngIf="loading(); else ready">
+  <div class="mx-auto max-w-screen-xl px-4 py-6 text-gray-500">Carregando promoções…</div>
+</ng-container>
+
+<ng-template #ready>
+  <ng-container *ngIf="error(); else content">
+    <div class="mx-auto max-w-screen-xl px-4 py-6">
       <div class="p-6 rounded bg-red-50 text-red-700 border border-red-200">
         {{ error() }}
       </div>
-    </ng-container>
-    <ng-template #content>
-      <ng-container *ngIf="page(); else empty">
-        <ng-container *ngFor="let s of page()!.sections">
+    </div>
+  </ng-container>
+
+  <ng-template #content>
+    <ng-container *ngIf="page(); else empty">
+      <ng-container *ngFor="let s of page()!.sections">
+        <!-- wrapper controla full-bleed por seção -->
+        <div [class]="getFullBleedClass(s)">
+          <!-- ✅ INLINE: Renderiza HTML com CSS funcionando -->
           <remote-html-inline *ngIf="s.type === 'remoteHtmlInline'"
-            [src]="getSrc(s)" [height]="getHeight(s)"></remote-html-inline>
+            [src]="getSrc(s)"
+            [height]="getHeight(s)"
+            [hoistAssets]="getHoistAssets(s)"
+            [copyBodyClasses]="getCopyBodyClasses(s)"
+            [executeScripts]="getExecuteScripts(s)"></remote-html-inline>
 
-          <remote-html-iframe *ngIf="s.type === 'remoteHtml'"
-            [src]="getSrc(s)" [height]="getHeight(s)"></remote-html-iframe>
+          <!-- 🔄 CONVERTENDO IFRAME → INLINE PARA CSS FUNCIONAR -->
+          <remote-html-inline *ngIf="s.type === 'remoteHtml'"
+            [src]="getSrc(s)"
+            [height]="getHeight(s)"
+            [hoistAssets]="true"
+            [copyBodyClasses]="true"
+            [executeScripts]="true"></remote-html-inline>
 
+          <!-- 📝 PROMO LIST -->
           <promo-list-section *ngIf="s.type === 'promotionList'"
             [title]="getTitle(s)"></promo-list-section>
-        </ng-container>
+        </div>
       </ng-container>
-      <ng-template #empty>
-        <div class="p-8 text-gray-500">Nenhuma seção para exibir.</div>
-      </ng-template>
+    </ng-container>
+    <ng-template #empty>
+      <div class="mx-auto max-w-screen-xl px-4 py-6 text-gray-500">Nenhuma seção para exibir.</div>
     </ng-template>
   </ng-template>
-</div>
+</ng-template>
