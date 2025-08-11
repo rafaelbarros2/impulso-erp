@@ -16,7 +16,7 @@ export const categoryResolver: ResolveFn<Category> = (route): Observable<Categor
     throw new Error('Category slug is required');
   }
 
-  console.log(`[CategoryResolver] Resolving category: ${slug}`);
+  // Resolving category
   
   // O CatalogService já implementa a lógica de TransferState
   // No servidor: faz HTTP e salva no TransferState

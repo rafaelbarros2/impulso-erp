@@ -1,0 +1,11 @@
+{
+  "layout": { "id": "promotion" },
+  "sections": [
+    {
+      "type": "remoteHtmlInline",
+      "src": "http://localhost:8080/tenants/demo/promotions/minha-promocao/index.html",
+      "height": "900px"
+    },
+    { "type": "promotionList", "title": "Ofertas" }
+  ]
+}

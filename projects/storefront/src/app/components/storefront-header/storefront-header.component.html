@@ -1,0 +1,15 @@
+<header class="flex items-center justify-between py-4 px-6 border-b border-gray-200">
+  <div class="flex items-center space-x-2 cursor-pointer" (click)="onLogoClick()">
+    <span class="text-2xl font-bold">{{ storeName }}</span>
+  </div>
+  <div class="flex items-center space-x-4">
+    <button class="relative" (click)="onCartClick()">
+      <!-- Simple cart icon using Unicode -->
+      🛒
+      <span *ngIf="cartItemCount > 0"
+            class="absolute -top-1 -right-2 text-xs text-white bg-red-600 rounded-full px-1">
+        {{ cartItemCount }}
+      </span>
+    </button>
+  </div>
+</header>

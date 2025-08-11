@@ -1,0 +1,30 @@
+.categories {
+  padding: 1rem 0;
+}
+
+.categories-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.category-card {
+  background-color: var(--card-bg, #ffffff);
+  border-color: var(--border-color, #e5e7eb);
+  border-width: 1px;
+  padding: 1rem;
+}

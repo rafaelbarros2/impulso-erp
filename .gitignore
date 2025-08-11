@@ -43,6 +43,6 @@ testem.log
 Thumbs.db
 
 
-ECOMMERCE_THEME_MIGRATION.md
-GEMINI.md
-THEME_TOKENS.md
+*.md
+*.zip
+*.tar.gz

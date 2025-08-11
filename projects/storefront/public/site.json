@@ -1,0 +1,9 @@
+{
+  "tenantId": "demo",
+  "storeId": "demo-store",
+  "defaultLayout": "promotion",
+  "defaultThemeUrl": "/tenants/demo/themes/ecommerce.theme.json",
+  "pages": {
+    "home": "/tenants/demo/pages/home.json"
+  }
+}

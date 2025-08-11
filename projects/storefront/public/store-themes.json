@@ -1,0 +1,6 @@
+{
+  "default": "minimal",
+  "map": {
+    "loja-legado.seu-dominio.com": "legacy"
+  }
+}

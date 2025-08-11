@@ -2,174 +2,144 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { map, tap, catchError } from 'rxjs/operators';
 
-export interface ThemeConfig {
-  name: string;
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    background: string;
-    surface: string;
-    text: string;
-    textSecondary: string;
-    border: string;
-    error: string;
-    success: string;
-    warning: string;
-  };
-  typography: {
-    fontFamily: string;
-    fontSize: {
-      xs: string;
-      sm: string;
-      base: string;
-      lg: string;
-      xl: string;
-      '2xl': string;
-    };
-    fontWeight: {
-      normal: string;
-      medium: string;
-      semibold: string;
-      bold: string;
-    };
-  };
-  spacing: {
-    xs: string;
-    sm: string;
-    md: string;
-    lg: string;
-    xl: string;
-    '2xl': string;
-  };
-  borderRadius: {
-    sm: string;
-    md: string;
-    lg: string;
-    full: string;
-  };
-}
+/**
+ * Theme tokens (DTCG-like). We only care about "$value" leaves;
+ * everything else is treated as namespaces forming CSS variable names.
+ */
+type TokenTree = { [key: string]: any };
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ThemeService {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID);
-  private currentTheme: ThemeConfig | null = null;
+  private currentThemeUrl: string | null = null;
+  private currentThemeName: string | null = null;
 
-  /**
-   * Carrega tema de um arquivo JSON
-   */
-  loadTheme(themePath: string): Observable<ThemeConfig> {
-    return this.http.get<ThemeConfig>(themePath).pipe(
-      tap(theme => {
-        this.currentTheme = theme;
-        this.applyTheme(theme);
-      }),
-      catchError(error => {
-        console.error('[ThemeService] Error loading theme:', error);
-        return of(this.getDefaultTheme());
+  private readonly STORAGE_KEY = 'storefront_theme';
+  private readonly STORAGE_URL_KEY = 'storefront_theme_url';
+
+  /** Loads a theme by URL (absolute or relative) and applies CSS variables. */
+  loadThemeUrl(url: string): Observable<void> {
+    this.currentThemeUrl = url;
+    return this.http.get<TokenTree>(url).pipe(
+      tap(tokens => this.applyTokens(tokens)),
+      tap(() => this.persist()),
+      map(() => void 0),
+      catchError(err => {
+        console.error('[ThemeService] Failed to load theme from', url, err);
+        return of(void 0);
       })
     );
   }
 
-  /**
-   * Aplica o tema via CSS variables
+  /** Loads a theme by name. 
+   * If name looks like a URL (.json), it's treated as URL directly.
+   * Otherwise, resolves to `/theme.${name}.json` at the storefront public root.
    */
-  private applyTheme(theme: ThemeConfig): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return; // Skip no servidor
+  loadThemeName(name: string): Observable<void> {
+    if (!name) return of(void 0);
+    if (name.endsWith('.json') || name.startsWith('/') || name.startsWith('http')) {
+      this.currentThemeName = this.inferNameFromUrl(name);
+      return this.loadThemeUrl(name);
     }
-
-    const root = document.documentElement;
-    
-    // Apply color variables
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key}`, value);
-    });
-
-    // Apply typography variables
-    root.style.setProperty(`--font-family`, theme.typography.fontFamily);
-    Object.entries(theme.typography.fontSize).forEach(([key, value]) => {
-      root.style.setProperty(`--text-${key}`, value);
-    });
-    Object.entries(theme.typography.fontWeight).forEach(([key, value]) => {
-      root.style.setProperty(`--font-${key}`, value);
-    });
-
-    // Apply spacing variables
-    Object.entries(theme.spacing).forEach(([key, value]) => {
-      root.style.setProperty(`--spacing-${key}`, value);
-    });
-
-    // Apply border radius variables
-    Object.entries(theme.borderRadius).forEach(([key, value]) => {
-      root.style.setProperty(`--radius-${key}`, value);
-    });
-
-    console.log(`[ThemeService] Theme '${theme.name}' applied successfully`);
+    this.currentThemeName = name;
+    const url = `/theme.${name}.json`;
+    return this.loadThemeUrl(url);
   }
 
-  /**
-   * Retorna tema padrão como fallback
-   */
-  private getDefaultTheme(): ThemeConfig {
-    return {
-      name: 'Default Storefront',
-      colors: {
-        primary: '#3b82f6',
-        secondary: '#64748b',
-        accent: '#f59e0b',
-        background: '#ffffff',
-        surface: '#f8fafc',
-        text: '#1e293b',
-        textSecondary: '#64748b',
-        border: '#e2e8f0',
-        error: '#ef4444',
-        success: '#10b981',
-        warning: '#f59e0b'
-      },
-      typography: {
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        fontSize: {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
-          '2xl': '1.5rem'
-        },
-        fontWeight: {
-          normal: '400',
-          medium: '500',
-          semibold: '600',
-          bold: '700'
+  /** Applies DTCG tokens as CSS variables to :root */
+  private applyTokens(tokens: TokenTree): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      // On the server: no DOM; still keep current theme metadata
+      return;
+    }
+    const root = document.documentElement;
+    const entries = this.flattenTokens(tokens);
+
+    for (const [cssVar, value] of entries) {
+      try {
+        root.style.setProperty(cssVar, value);
+      } catch (e) {
+        console.warn('[ThemeService] Failed to set var', cssVar, value, e);
+      }
+    }
+    // Also set a few meta variables (for components relying on generic names)
+    // Map common aliases for convenience
+    const primary = getComputedStyle(root).getPropertyValue('--color-primary-500')?.trim();
+    const text = getComputedStyle(root).getPropertyValue('--color-neutral-900')?.trim() || '#111827';
+    if (primary) root.style.setProperty('--primary-color', primary);
+    if (text) root.style.setProperty('--text-color', text);
+  }
+
+  /** Flattens tokens into [--a-b-c, value] pairs using kebab-case and numeric keys intact */
+  private flattenTokens(tokens: TokenTree): Array<[string, string]> {
+    const out: Array<[string, string]> = [];
+    const walk = (node: any, path: string[]) => {
+      if (node && typeof node === 'object' && ('$value' in node)) {
+        const cssName = '--' + path.join('-');
+        out.push([cssName, String(node['$value'])]);
+        return;
+      }
+      if (node && typeof node === 'object') {
+        for (const key of Object.keys(node)) {
+          if (key === '$type' || key === '$description' || key === '$version' || key === '$schema') continue;
+          const k = key.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+          walk(node[key], [...path, k]);
         }
-      },
-      spacing: {
-        xs: '0.25rem',
-        sm: '0.5rem',
-        md: '1rem',
-        lg: '1.5rem',
-        xl: '2rem',
-        '2xl': '3rem'
-      },
-      borderRadius: {
-        sm: '0.25rem',
-        md: '0.375rem',
-        lg: '0.5rem',
-        full: '9999px'
       }
     };
+    walk(tokens, []);
+    return out;
   }
 
-  /**
-   * Retorna o tema atual
-   */
-  getCurrentTheme(): ThemeConfig | null {
-    return this.currentTheme;
+  /** Persist current theme selection in localStorage (browser only) */
+  private persist(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      if (this.currentThemeName) {
+        localStorage.setItem(this.STORAGE_KEY, this.currentThemeName);
+        console.log(`[ThemeService] Persisted theme name: ${this.currentThemeName}`);
+      }
+      if (this.currentThemeUrl) {
+        localStorage.setItem(this.STORAGE_URL_KEY, this.currentThemeUrl);
+        console.log(`[ThemeService] Persisted theme URL: ${this.currentThemeUrl}`);
+      }
+    } catch {}
   }
+
+  /** Restore selection from localStorage */
+  restore(): { name: string | null; url: string | null } {
+    if (!isPlatformBrowser(this.platformId)) return { name: null, url: null };
+    try {
+      const name = localStorage.getItem(this.STORAGE_KEY);
+      const url = localStorage.getItem(this.STORAGE_URL_KEY);
+      console.log(`[ThemeService] Restored from localStorage - name: ${name}, url: ${url}`);
+      return { name, url };
+    } catch {
+      return { name: null, url: null };
+    }
+  }
+
+  clear(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem(this.STORAGE_URL_KEY);
+    } catch {}
+  }
+
+  private inferNameFromUrl(url: string): string {
+    try {
+      const u = new URL(url, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+      const base = u.pathname.split('/').pop() ?? '';
+      return base.replace(/^theme\./, '').replace(/\.json$/,'') || 'custom';
+    } catch {
+      return 'custom';
+    }
+  }
+
+  get currentName(): string | null { return this.currentThemeName; }
+  get currentUrl(): string | null { return this.currentThemeUrl; }
 }

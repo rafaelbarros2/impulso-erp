@@ -1,0 +1,12 @@
+*** a/src/app/sections/section-registry.ts
+--- b/src/app/sections/section-registry.ts
+@@
+-import { RemoteHtmlSectionComponent } from './remote-html-section.component';
++import { RemoteHtmlSectionComponent } from './remote-html-section.component';
++import { RemoteHtmlInlineSectionComponent } from './remote-html-inline-section.component';
+@@
+ export const SECTION_REGISTRY = {
+   remoteHtml:      { comp: RemoteHtmlSectionComponent },
++  remoteHtmlInline:{ comp: RemoteHtmlInlineSectionComponent },
+   promotionList:   { comp: PromotionListSectionComponent },
+ };

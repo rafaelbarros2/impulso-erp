@@ -16,7 +16,7 @@ export const productResolver: ResolveFn<Product> = (route): Observable<Product> 
     throw new Error('Product slug is required');
   }
 
-  console.log(`[ProductResolver] Resolving product: ${slug}`);
+  // Resolving product
   
   // O CatalogService já implementa a lógica de TransferState
   // No servidor: faz HTTP e salva no TransferState

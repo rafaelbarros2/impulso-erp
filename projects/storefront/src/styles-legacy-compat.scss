@@ -1,0 +1,191 @@
+/* ======================================================================
+   Camada de compatibilidade: legacy -> novo tema (CSS Custom Properties)
+   Coloque este arquivo depois de styles.css no angular.json
+   ====================================================================== */
+
+:root {
+  /* ---------------- Cores principais ---------------- */
+  /* Antigo: --primary-color, --primary-50/600 */
+  --primary-color: var(--color-primary-600);
+  --primary-50:  var(--color-primary-50);
+  --primary-100: var(--color-primary-100, #eaf2ff);
+  --primary-200: var(--color-primary-200, #dbe7ff);
+  --primary-300: var(--color-primary-300, #b8d0ff);
+  --primary-400: var(--color-primary-400, #8fb3ff);
+  --primary-500: var(--color-primary-500);
+  --primary-600: var(--color-primary-600);
+  --primary-700: var(--color-primary-700);
+  --primary-800: var(--color-primary-800, #1f479f);
+  --primary-900: var(--color-primary-900, #193a80);
+
+  /* Antigo: --secondary-color */
+  --secondary-color: var(--color-secondary-500, #6b7280);
+  --accent-color:    var(--color-accent-500, #f59e0b);
+
+  /* Estados (antigo costumava usar nomes diretos) */
+  --success-500: var(--color-success-500, #22c55e);
+  --warning-500: var(--color-warning-500, #f59e0b);
+  --error-500:   var(--color-error-500,   #ef4444);
+  --red-500:     var(--color-error-500,   #ef4444);
+
+  /* ---------------- Texto & superfícies ---------------- */
+  /* Antigo: --text-color, --text-color-secondary */
+  --text-color:            var(--color-text, #111827);
+  --text-color-secondary:  var(--color-text-muted, #6b7280);
+
+  /* Antigo: --background-color, --surface-xxx, --surface-border */
+  --background-color: var(--color-surface, #ffffff);
+
+  /* “surface” do antigo mapeado para a escala neutra do novo */
+  --surface-50:  var(--color-neutral-50,  #f9fafb);
+  --surface-100: var(--color-neutral-100, #f3f4f6);
+  --surface-200: var(--color-neutral-200, #e5e7eb);
+  --surface-300: var(--color-neutral-300, #d1d5db);
+
+  --surface-border: var(--color-surface-border, #e5e7eb);
+
+  /* Antigo: cabeçalho/navbar */
+  --header-bg:  var(--color-surface, #ffffff);
+  --navbar-bg:  var(--color-surface, #ffffff);
+
+  /* ---------------- Hero / Background (usado pelos serviços core) ---------------- */
+  /* Se o CoreBackgroundService não setar --hero-bg, usamos gradiente do tema */
+  --hero-start: var(--color-primary-500);
+  --hero-end:   var(--color-primary-700);
+  --hero-bg:    linear-gradient(135deg, var(--hero-start), var(--hero-end));
+  --hero-overlay-color: rgba(0,0,0,.0);
+  --hero-overlay-opacity: 0;
+
+  /* ---------------- Botões/links “antigo” ---------------- */
+  --btn-primary-bg:        var(--color-primary-600);
+  --btn-primary-hover-bg:  var(--color-primary-700);
+  --btn-on-primary:        #ffffff;
+
+  --link-color:        var(--color-primary-600);
+  --link-hover-color:  var(--color-primary-700);
+
+  /* ---------------- Espaçamento & raio (nomes antigos) ---------------- */
+  --spacing-xs:  var(--space-1, 0.25rem);
+  --spacing-sm:  var(--space-2, 0.5rem);
+  --spacing-md:  var(--space-4, 1rem);
+  --spacing-lg:  var(--space-6, 1.5rem);
+  --spacing-xl:  var(--space-8, 2rem);
+
+  --radius-sm:   var(--radius-sm, 8px);
+  --radius-md:   var(--radius-md, 12px);
+  --radius-lg:   var(--radius-lg, 16px);
+  --radius-full: var(--radius-full, 9999px);
+
+  /* Alguns componentes antigos usam isto em cards/badges */
+  --card-radius: var(--radius-lg);
+  --card-bg:     var(--color-surface, #fff);
+  --badge-bg:    color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+  --badge-text:  var(--color-primary-700);
+
+  /* ---------------- Tipografia (nomes antigos) ---------------- */
+  --text-xs:  var(--font-size-xs, 0.75rem);
+  --text-sm:  var(--font-size-sm, 0.875rem);
+  --text-base:var(--font-size-base, 1rem);
+  --text-lg:  var(--font-size-lg, 1.125rem);
+  --text-xl:  var(--font-size-xl, 1.25rem);
+  --text-2xl: var(--font-size-2xl, 1.5rem);
+  --font-bold: var(--font-weight-bold, 700);
+
+  /* ---------------- Motion tokens mínimos (compat) ---------------- */
+  --ease-standard:    cubic-bezier(.2,0,0,1);
+  --ease-emphasized:  cubic-bezier(.2,0,0,.9);
+  --duration-fast:    120ms;
+  --duration-normal:  220ms;
+  --duration-slow:    360ms;
+
+  /* Elevação usada no antigo em hover de cards/botões */
+  --elev-1: 0 6px 16px rgba(0,0,0,.08);
+  --elev-2: 0 10px 24px rgba(0,0,0,.12);
+
+  /* Anel de foco “antigo” baseado no primário do tema */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 25%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce){
+  :root{
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+/* ======================= Regras globais mínimas ======================= */
+/* Links do antigo herdavam “azul” fixo; agora seguem o tema */
+a { color: var(--link-color); }
+a:hover { color: var(--link-hover-color); }
+
+/* Botão primário padrão do antigo */
+button.btn-primary,
+a.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-on-primary);
+  border-radius: var(--card-radius);
+  transition:
+    background var(--duration-fast) var(--ease-emphasized),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+button.btn-primary:hover,
+a.btn-primary:hover { background: var(--btn-primary-hover-bg); box-shadow: var(--elev-1); transform: translateY(-1px); }
+button.btn-primary:active,
+a.btn-primary:active { transform: translateY(0); }
+
+/* Superfície/base dos cards antigos */
+.card-legacy {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--elev-1);
+  border: 1px solid var(--surface-border);
+}
+
+/* Removido: valores hardcoded que sobrescreviam os tokens dinâmicos do home.json
+   Os valores agora vêm do ThemeTokenApplierService via home.json
+*/
+
+
+.p-toast {
+  z-index: 10000;
+}
+
+/* Item do toast */
+.p-toast .p-toast-message {
+  border-radius: 12px;
+  box-shadow: var(--elev-2, 0 10px 24px rgba(0,0,0,.12));
+  border: 1px solid var(--surface-border, #e5e7eb);
+  overflow: hidden;
+}
+
+/* Header + content */
+.p-toast .p-toast-message .p-toast-message-content {
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+/* Título e detalhe */
+.p-toast .p-toast-summary { font-weight: 700; }
+.p-toast .p-toast-detail { color: var(--text-color-secondary, #6b7280); }
+
+/* Ícone lateral (status) */
+.p-toast .p-toast-message .p-toast-message-icon {
+  width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;
+}
+
+/* Botão fechar */
+.p-toast .p-toast-icon-close {
+  width: 32px; height: 32px; border-radius: 8px; transition: background 120ms;
+}
+.p-toast .p-toast-icon-close:hover { background: var(--surface-100, #f3f4f6); }
+
+/* Cores por severidade (seguem o tema) */
+.p-toast-message-info { border-left: 4px solid var(--color-primary-600, #2563eb); }
+.p-toast-message-success { border-left: 4px solid var(--success-500, #22c55e); }
+.p-toast-message-warn { border-left: 4px solid var(--warning-500, #f59e0b); }
+.p-toast-message-error { border-left: 4px solid var(--error-500, #ef4444); }
+
+/* Fundo e texto (claro) */
+.p-toast .p-toast-message { background: var(--color-surface, #fff); color: var(--text-color, #111827); }

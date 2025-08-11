@@ -3,7 +3,8 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent)
+    resolve: { tenant: () => import('./resolvers/tenant.resolver').then(r => r.tenantResolver) },
+    loadComponent: () => import('./pages/storefront-home/storefront-home.page').then(c => c.StorefrontHomePage)
   },
   {
     path: 'c/:slug',
@@ -26,6 +27,15 @@ export const routes: Routes = [
   {
     path: 'checkout',
     loadComponent: () => import('./pages/checkout/checkout.component').then(c => c.CheckoutComponent)
+  },
+  // ✅ NOVA ROTA (mantém os query params tipo ?pageUrl=...)
+  {
+    path: 'promocoes',
+    loadComponent: () => import('./pages/promotion/promotion.component').then(c => c.PromotionComponent)
+  },
+  {
+    path: 'promotion',
+    loadComponent: () => import('./pages/promotion/promotion.component').then(c => c.PromotionComponent)
   },
   {
     path: '**',

@@ -30,6 +30,10 @@ export interface Product extends BaseEntity {
   notes?: string;
   tags?: string[];
   variants?: ProductVariant[];
+  inStock?: boolean;
+  oldPrice?: number; 
+  price?: number;
+  featured?: boolean; // For displaying old price in promotions
 }
 
 export interface ProductVariant extends BaseEntity {

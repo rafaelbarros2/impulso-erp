@@ -1,0 +1,13 @@
+*** projects/storefront/src/app/dynamic/section-registry.ts	before
+--- projects/storefront/src/app/dynamic/section-registry.ts	after
+@@
+-import { Type } from '@angular/core';
++import { Type } from '@angular/core';
++import { RemoteHtmlSectionComponent } from '../features/promo/remote-html-section.component';
++import { PromotionListSectionComponent } from '../features/promo/promotion-list-section.component';
+@@
+ export const SECTION_REGISTRY: Record<string, { comp: Type<any> }> = {
+   // ...suas seções existentes
++  remoteHtml: { comp: RemoteHtmlSectionComponent },
++  promotionList: { comp: PromotionListSectionComponent }
+ };

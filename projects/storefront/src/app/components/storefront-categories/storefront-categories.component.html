@@ -1,0 +1,30 @@
+<div class="categories py-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <h2 *ngIf="title" class="text-3xl font-bold text-center mb-8 text-gray-800">{{ title }}</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <ng-container *ngFor="let category of categories">
+        <div
+          class="category-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 overflow-hidden"
+          role="button"
+          tabindex="0"
+          (click)="onCategoryClick(category)"
+          (keyup.enter)="onCategoryClick(category)"
+          [attr.aria-label]="'Categoria ' + category.name">
+          <div class="aspect-square relative bg-gradient-to-br from-gray-100 to-gray-200">
+            <div class="absolute inset-0 flex items-center justify-center"
+                 [ngStyle]="category.image ? {'background-image': 'url(' + category.image + ')', 'background-size': 'cover', 'background-position': 'center'} : {}">
+              <div *ngIf="!category.image" class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                <span class="text-gray-600 text-xl font-bold">{{ category.name.charAt(0) }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800 mb-1">{{ category.name }}</h3>
+            <p *ngIf="showItemCount && category.itemCount !== undefined"
+               class="text-sm text-gray-500">{{ category.itemCount }} produtos</p>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

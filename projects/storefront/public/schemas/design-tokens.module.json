@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/design-tokens.module.json",
+  "title": "Design Tokens (Module) - Minimal Local Schema",
+  "description": "Schema local minimalista para validação de arquivos de design tokens no formato Design Tokens Community Group (module).",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$version": { "type": "string" },
+    "$description": { "type": "string" }
+  },
+  "patternProperties": {
+    ".+": {
+      "anyOf": [
+        { "$ref": "#/definitions/token" },
+        { "$ref": "#/definitions/group" }
+      ]
+    }
+  },
+  "definitions": {
+    "token": {
+      "type": "object",
+      "required": ["$value"],
+      "properties": {
+        "$value": {},
+        "$type": { "type": ["string", "number"] },
+        "$description": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          { "$ref": "#/definitions/token" },
+          { "$ref": "#/definitions/group" }
+        ]
+      }
+    }
+  }
+}
+

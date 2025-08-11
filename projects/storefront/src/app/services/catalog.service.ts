@@ -27,19 +27,19 @@ export class CatalogService {
     // Verifica se já existe no TransferState
     const cachedCategory = this.transferState.get(stateKey, null);
     if (cachedCategory) {
-      console.log(`[CatalogService] Category '${slug}' loaded from TransferState (no HTTP request)`);
+      // Category loaded from cache
       return of(cachedCategory);
     }
 
     // Faz requisição HTTP e salva no TransferState
-    console.log(`[CatalogService] Fetching category '${slug}' from API`);
+    // Fetching category from API
     return this.http.get<CatalogResponse<Category>>(`${this.API_BASE}/categories/${slug}`)
       .pipe(
         map(response => response.data),
         tap(category => {
           // Salva no TransferState para evitar refetch no cliente
           this.transferState.set(stateKey, category);
-          console.log(`[CatalogService] Category '${slug}' saved to TransferState`);
+          // Category saved to cache
         }),
         catchError(error => {
           console.error(`[CatalogService] Error fetching category '${slug}':`, error);
@@ -58,19 +58,19 @@ export class CatalogService {
     // Verifica se já existe no TransferState
     const cachedProduct = this.transferState.get(stateKey, null);
     if (cachedProduct) {
-      console.log(`[CatalogService] Product '${slug}' loaded from TransferState (no HTTP request)`);
+      // Product loaded from cache
       return of(cachedProduct);
     }
 
     // Faz requisição HTTP e salva no TransferState
-    console.log(`[CatalogService] Fetching product '${slug}' from API`);
+    // Fetching product from API
     return this.http.get<CatalogResponse<Product>>(`${this.API_BASE}/products/${slug}`)
       .pipe(
         map(response => response.data),
         tap(product => {
           // Salva no TransferState para evitar refetch no cliente
           this.transferState.set(stateKey, product);
-          console.log(`[CatalogService] Product '${slug}' saved to TransferState`);
+          // Product saved to cache
         }),
         catchError(error => {
           console.error(`[CatalogService] Error fetching product '${slug}':`, error);
@@ -85,7 +85,7 @@ export class CatalogService {
    */
   clearTransferStateCache(): void {
     // Em produção, você pode implementar lógica mais sofisticada
-    console.log('[CatalogService] TransferState cache cleared');
+    // TransferState cache cleared
   }
 
   // ========================================
@@ -98,7 +98,7 @@ export class CatalogService {
       slug,
       name: `Category ${slug.charAt(0).toUpperCase() + slug.slice(1)}`,
       description: `This is a mock category for ${slug}. In production, this would come from your API.`,
-      image: `https://picsum.photos/400/300?random=${slug}`,
+      image: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjE1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRTVFN0VCIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LXNpemU9IjE2cHgiPkNhdGVnb3J5ICR7c2x1Z308L3RleHQ+Cjwvc3ZnPg==`,
       products: this.getMockProducts(slug),
       subcategories: [],
       createdAt: new Date().toISOString()
@@ -114,8 +114,7 @@ export class CatalogService {
       price: Math.floor(Math.random() * 500) + 50,
       originalPrice: Math.floor(Math.random() * 200) + 600,
       images: [
-        `https://picsum.photos/600/400?random=${slug}-1`,
-        `https://picsum.photos/600/400?random=${slug}-2`
+        `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjIyNSIgeT0iMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI0U1RTdFQiIvPgo8dGV4dCB4PSIzMDAiIHk9IjMyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxOHB4Ij5Qcm9kdWN0ICR7c2x1Z308L3RleHQ+Cjwvc3ZnPg==`
       ],
       categoryId: 'mock-category',
       inStock: Math.random() > 0.2, // 80% chance in stock
@@ -136,7 +135,7 @@ export class CatalogService {
       name: `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)} Product ${i + 1}`,
       description: `Mock product ${i + 1} in category ${categorySlug}`,
       price: Math.floor(Math.random() * 300) + 20,
-      images: [`https://picsum.photos/300/200?random=${categorySlug}-${i}`],
+      images: [`data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjExMiIgeT0iNzUiIHdpZHRoPSI3NSIgaGVpZ2h0PSI1MCIgZmlsbD0iI0U1RTdFQiIvPgo8dGV4dCB4PSIxNTAiIHk9IjE2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4Ij4ke2NhdGVnb3J5U2x1Z30gUHJvZHVjdCR7aSArIDF9PC90ZXh0Pjwvc3ZnPg==`],
       categoryId: `cat-${categorySlug}`,
       inStock: Math.random() > 0.15,
       attributes: [

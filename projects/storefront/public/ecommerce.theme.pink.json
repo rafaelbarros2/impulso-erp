@@ -1,5 +1,5 @@
 {
-  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$schema": "./schemas/design-tokens.module.json",
   "$version": "1.0.0",
   "$description": "Alternative Pink theme for testing theme switching",
   "color": {

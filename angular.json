@@ -35,6 +35,7 @@
             "src/styles.scss",
             "node_modules/primeicons/primeicons.css"
             
+            
           ],
             "scripts": []
           },
@@ -44,7 +45,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "1MB",
-                  "maximumError": "1MB"
+                  "maximumError": "1.5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -124,7 +125,10 @@
               }
             ],
             "styles": [
-              "projects/storefront/src/styles.css"
+              "projects/storefront/src/styles.css",
+              "projects/storefront/src/styles-legacy-compat.scss",
+              "projects/storefront/src/styles-effects.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": [],
             "server": "projects/storefront/src/main.server.ts",
@@ -143,8 +147,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"
@@ -187,7 +191,10 @@
               }
             ],
             "styles": [
-              "projects/storefront/src/styles.css"
+              "projects/storefront/src/styles.css",
+              "projects/storefront/src/styles-legacy-compat.scss",
+              "projects/storefront/src/styles-effects.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": []
           }

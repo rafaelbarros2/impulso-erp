@@ -1,80 +1,116 @@
 import { APP_INITIALIZER, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ThemeService } from '../services/theme.service';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { ThemeService } from '../services/theme.service';
 
 /**
- * Inicializador de tema para o storefront
- * Carrega o tema antes do bootstrap da aplicação
+ * Precedence for resolving the theme:
+ * 1) URL params: ?theme=<name> or ?themeUrl=<url>
+ * 2) localStorage (previous choice)
+ * 3) Hostname mapping from /store-themes.json (map host -> name or url)
+ * 4) Default: theme.minimal.json
  */
 export function themeInitializer() {
-  return () => {
-    const themeService = inject(ThemeService);
+  return async () => {
+    console.log('[ThemeInitializer] Starting theme initialization...');
+    const http = inject(HttpClient);
+    const theme = inject(ThemeService);
     const platformId = inject(PLATFORM_ID);
 
-    // Determina qual tema carregar baseado no ambiente/loja
-    const getThemeUrl = (): string => {
-      // Em produção, isso poderia vir de variáveis de ambiente ou API
-      const storeId = getStoreId();
+    const isBrowser = isPlatformBrowser(platformId);
+    console.log(`[ThemeInitializer] Is browser: ${isBrowser}`);
+
+    const params = isBrowser ? new URLSearchParams(window.location.search) : new URLSearchParams();
+    const themeUrlParam = params.get('themeUrl');
+    const themeParam = params.get('theme');
+    const clearParam = params.get('clearTheme');
+
+    console.log(`[ThemeInitializer] URL params - theme: ${themeParam}, themeUrl: ${themeUrlParam}, clearTheme: ${clearParam}`);
+
+    if (clearParam) {
+      console.log('[ThemeInitializer] Clearing theme from localStorage');
+      theme.clear();
+    }
+
+    // 1) URL param override
+    if (themeUrlParam) {
+      console.log(`[ThemeInitializer] Loading theme from URL param: ${themeUrlParam}`);
+      await firstValueFrom(theme.loadThemeUrl(themeUrlParam));
+      return true;
+    }
+    if (themeParam) {
+      console.log(`[ThemeInitializer] Loading theme from name param: ${themeParam}`);
+      await firstValueFrom(theme.loadThemeName(themeParam));
+      return true;
+    }
+
+    // 2) localStorage
+    console.log('[ThemeInitializer] Checking localStorage for saved theme...');
+    const restored = theme.restore();
+    if (restored?.url) {
+      console.log(`[ThemeInitializer] Loading theme from localStorage URL: ${restored.url}`);
+      await firstValueFrom(theme.loadThemeUrl(restored.url));
+      return true;
+    }
+    if (restored?.name) {
+      console.log(`[ThemeInitializer] Loading theme from localStorage name: ${restored.name}`);
+      await firstValueFrom(theme.loadThemeName(restored.name));
+      return true;
+    }
+
+    // 3) Hostname mapping
+    console.log('[ThemeInitializer] Checking hostname mapping...');
+    let mapped: string | null = null;
+    try {
+      const mapping: any = await firstValueFrom(http.get('/store-themes.json'));
+      const host = isBrowser ? window.location.hostname.toLowerCase() : 'ssr';
+      const map: Record<string,string> = (mapping && mapping.map) || {};
+      console.log(`[ThemeInitializer] Host: ${host}, Mapping:`, map);
       
-      switch (storeId) {
-        case 'pink':
-          return '/assets/ecommerce.theme.pink.json';
-        case 'minimal':
-          return '/assets/theme.minimal.json';
-        default:
-          return '/assets/ecommerce.theme.json';
+      // exact match
+      if (host in map) {
+        mapped = map[host];
+      } else {
+        // suffix wildcard (e.g., ".lojas.meudominio.com")
+        const entries = Object.entries(map);
+        for (const [key, value] of entries) {
+          if (key.startsWith('*.')) {
+            const suffix = key.slice(1); // ".domain.com"
+            if (host.endsWith(suffix)) {
+              mapped = value;
+              break;
+            }
+          }
+        }
       }
-    };
+      if (!mapped) {
+        mapped = mapping?.default || 'minimal';
+      }
+      console.log(`[ThemeInitializer] Mapped theme: ${mapped}`);
+    } catch (err) {
+      console.log('[ThemeInitializer] Mapping not available, using default');
+      // mapping not available; use default
+      mapped = 'minimal';
+    }
 
-    const themeUrl = getThemeUrl();
-    console.log(`[ThemeInitializer] Loading theme: ${themeUrl}`);
+    if (mapped) {
+      console.log(`[ThemeInitializer] Loading mapped theme: ${mapped}`);
+      if (mapped.endsWith('.json') || mapped.startsWith('/') || mapped.startsWith('http')) {
+        await firstValueFrom(theme.loadThemeUrl(mapped));
+      } else {
+        await firstValueFrom(theme.loadThemeName(mapped));
+      }
+      return true;
+    }
 
-    // Carrega o tema de forma assíncrona
-    return firstValueFrom(themeService.loadTheme(themeUrl))
-      .then(theme => {
-        console.log(`[ThemeInitializer] Theme '${theme.name}' loaded successfully`);
-      })
-      .catch(error => {
-        console.error('[ThemeInitializer] Failed to load theme, using default:', error);
-        // O ThemeService já aplica tema padrão em caso de erro
-      });
+    // 4) Absolute fallback
+    console.log('[ThemeInitializer] Using fallback theme: minimal');
+    await firstValueFrom(theme.loadThemeName('minimal'));
+    return true;
   };
 }
 
-/**
- * Determina qual loja/tema usar baseado na URL ou configuração
- * Em produção, isso viria de subdomain, path ou API
- */
-function getStoreId(): string {
-  if (typeof window === 'undefined') {
-    return 'default'; // Fallback para SSR
-  }
-
-  const hostname = window.location.hostname;
-  const pathname = window.location.pathname;
-  
-  // Exemplos de lógica de detecção de loja:
-  if (hostname.includes('pink') || pathname.includes('/pink')) {
-    return 'pink';
-  }
-  
-  if (hostname.includes('minimal') || pathname.includes('/minimal')) {
-    return 'minimal';
-  }
-  
-  // Pode também verificar localStorage, cookies, etc.
-  const storedTheme = localStorage?.getItem('storefront-theme');
-  if (storedTheme) {
-    return storedTheme;
-  }
-  
-  return 'default';
-}
-
-/**
- * Provider para o APP_INITIALIZER
- */
 export const provideThemeInitializer = () => ({
   provide: APP_INITIALIZER,
   useFactory: themeInitializer,

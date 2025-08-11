@@ -1,0 +1,16 @@
+.layout-shell {
+  --container-max: var(--layout-container-max, 1200px);
+  --gap: var(--layout-gap, 1.25rem);
+  display: grid;
+  gap: var(--gap);
+  grid-template:
+    "header" auto
+    "hero" auto
+    "main" 1fr
+    "footer" auto / 1fr;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: 1rem;
+}
+
+.layout-hero { position: relative; }

@@ -1,0 +1,20 @@
+{
+  "layout": {
+    "id": "promotion",
+    "vars": {
+      "--promo-hero-overlay": "0.40",
+      "--promo-accent": "var(--primary-600)"
+    }
+  },
+  "sections": [
+    {
+      "type": "remoteHtml",
+      "src": "/tenants/demo/promotions/verao-2025/index.html",
+      "height": "900px"
+    },
+    {
+      "type": "promotionList",
+      "title": "Ofertas"
+    }
+  ]
+}

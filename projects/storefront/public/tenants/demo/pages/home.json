@@ -1,0 +1,21 @@
+{
+  "layout": {
+    "id": "promotion",
+    "vars": {
+      "--promo-hero-overlay": "0.40"
+    }
+  },
+  "theme": {
+    "tokens": {
+      "colorPrimary600": "#2563eb"
+    }
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "title": "Coleção Verão 2025",
+      "classes": "promo-hero",
+      "ctaClass": "promo-cta"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+<div class="flex flex-wrap gap-2">
+  <button *ngFor="let it of items"
+          class="px-3 py-2 rounded border"
+          [class.ring]="(currentId() === it.id)"
+          (click)="setBg(it.id)">
+    {{ it.name }}
+  </button>
+</div>

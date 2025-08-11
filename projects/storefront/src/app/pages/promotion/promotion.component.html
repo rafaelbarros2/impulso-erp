@@ -1,0 +1,29 @@
+<div class="container mx-auto px-4 py-6">
+  <ng-container *ngIf="loading(); else ready">
+    <div class="p-8 text-gray-500">Carregando promoções…</div>
+  </ng-container>
+  <ng-template #ready>
+    <ng-container *ngIf="error(); else content">
+      <div class="p-6 rounded bg-red-50 text-red-700 border border-red-200">
+        {{ error() }}
+      </div>
+    </ng-container>
+    <ng-template #content>
+      <ng-container *ngIf="page(); else empty">
+        <ng-container *ngFor="let s of page()!.sections">
+          <remote-html-inline *ngIf="s.type === 'remoteHtmlInline'"
+            [src]="getSrc(s)" [height]="getHeight(s)"></remote-html-inline>
+
+          <remote-html-iframe *ngIf="s.type === 'remoteHtml'"
+            [src]="getSrc(s)" [height]="getHeight(s)"></remote-html-iframe>
+
+          <promo-list-section *ngIf="s.type === 'promotionList'"
+            [title]="getTitle(s)"></promo-list-section>
+        </ng-container>
+      </ng-container>
+      <ng-template #empty>
+        <div class="p-8 text-gray-500">Nenhuma seção para exibir.</div>
+      </ng-template>
+    </ng-template>
+  </ng-template>
+</div>

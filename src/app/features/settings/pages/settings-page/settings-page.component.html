@@ -25,5 +25,12 @@
         <app-permissions-settings></app-permissions-settings>
       </ng-template>
     </p-tabPanel>
+
+    <!-- Theme editing panel (only visible to authorized roles) -->
+    <p-tabPanel *ngIf="canEditTheme()" header="Tema">
+      <ng-template pTemplate="content">
+        <app-theme-settings></app-theme-settings>
+      </ng-template>
+    </p-tabPanel>
   </p-tabView>
 </div>

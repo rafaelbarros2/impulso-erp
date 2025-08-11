@@ -9,7 +9,7 @@
 @use 'tailwindcss';
 
 // Import theme variables after tailwind
-@import 'styles/theme-vars';
+@use 'styles/theme-vars';
 // @plugin "tailwindcss-primeui";
 
 :root {

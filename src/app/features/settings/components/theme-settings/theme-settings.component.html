@@ -1,0 +1,68 @@
+<div class="p-fluid">
+  <h2 class="text-xl font-semibold mb-4">Personalização de Tema</h2>
+  <p class="text-gray-600 mb-6">
+    Selecione as cores abaixo para personalizar o visual da sua loja. As alterações são aplicadas em tempo real como pré‑visualização. Lembre‑se de salvar para que o novo tema seja persistido.
+  </p>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <!-- Primary Colour -->
+    <div class="field">
+      <label for="primaryColor" class="font-medium block mb-2">Cor Primária</label>
+      <input id="primaryColor" type="color" [(ngModel)]="theme.colors.primary" name="primaryColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Secondary Colour -->
+    <div class="field">
+      <label for="secondaryColor" class="font-medium block mb-2">Cor Secundária</label>
+      <input id="secondaryColor" type="color" [(ngModel)]="theme.colors.secondary" name="secondaryColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Accent Colour -->
+    <div class="field">
+      <label for="accentColor" class="font-medium block mb-2">Cor de Destaque</label>
+      <input id="accentColor" type="color" [(ngModel)]="theme.colors.accent" name="accentColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Background Colour -->
+    <div class="field">
+      <label for="backgroundColor" class="font-medium block mb-2">Cor de Fundo</label>
+      <input id="backgroundColor" type="color" [(ngModel)]="theme.colors.background" name="backgroundColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Surface Colour -->
+    <div class="field">
+      <label for="surfaceColor" class="font-medium block mb-2">Cor de Superfície</label>
+      <input id="surfaceColor" type="color" [(ngModel)]="theme.colors.surface" name="surfaceColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Text Colour -->
+    <div class="field">
+      <label for="textColor" class="font-medium block mb-2">Cor de Texto</label>
+      <input id="textColor" type="color" [(ngModel)]="theme.colors.text" name="textColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Text Secondary Colour -->
+    <div class="field">
+      <label for="textSecondaryColor" class="font-medium block mb-2">Texto Secundário</label>
+      <input id="textSecondaryColor" type="color" [(ngModel)]="theme.colors.textSecondary" name="textSecondaryColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Border Colour -->
+    <div class="field">
+      <label for="borderColor" class="font-medium block mb-2">Cor de Borda</label>
+      <input id="borderColor" type="color" [(ngModel)]="theme.colors.border" name="borderColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Success Colour -->
+    <div class="field">
+      <label for="successColor" class="font-medium block mb-2">Cor de Sucesso</label>
+      <input id="successColor" type="color" [(ngModel)]="theme.colors.success" name="successColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Warning Colour -->
+    <div class="field">
+      <label for="warningColor" class="font-medium block mb-2">Cor de Aviso</label>
+      <input id="warningColor" type="color" [(ngModel)]="theme.colors.warning" name="warningColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+    <!-- Error Colour -->
+    <div class="field">
+      <label for="errorColor" class="font-medium block mb-2">Cor de Erro</label>
+      <input id="errorColor" type="color" [(ngModel)]="theme.colors.error" name="errorColor" (input)="preview()" class="w-full h-10 p-0 border-none cursor-pointer" />
+    </div>
+  </div>
+
+  <div class="mt-6 flex gap-3">
+    <button pButton type="button" [loading]="isSaving" label="Salvar" icon="pi pi-save" (click)="save()"></button>
+  </div>
+</div>
