@@ -21,9 +21,9 @@
   "definitions": {
     "token": {
       "type": "object",
-      "required": ["$value"],
+      "required": ["value"],
       "properties": {
-        "$value": {},
+        "value": {},
         "$type": { "type": ["string", "number"] },
         "$description": { "type": "string" }
       },
@@ -32,7 +32,7 @@
     "group": {
       "type": "object",
       "additionalProperties": {
-        "anyOf": [
+        "oneOf": [
           { "$ref": "#/definitions/token" },
           { "$ref": "#/definitions/group" }
         ]

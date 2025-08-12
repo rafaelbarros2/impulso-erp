@@ -1,71 +1,71 @@
-// Basic styles for the promotion page
-.promotion-page {
-  padding: var(--spacing-lg);
-}
-
-.page-title {
-  margin: 0 0 var(--spacing-md);
-  color: var(--color-primary);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-}
-
-.storefront-container{ padding: 16px; }
-
-.hero-banner{
-  position: relative;
-  min-height: clamp(260px, 36vw, 420px);
-  background: var(--hero-bg);
-  border-radius: 16px;
-  padding: clamp(24px, 5vw, 56px) 24px;
-  color: var(--hero-text, #fff);
-  overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 24px;
-}
-.hero-banner::before{
-  content: ""; position: absolute; inset: 0;
-  background: var(--hero-overlay-color, transparent);
-  opacity: var(--hero-overlay-opacity, 0);
-}
-.hero-content{ position: relative; z-index: 1; width: 100%; max-width: 1100px; }
-.hero-title{ font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 700; margin: 0 0 8px; }
-.hero-subtitle{ font-size: clamp(1rem, 1.6vw, 1.25rem); opacity: .95; margin: 0; }
-.hero-actions{ margin-top: 16px; }
-.hero-cta-btn{
-  background: var(--btn-primary-bg, var(--color-primary-600));
-  color: var(--btn-on-primary, #fff);
-  border: 0; border-radius: 9999px;
-  padding: 10px 18px; cursor: pointer;
-  transition: background var(--duration-fast, 120ms) var(--ease-emphasized, cubic-bezier(.2,0,0,.9));
-}
-.hero-cta-btn:hover{ background: var(--btn-primary-hover-bg, var(--color-primary-700)); }
-
-/* Ícones PrimeIcons visíveis */
-.layout-btn i.pi,
-.hero-toggle-btn i.pi,
-.section-title i.pi,
-.modal-actions i.pi{ font-size: 1rem; line-height: 1; color: currentColor; }
-
-/* Header / controles */
-.store-header{ margin-bottom: 16px; }
-.header-content{ display: flex; align-items: center; gap: 12px; justify-content: space-between; }
-.header-controls{ display: flex; gap: 8px; align-items: center; }
-.layout-switcher .layout-btn,
-.hero-controls .hero-toggle-btn{
-  background: var(--surface-100); border: 1px solid var(--surface-border);
-  padding: 8px 10px; border-radius: 10px; cursor: pointer;
-}
-.layout-switcher .layout-btn.active{ box-shadow: var(--elev-1); }
-
-/* Seções */
-.section-header{ display: flex; align-items: baseline; justify-content: space-between; margin: 18px 0 10px; }
-.section-title{ font-size: 1.25rem; font-weight: 700; display:flex; align-items:center; gap:8px; }
-.section-subtitle{ color: var(--text-color-secondary); font-size: .95rem; }
-
-/* Grid container que hospeda o componente de lista */
-.promotions-section, .featured-section, .new-products-section, .regular-products-section{ margin-bottom: 24px; }
-
-.store-main{ max-width: 1200px; margin: 0 auto; padding: 0 8px; }
-.store-title{ font-weight: 700; font-size: 1.25rem; }
-.cart-summary-btn{ cursor: pointer; }
+.dbg-panel { 
+      position: fixed; 
+      inset: auto 1rem 1rem 1rem; 
+      background: rgba(17,24,39,.95); 
+      color: #e5e7eb; 
+      font: 12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; 
+      padding:.75rem; 
+      border:1px solid #374151; 
+      border-radius:.5rem; 
+      z-index:99999; 
+      max-height:35vh; 
+      overflow:auto 
+    }
+    .full-bleed { 
+      width: 100vw; 
+      margin-left: 50%; 
+      transform: translateX(-50%); 
+    }
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding-left: 1rem; 
+      padding-right: 1rem; 
+    }
+    .badge { 
+      display:inline-block; 
+      background:#4b5563; 
+      color:#fff; 
+      padding:.1rem .4rem; 
+      border-radius:.25rem; 
+      margin-right:.25rem 
+    }
+    .s-ok{ color:#22c55e } 
+    .s-err{ color:#ef4444 }
+    
+    /* Estilos que respondem ao tema extraído */
+    .themed-container {
+      background: var(--theme-background, #ffffff);
+      color: var(--theme-text, #333333);
+      transition: all 0.3s ease;
+    }
+    
+    .theme-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--theme-primary, #3b82f6);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .promo-filters {
+      background: var(--theme-surface, #f8fafc);
+      border: 1px solid var(--theme-secondary, #e5e7eb);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .filter-tag {
+      background: var(--theme-primary, #3b82f6);
+      color: var(--theme-background, #ffffff);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-right: 8px;
+    }

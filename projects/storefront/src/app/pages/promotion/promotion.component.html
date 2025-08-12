@@ -1,46 +1,22 @@
-<!-- Full-bleed promotion page: sections podem ocupar 100vw -->
-<ng-container *ngIf="loading(); else ready">
-  <div class="mx-auto max-w-screen-xl px-4 py-6 text-gray-500">Carregando promoções…</div>
-</ng-container>
-
-<ng-template #ready>
-  <ng-container *ngIf="error(); else content">
-    <div class="mx-auto max-w-screen-xl px-4 py-6">
-      <div class="p-6 rounded bg-red-50 text-red-700 border border-red-200">
-        {{ error() }}
-      </div>
-    </div>
+<div class="w-full h-full">
+  <ng-container *ngIf="loading(); else ready">
+    <div class="mx-auto max-w-screen-xl px-4 py-6 text-gray-500">Carregando…</div>
   </ng-container>
-
-  <ng-template #content>
-    <ng-container *ngIf="page(); else empty">
-      <ng-container *ngFor="let s of page()!.sections">
-        <!-- wrapper controla full-bleed por seção -->
-        <div [class]="getFullBleedClass(s)">
-          <!-- ✅ INLINE: Renderiza HTML com CSS funcionando -->
-          <remote-html-inline *ngIf="s.type === 'remoteHtmlInline'"
-            [src]="getSrc(s)"
-            [height]="getHeight(s)"
-            [hoistAssets]="getHoistAssets(s)"
-            [copyBodyClasses]="getCopyBodyClasses(s)"
-            [executeScripts]="getExecuteScripts(s)"></remote-html-inline>
-
-          <!-- 🔄 CONVERTENDO IFRAME → INLINE PARA CSS FUNCIONAR -->
-          <remote-html-inline *ngIf="s.type === 'remoteHtml'"
-            [src]="getSrc(s)"
-            [height]="getHeight(s)"
-            [hoistAssets]="true"
-            [copyBodyClasses]="true"
-            [executeScripts]="true"></remote-html-inline>
-
-          <!-- 📝 PROMO LIST -->
-          <promo-list-section *ngIf="s.type === 'promotionList'"
-            [title]="getTitle(s)"></promo-list-section>
-        </div>
-      </ng-container>
+  <ng-template #ready>
+    <ng-container *ngIf="error(); else onlyHtml">
+      <div class="mx-auto max-w-screen-xl px-4 py-6">
+        <div class="p-6 rounded bg-red-50 text-red-700 border border-red-200">{{ error() }}</div>
+      </div>
     </ng-container>
-    <ng-template #empty>
-      <div class="mx-auto max-w-screen-xl px-4 py-6 text-gray-500">Nenhuma seção para exibir.</div>
+    <ng-template #onlyHtml style="height: 100%!important;">
+      <app-simple-html-injector
+        [htmlUrl]="htmlUrl()"
+        [height]="'100%'"
+        [autoLoad]="true"
+        [allowScripts]="true"
+        (loaded)="onHtmlLoaded()"
+        (errorEmitted)="onHtmlError($event)">
+      </app-simple-html-injector>
     </ng-template>
   </ng-template>
-</ng-template>
+</div>

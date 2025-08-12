@@ -73,13 +73,14 @@ export class SeoService {
    * Configura SEO para página de categoria
    */
   setCategorySeo(category: Category, baseUrl: string): void {
+    const count = Array.isArray((category as any)?.products) ? category.products.length : 0;
     const config: SeoConfig = {
       title: `${category.name} - Premium Products | Storefront`,
-      description: category.description || `Explore our ${category.name.toLowerCase()} collection with ${category.products.length} premium products.`,
+      description: category.description || `Explore our ${category.name.toLowerCase()} collection with ${count} premium products.`,
       keywords: `${category.name}, products, shopping, ecommerce`,
       canonical: `${baseUrl}/c/${category.slug}`,
       ogTitle: `${category.name} Collection`,
-      ogDescription: category.description || `Discover ${category.products.length} amazing ${category.name.toLowerCase()} products`,
+      ogDescription: category.description || `Discover ${count} amazing ${category.name.toLowerCase()} products`,
       ogImage: category.image,
       ogUrl: `${baseUrl}/c/${category.slug}`,
       ogType: 'website',
@@ -100,7 +101,7 @@ export class SeoService {
     const config: SeoConfig = {
       title: `${product.name} - $${product.price} | Premium Storefront`,
       description: product.description || `${product.name} available for $${product.price}. ${product.inStock ? 'In stock' : 'Out of stock'}.`,
-      keywords: `${product.name}, product, buy, shopping, ${product.attributes.map(a => a.value).join(', ')}`,
+      keywords: `${product.name}, product, buy, shopping, ${((product.attributes || []).map(a => a.value).join(', '))}`,
       canonical: `${baseUrl}/p/${product.slug}`,
       ogTitle: product.name,
       ogDescription: `${product.name} - $${product.price}${discount > 0 ? ` (${discount}% off!)` : ''}`,

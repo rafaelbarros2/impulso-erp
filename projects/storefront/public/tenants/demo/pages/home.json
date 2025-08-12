@@ -1,21 +1,23 @@
 {
-  "layout": {
-    "id": "promotion",
-    "vars": {
-      "--promo-hero-overlay": "0.40"
-    }
-  },
-  "theme": {
-    "tokens": {
-      "colorPrimary600": "#2563eb"
-    }
-  },
+  "layout": { "id": "promotion", "vars": { "--promo-hero-overlay": "0.40" } },
   "sections": [
     {
       "type": "hero",
       "title": "Coleção Verão 2025",
       "classes": "promo-hero",
       "ctaClass": "promo-cta"
+    },
+    {
+      "type": "remoteHtmlInline",
+      "src": "http://localhost:8080/tenants/demo/promotions/minha-promocao/index.html",
+      "height": "100%",
+      "executeScripts": true,
+      "injectTailwindCdn": true,
+      "fullBleed": true
+    },
+    {
+      "type": "promotionList",
+      "title": "Ofertas"
     }
   ]
 }

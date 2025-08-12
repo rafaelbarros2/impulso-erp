@@ -7,6 +7,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/storefront-home/storefront-home.page').then(c => c.StorefrontHomePage)
   },
   {
+    path: 'produtos',
+    loadComponent: () => import('./pages/product-list/product-list.component').then(c => c.ProductListComponent)
+  },
+  {
     path: 'c/:slug',
     loadComponent: () => import('./pages/category/category.component').then(c => c.CategoryComponent),
     resolve: {

@@ -21,6 +21,12 @@ export function themeInitializer() {
     const isBrowser = isPlatformBrowser(platformId);
     console.log(`[ThemeInitializer] Is browser: ${isBrowser}`);
 
+    // Skip theme loading during SSR to avoid HTTP errors
+    if (!isBrowser) {
+      console.log('[ThemeInitializer] Skipping theme loading during SSR');
+      return true;
+    }
+
     const params = isBrowser ? new URLSearchParams(window.location.search) : new URLSearchParams();
     const themeUrlParam = params.get('themeUrl');
     const themeParam = params.get('theme');

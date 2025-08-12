@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos em Promoção - FashionERP Store</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-50: #eff6ff; --primary-100: #dbeafe; --primary-200: #bfdbfe; --primary-300: #93c5fd;
+      --primary-400: #60a5fa; --primary-500: #3b82f6; --primary-600: #2563eb; --primary-700: #1d4ed8;
+      --primary-800: #1e40af; --primary-900: #1e3a8a; --primary-950: #172554;
+    }
+    .bg-primary-500 { background-color: var(--primary-500); }
+    .bg-primary-600 { background-color: var(--primary-600); }
+    .hover\:bg-primary-700:hover { background-color: var(--primary-700); }
+    .text-primary-500 { color: var(--primary-500); }
+    .text-primary-600 { color: var(--primary-600); }
+    .border-primary-500 { border-color: var(--primary-500); }
+    .dark .text-primary-400 { color: var(--primary-400); }
+    .focus\:ring-primary-500:focus { --tw-ring-color: var(--primary-500); }
+    body { font-family: 'Inter', sans-serif; }
+    
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+    
+    /* Animação para badge de desconto */
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1) rotate(-5deg); }
+      50% { transform: scale(1.05) rotate(-5deg); }
+    }
+    .discount-badge { animation: pulse-badge 2s infinite; }
+    
+    /* Overlay escuro para mobile */
+    .sidebar-overlay {
+      backdrop-filter: blur(4px);
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Transição suave para filtros */
+    .filter-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Checkbox customizado */
+    .custom-checkbox {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .custom-checkbox:checked {
+      background-color: var(--primary-500);
+      border-color: var(--primary-500);
+    }
+    .custom-checkbox:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 14px;
+    }
+    
+    /* Range slider customizado */
+    .range-slider {
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    .range-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-500);
+      cursor: pointer;
+    }
+    .range-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-500);
+      cursor: pointer;
+      border: none;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+  
+  <!-- Botão flutuante do filtro (Mobile) -->
+  <button id="filterToggleMobile" class="lg:hidden fixed bottom-6 right-6 z-50 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-all transform hover:scale-110">
+    <i class="fas fa-filter text-xl"></i>
+    <span id="activeFiltersCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+  </button>
+
+  <!-- Overlay para mobile -->
+  <div id="sidebarOverlay" class="fixed inset-0 z-40 sidebar-overlay hidden lg:hidden"></div>
+
+  <!-- Container principal -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-8">
+      
+      <!-- Sidebar de Filtros -->
+      <aside id="filterSidebar" class="fixed lg:sticky top-20 left-0 h-screen lg:h-auto w-80 lg:w-72 bg-white dark:bg-gray-800 shadow-xl lg:shadow-lg rounded-r-2xl lg:rounded-xl p-6 z-50 transform -translate-x-full lg:translate-x-0 filter-transition overflow-y-auto custom-scrollbar">
+        
+        <!-- Header do filtro -->
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+            <i class="fas fa-filter mr-2 text-primary-500"></i>
+            Filtros
+          </h3>
+          <button id="closeFilterMobile" class="lg:hidden text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Botão limpar filtros -->
+        <button id="clearFilters" class="w-full mb-6 py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+          <i class="fas fa-redo mr-2"></i>Limpar Filtros
+        </button>
+
+        <!-- Categorias -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center justify-between">
+            <span>Categorias</span>
+            <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+          </h4>
+          <div class="space-y-2" id="categoryFilters">
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="vestidos">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Vestidos</span>
+              <span class="ml-auto text-xs text-gray-500">(156)</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="calcados">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Calçados</span>
+              <span class="ml-auto text-xs text-gray-500">(89)</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="blusas">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Blusas & Tops</span>
+              <span class="ml-auto text-xs text-gray-500">(203)</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="calcas">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Calças & Jeans</span>
+              <span class="ml-auto text-xs text-gray-500">(124)</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="acessorios">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Acessórios</span>
+              <span class="ml-auto text-xs text-gray-500">(312)</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="checkbox" class="custom-checkbox" value="lingerie">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">Lingerie</span>
+              <span class="ml-auto text-xs text-gray-500">(78)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Faixa de Preço -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Faixa de Preço</h4>
+          <div class="px-2">
+            <input type="range" id="priceRange" class="range-slider" min="0" max="500" value="500">
+            <div class="flex justify-between mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <span>R$ 0</span>
+              <span id="priceValue" class="font-semibold text-primary-600">R$ 500</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tamanhos -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Tamanhos</h4>
+          <div class="grid grid-cols-4 gap-2" id="sizeFilters">
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="PP">PP</button>
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="P">P</button>
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="M">M</button>
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="G">G</button>
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="GG">GG</button>
+            <button class="size-btn py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-colors" data-size="XG">XG</button>
+          </div>
+        </div>
+
+        <!-- Cores -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Cores</h4>
+          <div class="grid grid-cols-6 gap-2" id="colorFilters">
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #000000" data-color="preto"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #FFFFFF" data-color="branco"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #DC143C" data-color="vermelho"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #000080" data-color="azul"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #228B22" data-color="verde"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #FFD700" data-color="amarelo"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #FF69B4" data-color="rosa"></button>
+            <button class="color-btn w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #808080" data-color="cinza"></button>
+          </div>
+        </div>
+
+        <!-- Desconto Mínimo -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Desconto Mínimo</h4>
+          <div class="space-y-2">
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="radio" name="discount" class="text-primary-500" value="10">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">10% ou mais</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="radio" name="discount" class="text-primary-500" value="30">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">30% ou mais</span>
+            </label>
+            <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input type="radio" name="discount" class="text-primary-500" value="50">
+              <span class="ml-3 text-gray-700 dark:text-gray-300">50% ou mais</span>
+            </label>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Grid de Produtos -->
+      <main class="flex-1">
+        
+        <!-- Barra de ordenação -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
+            <select id="sortSelect" class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <option value="relevance">Mais Relevantes</option>
+              <option value="price-low">Menor Preço</option>
+              <option value="price-high">Maior Preço</option>
+              <option value="discount">Maior Desconto</option>
+              <option value="newest">Mais Recentes</option>
+            </select>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="gridView" class="p-2 text-gray-600 hover:text-primary-500 transition-colors">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button id="listView" class="p-2 text-gray-400 hover:text-primary-500 transition-colors">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de produtos -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Produtos serão inseridos aqui via JavaScript -->
+        </div>
+
+        <!-- Paginação -->
+        <div class="mt-12 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="px-4 py-2 bg-primary-500 text-white rounded-lg">1</button>
+            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">2</button>
+            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">3</button>
+            <span class="px-4 py-2">...</span>
+            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">10</button>
+            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </nav>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Estado da aplicação
+    const state = {
+      products: [],
+      filteredProducts: [],
+      filters: {
+        categories: [],
+        maxPrice: 500,
+        sizes: [],
+        colors: [],
+        minDiscount: 0
+      },
+      sort: 'relevance',
+      view: 'grid'
+    };
+
+    // Produtos mock
+    const mockProducts = [
+      { id: 1, name: 'Vestido Floral Verão', category: 'vestidos', price: 129.90, originalPrice: 259.90, discount: 50, image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400', sizes: ['P', 'M', 'G'], colors: ['vermelho', 'azul'], isNew: true },
+      { id: 2, name: 'Tênis Esportivo Premium', category: 'calcados', price: 189.90, originalPrice: 269.90, discount: 30, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', sizes: ['38', '39', '40'], colors: ['preto', 'branco'] },
+      { id: 3, name: 'Blusa Cropped Básica', category: 'blusas', price: 49.90, originalPrice: 69.90, discount: 29, image: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=400', sizes: ['PP', 'P', 'M'], colors: ['branco', 'preto', 'rosa'] },
+      { id: 4, name: 'Calça Jeans Skinny', category: 'calcas', price: 119.90, originalPrice: 149.90, discount: 20, image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400', sizes: ['36', '38', '40', '42'], colors: ['azul'] },
+      { id: 5, name: 'Bolsa de Couro Legítimo', category: 'acessorios', price: 259.90, originalPrice: 459.90, discount: 43, image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400', sizes: [], colors: ['preto', 'marrom'] },
+      { id: 6, name: 'Conjunto Lingerie Renda', category: 'lingerie', price: 89.90, originalPrice: 129.90, discount: 31, image: 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=400', sizes: ['P', 'M', 'G'], colors: ['preto', 'vermelho', 'branco'] },
+      { id: 7, name: 'Vestido Midi Elegante', category: 'vestidos', price: 199.90, originalPrice: 399.90, discount: 50, image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400', sizes: ['P', 'M', 'G', 'GG'], colors: ['preto', 'vinho'], isNew: false },
+      { id: 8, name: 'Sandália Salto Alto', category: 'calcados', price: 149.90, originalPrice: 199.90, discount: 25, image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400', sizes: ['35', '36', '37', '38'], colors: ['preto', 'nude'] },
+      { id: 9, name: 'Top Fitness Premium', category: 'blusas', price: 69.90, originalPrice: 99.90, discount: 30, image: 'https://images.unsplash.com/photo-1594633312861-05509d64e86d?w=400', sizes: ['P', 'M', 'G'], colors: ['preto', 'rosa', 'azul'] },
+      { id: 10, name: 'Calça Pantalona', category: 'calcas', price: 159.90, originalPrice: 219.90, discount: 27, image: 'https://images.unsplash.com/photo-1594633313515-7ad9334a2349?w=400', sizes: ['36', '38', '40'], colors: ['preto', 'branco', 'bege'] },
+      { id: 11, name: 'Colar Statement Dourado', category: 'acessorios', price: 79.90, originalPrice: 159.90, discount: 50, image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400', sizes: [], colors: ['dourado'] },
+      { id: 12, name: 'Pijama de Seda', category: 'lingerie', price: 129.90, originalPrice: 189.90, discount: 32, image: 'https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?w=400', sizes: ['P', 'M', 'G'], colors: ['rosa', 'azul', 'preto'] }
+    ];
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      state.products = mockProducts;
+      state.filteredProducts = [...mockProducts];
+      renderProducts();
+      setupEventListeners();
+      updateProductCount();
+    });
+
+    // Renderizar produtos
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      const isListView = state.view === 'list';
+      
+      grid.className = isListView 
+        ? 'space-y-4' 
+        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+      
+      grid.innerHTML = state.filteredProducts.map(product => {
+        if (isListView) {
+          return `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col sm:flex-row hover:shadow-xl transition-shadow">
+              <div class="relative w-full sm:w-48 h-48 sm:h-auto">
+                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                ${product.discount >= 30 ? `<span class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold discount-badge">-${product.discount}%</span>` : ''}
+                ${product.isNew ? `<span class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">NOVO</span>` : ''}
+              </div>
+              <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">${product.name}</h3>
+                  <div class="flex items-center space-x-2 mb-3">
+                    <span class="text-2xl font-bold text-primary-600">R$ ${product.price.toFixed(2)}</span>
+                    <span class="text-sm text-gray-500 line-through">R$ ${product.originalPrice.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="flex-1 bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors">
+                    <i class="fas fa-shopping-cart mr-2"></i>Adicionar
+                  </button>
+                  <button class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <i class="far fa-heart"></i>
+                  </button>
+                </div>
+              </div>
+            </div>`;
+        } else {
+          return `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div class="relative h-64 overflow-hidden">
+                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                ${product.discount >= 30 ? `<span class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold discount-badge">-${product.discount}%</span>` : ''}
+                ${product.isNew ? `<span class="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">NOVO</span>` : ''}
+                <div class="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <button class="bg-white text-gray-900 px-6 py-2 rounded-lg font-semibold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <i class="fas fa-eye mr-2"></i>Ver Detalhes
+                  </button>
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2 truncate">${product.name}</h3>
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <span class="text-xl font-bold text-primary-600">R$ ${product.price.toFixed(2)}</span>
+                    <span class="text-sm text-gray-500 line-through block">R$ ${product.originalPrice.toFixed(2)}</span>
+                  </div>
+                  <button class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="far fa-heart"></i>
+                  </button>
+                </div>
+                <button class="w-full bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                  <i class="fas fa-shopping-cart mr-2"></i>Adicionar
+                </button>
+              </div>
+            </div>`;
+        }
+      }).join('');
+    }
+
+    // Aplicar filtros
+    function applyFilters() {
+      state.filteredProducts = state.products.filter(product => {
+        // Filtro de categoria
+        if (state.filters.categories.length > 0 && !state.filters.categories.includes(product.category)) {
+          return false;
+        }
+        
+        // Filtro de preço
+        if (product.price > state.filters.maxPrice) {
+          return false;
+        }
+        
+        // Filtro de tamanho
+        if (state.filters.sizes.length > 0) {
+          const hasSize = state.filters.sizes.some(size => product.sizes.includes(size));
+          if (!hasSize) return false;
+        }
+        
+        // Filtro de cor
+        if (state.filters.colors.length > 0) {
+          const hasColor = state.filters.colors.some(color => product.colors.includes(color));
+          if (!hasColor) return false;
+        }
+        
+        // Filtro de desconto
+        if (product.discount < state.filters.minDiscount) {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      applySorting();
+      renderProducts();
+      updateProductCount();
+      updateActiveFiltersCount();
+    }
+
+    // Aplicar ordenação
+    function applySorting() {
+      switch (state.sort) {
+        case 'price-low':
+          state.filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          state.filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'discount':
+          state.filteredProducts.sort((a, b) => b.discount - a.discount);
+          break;
+        case 'newest':
+          state.filteredProducts.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+          break;
+        default:
+          // relevance - mantém ordem original
+          break;
+      }
+    }
+
+    // Atualizar contador de produtos
+    function updateProductCount() {
+      document.getElementById('productCount').textContent = state.filteredProducts.length;
+    }
+
+    // Atualizar contador de filtros ativos
+    function updateActiveFiltersCount() {
+      let count = 0;
+      count += state.filters.categories.length;
+      count += state.filters.sizes.length;
+      count += state.filters.colors.length;
+      if (state.filters.maxPrice < 500) count++;
+      if (state.filters.minDiscount > 0) count++;
+      
+      const badge = document.getElementById('activeFiltersCount');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+      // Mobile filter toggle
+      const filterToggle = document.getElementById('filterToggleMobile');
+      const filterSidebar = document.getElementById('filterSidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      const closeFilter = document.getElementById('closeFilterMobile');
+      
+      filterToggle?.addEventListener('click', () => {
+        filterSidebar.classList.toggle('-translate-x-full');
+        sidebarOverlay.classList.toggle('hidden');
+      });
+      
+      closeFilter?.addEventListener('click', () => {
+        filterSidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      });
+      
+      sidebarOverlay?.addEventListener('click', () => {
+        filterSidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      });
+      
+      // Categorias
+      document.querySelectorAll('#categoryFilters input').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            state.filters.categories.push(e.target.value);
+          } else {
+            state.filters.categories = state.filters.categories.filter(cat => cat !== e.target.value);
+          }
+          applyFilters();
+        });
+      });
+      
+      // Preço
+      const priceRange = document.getElementById('priceRange');
+      const priceValue = document.getElementById('priceValue');
+      priceRange?.addEventListener('input', (e) => {
+        state.filters.maxPrice = parseInt(e.target.value);
+        priceValue.textContent = `R$ ${e.target.value}`;
+        applyFilters();
+      });
+      
+      // Tamanhos
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const size = e.target.dataset.size;
+          if (state.filters.sizes.includes(size)) {
+            state.filters.sizes = state.filters.sizes.filter(s => s !== size);
+            e.target.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
+          } else {
+            state.filters.sizes.push(size);
+            e.target.classList.add('bg-primary-500', 'text-white', 'border-primary-500');
+          }
+          applyFilters();
+        });
+      });
+      
+      // Cores
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const color = e.target.dataset.color;
+          if (state.filters.colors.includes(color)) {
+            state.filters.colors = state.filters.colors.filter(c => c !== color);
+            e.target.classList.remove('ring-2', 'ring-primary-500', 'ring-offset-2');
+          } else {
+            state.filters.colors.push(color);
+            e.target.classList.add('ring-2', 'ring-primary-500', 'ring-offset-2');
+          }
+          applyFilters();
+        });
+      });
+      
+      // Desconto
+      document.querySelectorAll('input[name="discount"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          state.filters.minDiscount = parseInt(e.target.value);
+          applyFilters();
+        });
+      });
+      
+      // Limpar filtros
+      document.getElementById('clearFilters')?.addEventListener('click', () => {
+        state.filters = {
+          categories: [],
+          maxPrice: 500,
+          sizes: [],
+          colors: [],
+          minDiscount: 0
+        };
+        
+        // Limpar UI
+        document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
+        document.getElementById('priceRange').value = 500;
+        document.getElementById('priceValue').textContent = 'R$ 500';
+        document.querySelectorAll('.size-btn').forEach(btn => {
+          btn.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
+        });
+        document.querySelectorAll('.color-btn').forEach(btn => {
+          btn.classList.remove('ring-2', 'ring-primary-500', 'ring-offset-2');
+        });
+        document.querySelectorAll('input[name="discount"]').forEach(radio => radio.checked = false);
+        
+        applyFilters();
+      });
+      
+      // Ordenação
+      document.getElementById('sortSelect')?.addEventListener('change', (e) => {
+        state.sort = e.target.value;
+        applySorting();
+        renderProducts();
+      });
+      
+      // Visualização
+      const gridView = document.getElementById('gridView');
+      const listView = document.getElementById('listView');
+      
+      gridView?.addEventListener('click', () => {
+        state.view = 'grid';
+        gridView.classList.add('text-primary-500');
+        gridView.classList.remove('text-gray-400');
+        listView.classList.add('text-gray-400');
+        listView.classList.remove('text-primary-500');
+        renderProducts();
+      });
+      
+      listView?.addEventListener('click', () => {
+        state.view = 'list';
+        listView.classList.add('text-primary-500');
+        listView.classList.remove('text-gray-400');
+        gridView.classList.add('text-gray-400');
+        gridView.classList.remove('text-primary-500');
+        renderProducts();
+      });
+
+      // Receber mensagens do parent (integração com index.html)
+      window.addEventListener('message', (event) => {
+        if (event.data?.type === 'promo:filter') {
+          // Limpar filtros anteriores
+          state.filters.categories = [];
+          
+          // Aplicar novo filtro se houver categoria
+          if (event.data.category) {
+            state.filters.categories = [event.data.category];
+            // Marcar checkbox correspondente
+            document.querySelectorAll('#categoryFilters input').forEach(cb => {
+              cb.checked = cb.value === event.data.category;
+            });
+          } else {
+            // Desmarcar todos se for "Ver Todas"
+            document.querySelectorAll('#categoryFilters input').forEach(cb => {
+              cb.checked = false;
+            });
+          }
+          
+          applyFilters();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

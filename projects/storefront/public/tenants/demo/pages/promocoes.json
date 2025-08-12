@@ -1,11 +1,62 @@
 {
-  "layout": { "id": "promotion" },
+  "layout": { "id": "promotion", "vars": { "--promo-hero-overlay": "0.40" } },
   "sections": [
-{
-  "type": "remoteHtml",
-  "src": "http://localhost:8080/tenants/demo/promotions/minha-promocao/index.html",
-  "height": "900px",
-  "fullBleed": true
-}
+    {
+      "type": "hero",
+      "title": "Coleção Verão 2025",
+      "classes": "promo-hero",
+      "ctaClass": "promo-cta"
+    },
+    {
+      "type": "remoteHtmlInline",
+      "src": "http://localhost:8080/tenants/demo/promotions/minha-promocao/index.html",
+      "height": "100%",
+      "executeScripts": true,
+      "injectTailwindCdn": true,
+      "fullBleed": true
+    },
+    {
+      "type": "promotionList",
+      "title": "Ofertas",
+      "items": [
+        {
+          "id": "promo-1",
+          "title": "Mega Promoção Verão",
+          "description": "Descontos imperdíveis em toda a linha verão 2025",
+          "discount": "40% OFF",
+          "originalPrice": 299.90,
+          "salePrice": 179.94,
+          "category": "Moda",
+          "validUntil": "2025-02-28",
+          "isActive": true,
+          "image": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop"
+        },
+        {
+          "id": "promo-2",
+          "title": "Eletrônicos em Oferta",
+          "description": "Smartphones, tablets e notebooks com preços especiais",
+          "discount": "55% OFF",
+          "originalPrice": 1299.90,
+          "salePrice": 584.96,
+          "category": "Tecnologia",
+          "validUntil": "2025-01-31",
+          "isActive": true,
+          "image": "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop"
+        },
+        {
+          "id": "promo-3",
+          "title": "Decoração de Casa",
+          "description": "Transforme seu lar com nossa coleção especial",
+          "discount": "35% OFF",
+          "originalPrice": 599.90,
+          "salePrice": 389.94,
+          "category": "Casa & Jardim",
+          "validUntil": "2025-03-15",
+          "isActive": true,
+          "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop"
+        }
+      ]
+    }
   ]
 }
+

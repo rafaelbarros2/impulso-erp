@@ -1,12 +1,13 @@
-import { Type } from '@angular/core';
-import { StorefrontHeroComponent, HeroSlide } from '../components/storefront-hero/storefront-hero.component';
-import { StorefrontCategoriesComponent, CategoryItem } from '../components/storefront-categories/storefront-categories.component';
-import { StorefrontItemGridComponent } from '../components/storefront-item-grid/storefront-item-grid.component';
-
-// Optional minimal banner component
+import type { Type } from '@angular/core';
+// Imports somente de TIPOS para não puxar os componentes no bundle inicial
+import type { HeroSlide } from '../components/storefront-hero/storefront-hero.component';
+import type { CategoryItem } from '../components/storefront-categories/storefront-categories.component';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
+// ——————————————————————————————————————————————————————————
+// Banner simples (standalone) — mantido no próprio arquivo
+// ——————————————————————————————————————————————————————————
 @Component({
   selector: 'app-storefront-banner',
   standalone: true,
@@ -35,7 +36,10 @@ export class StorefrontBannerComponent {
   }
 }
 
-export type SectionType = 'hero' | 'categoryGrid' | 'productGrid' | 'banner';
+// ——————————————————————————————————————————————————————————
+// Tipos de seção (mantidos para o DynamicPage)
+// ——————————————————————————————————————————————————————————
+export type SectionType = 'hero' | 'categoryGrid' | 'productGrid' | 'banner' | 'remoteHtmlInline' | 'remoteHtml' | 'promotionList';
 
 export interface ThemeTokens {
   colorPrimary600?: string;
@@ -43,10 +47,7 @@ export interface ThemeTokens {
   heroText?: string;
   heroOverlayOpacity?: string;
 }
-
-export interface PageThemeConfig {
-  tokens?: ThemeTokens;
-}
+export interface PageThemeConfig { tokens?: ThemeTokens; }
 
 export interface HeroSectionConfig {
   type: 'hero';
@@ -57,24 +58,21 @@ export interface HeroSectionConfig {
   autoSlide?: boolean;
   slideInterval?: number;
 }
-
 export interface CategoryGridSectionConfig {
   type: 'categoryGrid';
   title?: string;
   categories: CategoryItem[];
   showItemCount?: boolean;
 }
-
 export interface ProductGridSectionConfig {
   type: 'productGrid';
   title?: string;
-  products?: unknown[]; // optional inline data for demo mode
-  query?: string; // not used offline, reserved for future
+  products?: unknown[];
+  query?: string;
   showRating?: boolean;
   columns?: string;
   minCardWidth?: string;
 }
-
 export interface BannerSectionConfig {
   type: 'banner';
   image: string;
@@ -82,27 +80,52 @@ export interface BannerSectionConfig {
   title?: string;
   ariaLabel?: string;
 }
-
 export type PageSection =
   | HeroSectionConfig
   | CategoryGridSectionConfig
   | ProductGridSectionConfig
   | BannerSectionConfig;
 
-export interface PageConfig {
-  theme?: PageThemeConfig;
-  sections: PageSection[];
-}
+export interface PageConfig { theme?: PageThemeConfig; sections: PageSection[]; }
 
-export interface SectionRegistryEntry<C extends PageSection = PageSection> {
-  type: C['type'];
-  component: Type<any>;
-}
+// ——————————————————————————————————————————————————————————
+// Registry baseado em LAZY loaders (promessa de componente)
+// ——————————————————————————————————————————————————————————
+export type SectionLoader = () => Promise<Type<any>>;
+export const SECTION_REGISTRY: Record<SectionType, SectionLoader> = {
+  hero: () => import('../components/storefront-hero/storefront-hero.component')
+            .then(m => m.StorefrontHeroComponent),
 
-export const SECTION_REGISTRY: Readonly<Record<SectionType, SectionRegistryEntry>> = {
-  hero: { type: 'hero', component: StorefrontHeroComponent },
-  categoryGrid: { type: 'categoryGrid', component: StorefrontCategoriesComponent },
-  productGrid: { type: 'productGrid', component: StorefrontItemGridComponent },
-  banner: { type: 'banner', component: StorefrontBannerComponent },
-} as const;
+  categoryGrid: () => import('../components/storefront-categories/storefront-categories.component')
+            .then(m => m.StorefrontCategoriesComponent),
+
+  productGrid: () => import('../components/storefront-item-grid/storefront-item-grid.component')
+            .then(m => m.StorefrontItemGridComponent),
+
+  banner: () => Promise.resolve(StorefrontBannerComponent),
+
+  remoteHtmlInline: () => import('../sections/remote-html-inline-section.component')
+            .then(m => m.RemoteHtmlInlineSectionComponent),
+
+  remoteHtml: () => import('../sections/remote-html-iframe-section.component')
+            .then(m => m.RemoteHtmlIframeSectionComponent),
+
+  promotionList: () => import('../sections/promo-list-section.component')
+            .then(m => m.PromoListSectionComponent),
+};
+
+// Helper seguro para o DynamicPage
+export async function resolveSectionComponent(type: SectionType): Promise<Type<any> | null> {
+  const loader = SECTION_REGISTRY[type];
+  if (!loader) {
+    console.error('[SectionRegistry] tipo de seção não registrado:', type);
+    return null;
+  }
+  try {
+    return await loader();
+  } catch (err) {
+    console.error('[SectionRegistry] falha ao carregar', type, err);
+    return null;
+  }
+}
 
