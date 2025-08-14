@@ -13,14 +13,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 import { ClientService } from '../../../../core/services/client.service';
-import { Client } from '../../../../core/models';
+import { Client, ClientDisplay } from '../../../../core/models';
 import { LoadingService } from 'shared-lib';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from 'shared-lib';
 import { finalize } from 'rxjs/operators';
-
-interface ClientDisplay extends Client {
-  status: 'Ativo' | 'Inativo' | 'Potencial';
-}
 
 @Component({
   selector: 'app-client-list-page',

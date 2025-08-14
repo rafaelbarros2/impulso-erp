@@ -14,24 +14,9 @@ import { MultiSelectModule } from 'primeng/multiselect'; // Adicionado para Mult
 import { HttpClientModule } from '@angular/common/http';
 import { ProductService } from '../../../../core/services/product.service';
 import { FormValidationService } from '../../../../core/services/form-validation.service';
-import { Product } from '../../../../core/models';
+import { Product, ProductCategory, ProductColor, ProductSize } from '../../../../core/models';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-
-interface Category {
-  name: string;
-  code: string;
-}
-
-interface Size {
-  name: string;
-  code: string;
-}
-
-interface Color {
-  name: string;
-  hex: string;
-}
 
 @Component({
   selector: 'app-product-form',
@@ -73,7 +58,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  categories: Category[] = [
+  categories: ProductCategory[] = [
     { name: 'Vestidos', code: 'VSTD' },
     { name: 'Calças', code: 'CALC' },
     { name: 'Blusas', code: 'BLUS' },
@@ -82,7 +67,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     { name: 'Acessórios', code: 'ACESS' },
   ];
 
-  sizes: Size[] = [
+  sizes: ProductSize[] = [
     { name: 'PP', code: 'PP' },
     { name: 'P', code: 'P' },
     { name: 'M', code: 'M' },
@@ -90,7 +75,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     { name: 'GG', code: 'GG' },
   ];
 
-  colors: Color[] = [
+  colors: ProductColor[] = [
     { name: 'Vermelho', hex: '#FF0000' },
     { name: 'Azul', hex: '#0000FF' },
     { name: 'Verde', hex: '#00FF00' },

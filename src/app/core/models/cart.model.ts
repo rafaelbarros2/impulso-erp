@@ -137,3 +137,17 @@ export interface CartStoreSettings extends BaseEntity {
     }>;
   };
 }
+
+export interface PosCartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  emoji: string;
+}
+
+export interface PosPaymentMethod {
+  id: string;
+  name: string;
+  icon: string;
+}

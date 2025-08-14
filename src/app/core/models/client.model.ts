@@ -74,3 +74,19 @@ export interface ClientImportData {
   zipCode?: string;
   category?: string;
 }
+
+export interface ClientType {
+  name: string;
+  code: string;
+}
+
+export interface ClientDisplay extends Client {
+  status: 'Ativo' | 'Inativo' | 'Potencial';
+}
+
+export interface PosClient {
+  id: string;
+  name: string;
+  cpf?: string;
+  phone?: string;
+}

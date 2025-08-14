@@ -2,27 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
-
-export interface DashboardData {
-  kpis: KpiData[];
-  activities: ActivityData[];
-}
-
-export interface KpiData {
-  title: string;
-  value: string;
-  icon: string;
-  trend: string;
-}
-
-export interface ActivityData {
-  type: string;
-  message: string;
-  time: string;
-  amount?: string;
-  client?: string;
-  product?: string;
-}
+import { ActivityData, DashboardData, KpiData } from '../models/dashboard.model';
 
 @Injectable({
   providedIn: 'root'

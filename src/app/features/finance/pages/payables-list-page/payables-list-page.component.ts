@@ -13,16 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-
-interface Payable {
-  id: string;
-  description: string;
-  supplierName: string;
-  amount: number;
-  dueDate: Date;
-  status: 'Pendente' | 'Pago' | 'Atrasado';
-  paymentDate?: Date;
-}
+import { Payable } from '../../../../core/models';
 
 @Component({
   selector: 'app-payables-list-page',

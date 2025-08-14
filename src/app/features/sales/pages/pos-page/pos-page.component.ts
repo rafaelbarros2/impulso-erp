@@ -12,38 +12,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-// Interfaces
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  emoji: string;
-  categoryId: string;
-  barcode?: string;
-  sku?: string;
-}
-
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  emoji: string;
-}
-
-export interface Client {
-  id: string;
-  name: string;
-  cpf?: string;
-  phone?: string;
-}
-
-export interface PaymentMethod {
-  id: string;
-  name: string;
-  icon: string;
-}
+import { PosProduct, PosCartItem, PosClient, PosPaymentMethod } from '../../../../core/models';
 
 @Component({
   selector: 'app-pdv',
@@ -68,7 +37,7 @@ export class PosPageComponent implements OnInit {
 
   // Data Properties
   // TODO: Implementar carregamento real de produtos da API
-  // products: Product[] = [
+  // products: PosProduct[] = [
   //   {
   //     id: '001',
   //     name: 'Coca-Cola 350ml',
@@ -150,9 +119,9 @@ export class PosPageComponent implements OnInit {
   //     sku: 'SHAM400'
   //   }
   // ];
-  products: Product[] = []; // Removido dados mockados
+  products: PosProduct[] = []; // Removido dados mockados
 
-  paymentMethods: PaymentMethod[] = [
+  paymentMethods: PosPaymentMethod[] = [
     { id: 'dinheiro', name: 'Dinheiro', icon: 'pi pi-money-bill' },
     { id: 'cartao', name: 'Cartão', icon: 'pi pi-credit-card' },
     { id: 'pix', name: 'PIX', icon: 'pi pi-qrcode' },
@@ -160,13 +129,13 @@ export class PosPageComponent implements OnInit {
   ];
 
   // Component State
-  cartItems: CartItem[] = [];
+  cartItems: PosCartItem[] = [];
   searchInput: string = '';
-  searchSuggestions: Product[] = [];
+  searchSuggestions: PosProduct[] = [];
   selectedPaymentId: string = 'dinheiro';
   discountPercent: number = 0;
 
-  selectedClient: Client = {
+  selectedClient: PosClient = {
     id: 'default',
     name: 'Cliente Padrão',
     cpf: '',
@@ -226,7 +195,7 @@ export class PosPageComponent implements OnInit {
     }
   }
 
-  addProductDirectly(product: Product): void {
+  addProductDirectly(product: PosProduct): void {
     this.addProductToCart(product);
     this.searchInput = '';
     this.searchSuggestions = [];
@@ -239,7 +208,7 @@ export class PosPageComponent implements OnInit {
     }, 100);
   }
 
-  private findProduct(searchTerm: string): Product | undefined {
+  private findProduct(searchTerm: string): PosProduct | undefined {
     return this.products.find(p => 
       // Search by exact ID
       p.id === searchTerm ||
@@ -254,7 +223,7 @@ export class PosPageComponent implements OnInit {
     );
   }
 
-  private getSearchSuggestions(searchTerm: string): Product[] {
+  private getSearchSuggestions(searchTerm: string): PosProduct[] {
     if (searchTerm.length < 2) return [];
     
     return this.products
@@ -265,7 +234,7 @@ export class PosPageComponent implements OnInit {
       .slice(0, 5); // Show max 5 suggestions
   }
 
-  private addProductToCart(product: Product): void {
+  private addProductToCart(product: PosProduct): void {
     if (product.stock <= 0) {
       this.showError('Produto sem estoque disponível');
       return;
@@ -293,7 +262,7 @@ export class PosPageComponent implements OnInit {
   }
 
   // Cart Management Methods
-  updateQuantity(item: CartItem, change: number): void {
+  updateQuantity(item: PosCartItem, change: number): void {
     const product = this.products.find(p => p.id === item.id);
     const newQuantity = item.quantity + change;
 
@@ -310,7 +279,7 @@ export class PosPageComponent implements OnInit {
     item.quantity = newQuantity;
   }
 
-  removeFromCart(item: CartItem): void {
+  removeFromCart(item: PosCartItem): void {
     this.confirmationService.confirm({
       message: `Remover ${item.name} do carrinho?`,
       header: 'Confirmar Remoção',

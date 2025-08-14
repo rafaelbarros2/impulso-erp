@@ -1,5 +1,3 @@
-import PrimeUI from 'tailwindcss-primeui';
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
    content: [
@@ -10,7 +8,7 @@ module.exports = {
      extend: {},
    },
    plugins: [
-     PrimeUI
+
    ],
    corePlugins: {
      preflight: false, // Desabilita o reset CSS do Tailwind para não conflitar com PrimeNG

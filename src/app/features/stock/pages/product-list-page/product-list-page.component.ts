@@ -14,13 +14,9 @@ import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 import { LoadingService } from 'shared-lib';
 import { ProductService } from '../../../../core/services/product.service';
-import { Product } from '../../../../core/models';
+import { Product, ProductDisplay } from '../../../../core/models';
 import { LoadingSpinnerComponent, SkeletonLoaderComponent, EmptyStateComponent, EMPTY_STATES } from 'shared-lib';
 import { finalize } from 'rxjs/operators';
-
-interface ProductDisplay extends Product {
-  status?: 'Em Estoque' | 'Baixo Estoque' | 'Esgotado';
-}
 
 @Component({
   selector: 'app-product-list-page',

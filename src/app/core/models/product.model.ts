@@ -132,3 +132,33 @@ export interface ProductImportData {
   minStock: number;
   unitOfMeasure: string;
 }
+
+export interface PosProduct {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  emoji: string;
+  categoryId: string;
+  barcode?: string;
+  sku?: string;
+}
+
+export interface ProductCategory {
+  name: string;
+  code: string;
+}
+
+export interface ProductSize {
+  name: string;
+  code: string;
+}
+
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
+export interface ProductDisplay extends Product {
+  status?: 'Em Estoque' | 'Baixo Estoque' | 'Esgotado';
+}

@@ -249,3 +249,25 @@ export interface ThemeMetadata {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+/**
+ * A simplified theme structure for previewing color changes.
+ * This is used by the ThemePreviewService and is intentionally
+ * decoupled from the more complex ThemeTokens structure.
+ */
+export interface PreviewThemeConfig {
+  name: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    surface: string;
+    text: string;
+    textSecondary: string;
+    border: string;
+    error: string;
+    success: string;
+    warning: string;
+  };
+}

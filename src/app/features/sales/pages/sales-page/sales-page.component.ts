@@ -5,15 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import {  TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
-
-interface SaleData {
-  id: string;
-  customer: string;
-  date: string;
-  status: string;
-  total: string;
-  totalValue: number; // Para ordenação
-}
+import { SaleDisplayData } from '../../../../core/models';
 
 @Component({
   selector: 'app-sales-page',
@@ -23,7 +15,7 @@ interface SaleData {
   styleUrls: ['./sales-page.component.scss'],
 })
 export class SalesPageComponent {
-  allSalesData: SaleData[] = [
+  allSalesData: SaleDisplayData[] = [
     { id: '#1024', customer: 'Carlos Pereira', date: '16/07/2025', status: 'Pago', total: 'R$ 1.250,00', totalValue: 1250 },
     { id: '#1023', customer: 'Mariana Costa', date: '15/07/2025', status: 'Pendente', total: 'R$ 89,90', totalValue: 89.90 },
     { id: '#1022', customer: 'Tech Solutions Ltda', date: '15/07/2025', status: 'Pago', total: 'R$ 5.400,00', totalValue: 5400 },
@@ -36,7 +28,7 @@ export class SalesPageComponent {
     { id: '#1015', customer: 'Inovação Tech', date: '09/07/2025', status: 'Pago', total: 'R$ 3.800,00', totalValue: 3800 }
   ];
 
-  salesData: SaleData[] = [...this.allSalesData];
+  salesData: SaleDisplayData[] = [...this.allSalesData];
 
   searchTerm: string = '';
   selectedStatus: any = null;
