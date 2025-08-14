@@ -6,10 +6,12 @@
  * As regras foram ajustadas para não entrarem em conflito com os componentes.
  */
 
-@use 'tailwindcss';
-
-// Import theme variables after tailwind
+// Import theme variables first (required by SCSS @use rules)
 @use 'styles/theme-vars';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 // @plugin "tailwindcss-primeui";
 
 :root {
