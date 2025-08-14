@@ -6,7 +6,9 @@
  * As regras foram ajustadas para não entrarem em conflito com os componentes.
  */
 
-@use 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 // Import theme variables after tailwind
 @use 'styles/theme-vars';

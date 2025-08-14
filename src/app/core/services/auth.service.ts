@@ -13,16 +13,26 @@ export class AuthService {
   private tokenKey = 'impulso_token';
   private userKey = 'impulso_user';
   
-  private currentUser = signal<User | null>(this.getUserFromStorage());
+  private currentUser = signal<User | null>(null);
   public currentUser$ = this.currentUser.asReadonly();
   
-  private isAuthenticated = signal<boolean>(this.hasValidToken());
+  private isAuthenticated = signal<boolean>(false);
   public isAuthenticated$ = this.isAuthenticated.asReadonly();
 
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) {
+    this.initializeAuthState();
+  }
+
+  private initializeAuthState(): void {
+    const user = this.getUserFromStorage();
+    const isValid = this.hasValidToken();
+    
+    this.currentUser.set(user);
+    this.isAuthenticated.set(isValid);
+  }
 
   login(credentials: AuthCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/users/login`, credentials)

@@ -75,7 +75,7 @@ export interface ClientImportData {
   category?: string;
 }
 
-export interface ClientType {
+export interface ClientTypeModel {
   name: string;
   code: string;
 }
