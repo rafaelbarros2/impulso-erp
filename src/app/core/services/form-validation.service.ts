@@ -1,12 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { FormFieldError } from '../models';
-
-export interface ValidationState {
-  hasErrors: boolean;
-  fieldErrors: Record<string, string>;
-  generalErrors: string[];
-}
+import { ValidationState } from '../models/form.model';
 
 @Injectable({
   providedIn: 'root'

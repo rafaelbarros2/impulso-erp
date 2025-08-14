@@ -136,3 +136,12 @@ export interface OrderCancellationRequest {
   refundAmount?: number;
   restockItems: boolean;
 }
+
+export interface SaleDisplayData {
+  id: string;
+  customer: string;
+  date: string;
+  status: string;
+  total: string;
+  totalValue: number; // Para ordenação
+}

@@ -13,16 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar'; // Para filtro de data
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-
-interface Receivable {
-  id: string;
-  description: string;
-  clientName: string;
-  amount: number;
-  dueDate: Date;
-  status: 'Pendente' | 'Recebido' | 'Atrasado';
-  paymentDate?: Date;
-}
+import { Receivable } from '../../../../core/models';
 
 @Component({
   selector: 'app-receivables-list-page',

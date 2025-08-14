@@ -11,11 +11,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CalendarModule } from 'primeng/calendar';
 import { HttpClientModule } from '@angular/common/http'; // Necessário se for usar HttpClient
-
-interface Client {
-  id: string;
-  name: string;
-}
+import { Client } from '../../../../core/models';
 
 @Component({
   selector: 'app-receivable-form',
