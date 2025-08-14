@@ -2,22 +2,8 @@ import { Injectable, inject, Renderer2, RendererFactory2, PLATFORM_ID } from '@a
 import { DOCUMENT } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
-import { Category, Product } from '../models/catalog.models';
-
-export interface SeoConfig {
-  title: string;
-  description: string;
-  keywords?: string;
-  canonical?: string;
-  ogTitle?: string;
-  ogDescription?: string;
-  ogImage?: string;
-  ogUrl?: string;
-  ogType?: string;
-  twitterCard?: string;
-  twitterImage?: string;
-  structuredData?: any;
-}
+import { Category, Product } from '../models/interfaces/catalog.interfaces';
+import { SeoConfig } from '../models/interfaces/seo.interfaces';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { HeroSlide } from '../../models/interfaces/hero.interfaces';
+
+import { HeroSlide } from '../../models/interfaces/hero.interfaces';
+
 /**
  * A simplified hero/slideshow component.
  *
@@ -8,14 +12,6 @@ import { CommonModule } from '@angular/common';
  * can be provided via the `slides` input. This component does not depend on
  * any external services.
  */
-export interface HeroSlide {
-  id: string;
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  image: string;
-}
-
 @Component({
   selector: 'app-storefront-hero',
   standalone: true,

@@ -2,16 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-
-export interface ExtractedTheme {
-  primary: string;
-  secondary: string;
-  background: string;
-  surface: string;
-  text: string;
-  accent: string;
-  [key: string]: string;
-}
+import { ExtractedTheme } from '../../models/interfaces/theme.interfaces';
 
 @Component({
   selector: 'app-secure-theme-iframe',

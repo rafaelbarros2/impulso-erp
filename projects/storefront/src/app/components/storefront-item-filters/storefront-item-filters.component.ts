@@ -1,15 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { FilterChangeEvent } from '../../models/interfaces/filter.interfaces';
+
 /**
  * A simplified item filters component.
  *
  * Provides basic search and filter capabilities. Emits events when filters change.
  */
-export interface FilterChangeEvent {
-  searchTerm: string;
-}
-
 @Component({
   selector: 'app-storefront-item-filters',
   standalone: true,

@@ -1,0 +1,12 @@
+export interface SitemapUrl {
+  loc: string;
+  lastmod: string;
+  changefreq: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+  priority: number;
+}
+
+export interface SitemapConfig {
+  baseUrl: string;
+  storeId: string;
+  maxUrls?: number;
+}

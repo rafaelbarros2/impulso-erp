@@ -1,20 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-/**
- * A simplified categories component.
- *
- * This component displays a list of categories and emits events when a category is clicked.
- * It does not depend on any external services and can be extended as needed.
- */
-export interface CategoryItem {
-  id: string;
-  name: string;
-  description?: string;
-  image?: string;
-  itemCount?: number;
-  featured?: boolean;
-}
+import { CategoryItem } from '../../models/interfaces/category.interfaces';
 
 @Component({
   selector: 'app-storefront-categories',

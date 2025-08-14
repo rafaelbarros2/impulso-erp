@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Response } from 'express';
-import { SitemapService, SitemapConfig } from '../services/sitemap.service';
+import { SitemapService } from '../services/sitemap.service';
+import { SitemapConfig } from '../models/interfaces/sitemap.interfaces';
 
 /**
  * Handlers para rotas de SEO (sitemap e robots)

@@ -1,27 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, signal, inject, PLATFORM_ID, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-
-interface Promotion {
-  id: string;
-  title: string;
-  description?: string;
-  discount?: string;
-  originalPrice?: number;
-  salePrice?: number;
-  image?: string;
-  category?: string;
-  validUntil?: string;
-  isActive?: boolean;
-}
-
-interface PromotionFilter {
-  category?: string;
-  minDiscount?: number;
-  maxPrice?: number;
-  searchTerm?: string;
-  isActive?: boolean;
-}
+import { Promotion, PromotionFilter } from '../models/interfaces/promotion.interfaces';
 
 @Component({
   selector: 'promo-list-section',

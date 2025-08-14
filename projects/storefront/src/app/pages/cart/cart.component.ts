@@ -8,21 +8,7 @@ import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  stock: number;
-}
-
-interface ShippingOption {
-  type: string;
-  price: number;
-  days: string;
-}
+import { CartItem, ShippingOption } from '../../models/interfaces/cart.interfaces';
 
 @Component({
   selector: 'app-cart',

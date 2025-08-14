@@ -60,15 +60,8 @@ type Hero = {
   height?: string;
 };
 
-interface ExtractedTheme {
-  primary: string;
-  secondary: string;
-  background: string;
-  surface: string;
-  text: string;
-  accent: string;
-  [key: string]: string;
-}
+import { ExtractedTheme } from '../../models/interfaces/theme.interfaces';
+
 type Section = RemoteHtmlInline | RemoteHtml | PromoList | Hero | FullHtml;
 
 type Layout = { id: string; vars?: Record<string, string> };

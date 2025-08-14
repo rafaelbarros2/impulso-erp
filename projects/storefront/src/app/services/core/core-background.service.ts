@@ -1,12 +1,6 @@
 import { Injectable, signal, Inject, Optional, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
-
-export type BgType = 'solid' | 'gradient' | 'image' | 'pattern' | 'custom';
-export interface BackgroundConfig {
-  id: string; name: string; type: BgType; value?: string;
-  overlayOpacity?: number; overlayColor?: string;
-  backgroundSize?: string; backgroundPosition?: string; backgroundRepeat?: string;
-}
+import { BackgroundConfig } from '../../models/interfaces/background.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class CoreBackgroundService {
