@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
         <!-- Logo -->
         <div class="logo-section">
           <a routerLink="/" class="logo-link">
-            <i class="pi pi-shopping-bag text-2xl text-primary"></i>
+            <i class="pi pi-shopping-bag text-2xl"></i>
             <span class="logo-text">Storefront</span>
           </a>
         </div>
@@ -134,6 +134,11 @@ import { ButtonModule } from 'primeng/button';
       font-size: 1.25rem;
     }
 
+    .logo-link .pi-shopping-bag {
+      color: var(--cart-icon-color, var(--primary-color)) !important;
+      font-size: var(--cart-icon-size, 2rem) !important;
+    }
+
     .logo-text {
       color: var(--text-color);
     }
@@ -194,36 +199,44 @@ import { ButtonModule } from 'primeng/button';
       position: relative;
       width: 40px;
       height: 40px;
-      background: var(--primary-color);
-      color: white;
-      border-radius: 8px;
+      background: var(--cart-icon-background, var(--primary-color));
+      color: var(--cart-icon-color, white);
+      border-radius: var(--cart-icon-border-radius, 8px);
       display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
       transition: all 0.2s;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      box-shadow: var(--cart-icon-shadow, 0 2px 4px rgba(0,0,0,0.15));
+      padding: var(--cart-icon-padding, 0);
     }
 
     .cart-btn:hover {
-      background: var(--primary-600);
+      background: var(--cart-icon-hover-background, var(--primary-600));
+      color: var(--cart-icon-hover-color, white);
       transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: var(--cart-icon-hover-shadow, 0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .cart-btn i {
+      font-size: var(--cart-icon-size, 1.25rem);
+      color: inherit;
     }
 
     .cart-count {
       position: absolute;
-      top: -6px;
-      right: -6px;
-      background: var(--red-500);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 10px;
+      top: var(--cart-badge-top, -6px);
+      right: var(--cart-badge-right, -6px);
+      background: var(--cart-badge-background, var(--red-500));
+      color: var(--cart-badge-color, white);
+      font-size: var(--cart-badge-font-size, 0.75rem);
+      font-weight: var(--cart-badge-font-weight, 600);
+      padding: var(--cart-badge-padding, 2px 6px);
+      border-radius: var(--cart-badge-border-radius, 10px);
       line-height: 1;
-      min-width: 16px;
+      min-width: var(--cart-badge-min-width, 16px);
       text-align: center;
+      animation: var(--cart-badge-animation, none);
     }
 
     .mobile-nav {

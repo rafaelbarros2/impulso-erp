@@ -9,7 +9,7 @@
     },
     {
       "type": "remoteHtmlInline",
-      "src": "http://localhost:8080/tenants/demo/promotions/minha-promocao/index.html",
+      "src": "/tenants/demo/promotions/verao-2025/index.html",
       "height": "100%",
       "executeScripts": true,
       "injectTailwindCdn": true,

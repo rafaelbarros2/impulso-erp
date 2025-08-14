@@ -4,6 +4,7 @@
   "defaultLayout": "promotion",
   "defaultThemeUrl": "/tenants/demo/themes/ecommerce.theme.json",
   "pages": {
-    "home": "/tenants/demo/pages/home.json"
+    "home": "/tenants/demo/pages/home.json",
+    "promocoes": "/tenants/demo/pages/promocoes.json"
   }
 }

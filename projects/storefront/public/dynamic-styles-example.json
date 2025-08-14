@@ -1,0 +1,294 @@
+{
+  "tenant": "loja-cosmeticos-luxo",
+  "version": "2.0.0",
+  "timestamp": "2025-01-15T10:00:00Z",
+  "theme": {
+    "primary": "#c2185b",
+    "secondary": "#7b1fa2",
+    "accent": "#ff6f00",
+    "success": "#388e3c",
+    "warning": "#f57c00",
+    "danger": "#d32f2f",
+    "info": "#0288d1",
+    "light": "#fce4ec",
+    "dark": "#4a148c",
+    "background": {
+      "type": "gradient",
+      "value": "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e1bee7 100%)"
+    },
+    "surface": "#ffffff",
+    "text": {
+      "primary": "#2d1b69",
+      "secondary": "#7b1fa2",
+      "disabled": "#bdbdbd",
+      "hint": "#9e9e9e"
+    },
+    "border": "#e1bee7",
+    "shadow": "0 4px 12px rgba(123, 31, 162, 0.15)"
+  },
+  
+  "globalTypography": {
+    "fontFamily": "'Playfair Display', 'Georgia', serif",
+    "headings": {
+      "h1": {
+        "fontSize": "2.5rem",
+        "fontWeight": "700",
+        "color": "#2d1b69",
+        "lineHeight": "1.2",
+        "letterSpacing": "-0.02em"
+      },
+      "h2": {
+        "fontSize": "2rem",
+        "fontWeight": "600",
+        "color": "#2d1b69",
+        "lineHeight": "1.3"
+      },
+      "h3": {
+        "fontSize": "1.5rem",
+        "fontWeight": "600",
+        "color": "#4a148c",
+        "lineHeight": "1.4"
+      },
+      "h4": {
+        "fontSize": "1.25rem",
+        "fontWeight": "500",
+        "color": "#7b1fa2",
+        "lineHeight": "1.4"
+      },
+      "h5": {
+        "fontSize": "1.125rem",
+        "fontWeight": "500",
+        "color": "#7b1fa2",
+        "lineHeight": "1.5"
+      },
+      "h6": {
+        "fontSize": "1rem",
+        "fontWeight": "500",
+        "color": "#9c27b0",
+        "lineHeight": "1.5"
+      }
+    },
+    "body": {
+      "fontSize": "1rem",
+      "fontWeight": "400",
+      "color": "#424242",
+      "lineHeight": "1.6"
+    },
+    "links": {
+      "color": "#c2185b",
+      "hoverColor": "#ad1457",
+      "activeColor": "#880e4f",
+      "textDecoration": "none",
+      "hoverTextDecoration": "underline"
+    },
+    "buttons": {
+      "primary": {
+        "background": "linear-gradient(135deg, #c2185b 0%, #ad1457 100%)",
+        "color": "#ffffff",
+        "border": "none",
+        "borderRadius": "25px",
+        "padding": "12px 24px",
+        "fontSize": "1rem",
+        "fontWeight": "600",
+        "hover": {
+          "background": "linear-gradient(135deg, #ad1457 0%, #880e4f 100%)",
+          "color": "#ffffff",
+          "transform": "translateY(-2px)"
+        },
+        "active": {
+          "background": "#880e4f",
+          "color": "#ffffff",
+          "transform": "translateY(0)"
+        },
+        "disabled": {
+          "background": "#e0e0e0",
+          "color": "#9e9e9e",
+          "opacity": 0.6
+        }
+      },
+      "secondary": {
+        "background": "transparent",
+        "color": "#c2185b",
+        "border": "2px solid #c2185b",
+        "borderRadius": "25px",
+        "padding": "10px 22px",
+        "fontSize": "1rem",
+        "fontWeight": "600",
+        "hover": {
+          "background": "#c2185b",
+          "color": "#ffffff",
+          "border": "2px solid #c2185b"
+        },
+        "active": {
+          "background": "#ad1457",
+          "color": "#ffffff"
+        },
+        "disabled": {
+          "background": "transparent",
+          "color": "#bdbdbd",
+          "opacity": 0.6
+        }
+      }
+    }
+  },
+
+  "globalLayout": {
+    "container": {
+      "maxWidth": "1200px",
+      "padding": "0 24px",
+      "margin": "0 auto"
+    },
+    "sections": {
+      "padding": "4rem 0",
+      "margin": "0",
+      "background": {
+        "type": "gradient",
+        "value": "linear-gradient(to bottom, rgba(252, 228, 236, 0.3), rgba(243, 229, 245, 0.1))"
+      }
+    },
+    "grid": {
+      "gap": "2rem",
+      "columns": {
+        "mobile": 1,
+        "tablet": 2,
+        "desktop": 4
+      }
+    }
+  },
+
+  "globalIcons": {
+    "color": "#7b1fa2",
+    "hoverColor": "#c2185b",
+    "activeColor": "#ad1457",
+    "size": "1.25rem",
+    "family": "primeicons",
+    "weight": "normal"
+  },
+  "components": {
+    "productCard": {
+      "background": {
+        "type": "gradient",
+        "value": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        "opacity": 0.95
+      },
+      "border": {
+        "width": "2px",
+        "style": "solid",
+        "color": "#e2e8f0"
+      },
+      "borderRadius": "16px",
+      "padding": "20px",
+      "shadow": "0 10px 25px rgba(0,0,0,0.1)",
+      "hoverEffect": {
+        "transform": "translateY(-4px)",
+        "shadow": "0 20px 40px rgba(0,0,0,0.15)",
+        "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale": 1.02
+      },
+      "layout": {
+        "direction": "column",
+        "imageRatio": "4/3",
+        "contentAlign": "center",
+        "spacing": "16px"
+      },
+      "typography": {
+        "title": {
+          "fontSize": "20px",
+          "fontWeight": "700",
+          "color": "#1e293b",
+          "lineHeight": "1.3"
+        },
+        "description": {
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "color": "#64748b",
+          "lineHeight": "1.5"
+        },
+        "price": {
+          "fontSize": "24px",
+          "fontWeight": "800",
+          "color": "#059669",
+          "textTransform": "none"
+        },
+        "badge": {
+          "fontSize": "12px",
+          "fontWeight": "600",
+          "textTransform": "uppercase",
+          "letterSpacing": "0.5px"
+        }
+      },
+      "colors": {
+        "background": "#ffffff",
+        "text": "#1e293b",
+        "accent": "#2563eb",
+        "border": "#e2e8f0",
+        "badge": {
+          "sale": {
+            "background": "#dc2626",
+            "color": "#ffffff"
+          },
+          "new": {
+            "background": "#16a34a",
+            "color": "#ffffff"
+          },
+          "featured": {
+            "background": "#7c3aed",
+            "color": "#ffffff"
+          }
+        },
+        "button": {
+          "primary": {
+            "background": "#2563eb",
+            "color": "#ffffff",
+            "hover": "#1d4ed8"
+          },
+          "secondary": {
+            "background": "#f1f5f9",
+            "color": "#475569",
+            "hover": "#e2e8f0"
+          }
+        }
+      },
+      "spacing": {
+        "padding": "20px",
+        "margin": "0",
+        "gap": "12px"
+      }
+    },
+    "productGrid": {
+      "selector": ".product-grid",
+      "styles": {
+        "gap": "24px",
+        "padding": "32px 0",
+        "background": "linear-gradient(to bottom, #f8fafc, #ffffff)"
+      }
+    },
+    "header": {
+      "selector": ".storefront-header",
+      "styles": {
+        "background": "rgba(255, 255, 255, 0.95)",
+        "backdrop-filter": "blur(10px)",
+        "box-shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      }
+    }
+  },
+  "globalStyles": [
+    {
+      "selector": "body",
+      "styles": {
+        "font-family": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        "background": "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        "color": "#1e293b"
+      }
+    },
+    {
+      "selector": ".container",
+      "styles": {
+        "max-width": "1280px",
+        "margin": "0 auto",
+        "padding": "0 24px"
+      }
+    }
+  ],
+  "customCSS": "\n    /* CSS personalizado adicional */\n    @keyframes fadeInUp {\n      from {\n        opacity: 0;\n        transform: translateY(30px);\n      }\n      to {\n        opacity: 1;\n        transform: translateY(0);\n      }\n    }\n    \n    .product-card {\n      animation: fadeInUp 0.6s ease-out;\n    }\n    \n    .product-card:nth-child(odd) {\n      animation-delay: 0.1s;\n    }\n    \n    .product-card:nth-child(even) {\n      animation-delay: 0.2s;\n    }\n    \n    /* Responsividade customizada */\n    @media (max-width: 768px) {\n      .product-card {\n        border-radius: 12px;\n        padding: 16px;\n      }\n    }\n    \n    /* Estilo dark mode se necessário */\n    @media (prefers-color-scheme: dark) {\n      .product-card {\n        background: #1e293b;\n        color: #f1f5f9;\n        border-color: #334155;\n      }\n    }\n  "
+}

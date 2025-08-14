@@ -167,7 +167,7 @@ export class SecureThemeIframeComponent implements OnChanges, AfterViewInit, OnI
       pathParts.pop(); // Remove o arquivo (index.html)
       return `${urlObj.origin}${pathParts.join('/')}/`;
     } catch {
-      return 'http://localhost:8080/';
+      return `${window.location.origin}/`;
     }
   }
 }

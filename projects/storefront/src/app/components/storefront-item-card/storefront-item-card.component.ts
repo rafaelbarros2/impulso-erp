@@ -1,6 +1,8 @@
-import { Component, Input, Output, EventEmitter, inject, Signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, Signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StorefrontProduct } from '../../models/storefront-product.model';
+import { DynamicStylesService } from '../../services/dynamic-styles.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-storefront-item-card',
@@ -8,8 +10,10 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
   imports: [CommonModule],
   template: `
     <div class="product-card" 
-         [ngClass]="cardClasses" 
-         (click)="onProductClick()">
+         [ngClass]="cardClasses"
+         [ngStyle]="cardStyles"
+         (click)="onProductClick()"
+         [attr.data-dynamic-styles]="stylesState().isLoaded">
       
       <!-- Badge Container -->
       <div class="badge-container" *ngIf="product.badges && product.badges.length > 0">
@@ -67,15 +71,14 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
 
       <!-- Actions -->
       <div class="product-actions" *ngIf="showActions">
-        <button type="button" class="btn btn-primary" 
+        <button type="button" class="btn add-to-cart-btn" 
                 (click)="onAddToCart($event)"
                 [disabled]="!product.inStock"
                 aria-label="Adicionar ao carrinho">
           <i class="pi pi-shopping-cart" aria-hidden="true"></i>
-          <span class="btn-text">Adicionar ao Carrinho</span>
         </button>
         
-        <button type="button" class="btn btn-secondary btn-icon" 
+        <button type="button" class="btn btn-secondary btn-icon wishlist-icon" 
                 (click)="onFavoriteToggle($event)"
                 aria-label="Favoritar"
                 title="Favoritar">
@@ -92,6 +95,10 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      height: 100%;
+    }
     .product-card {
       background: white;
       border-radius: 8px;
@@ -99,6 +106,9 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
       overflow: hidden;
       transition: all 0.3s;
       position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .product-card:hover {
@@ -149,6 +159,10 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
 
     .product-info {
       padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1 1 auto;
     }
 
     .product-name {
@@ -230,6 +244,7 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
       display: flex;
       gap: 8px;
       align-items: center;
+      margin-top: auto;
     }
 
     .btn {
@@ -245,17 +260,20 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
       gap: 8px;
     }
 
+    /* Botão primário agora usa cores dinâmicas do sistema de carrinho */
     .btn-primary {
-      background: #2563eb;
-      color: white;
+      background: var(--add-to-cart-background, #2563eb);
+      color: var(--add-to-cart-color, white);
     }
 
     .btn-primary:hover {
-      background: #1d4ed8;
+      background: var(--add-to-cart-hover-background, #1d4ed8);
+      color: var(--add-to-cart-hover-color, white);
     }
 
     .btn-primary:disabled {
-      background: #9ca3af;
+      background: var(--add-to-cart-disabled-background, #9ca3af);
+      color: var(--add-to-cart-disabled-color, #6b7280);
       cursor: not-allowed;
     }
 
@@ -307,22 +325,41 @@ import { StorefrontProduct } from '../../models/storefront-product.model';
     }
   `]
 })
-export class StorefrontItemCardComponent {
+export class StorefrontItemCardComponent implements OnInit, OnDestroy {
   @Input() product!: StorefrontProduct;
   @Input() layout: 'grid' | 'list' = 'grid';
   @Input() showActions: boolean = true;
   @Input() showRating: boolean = true;
   @Input() showDescription: boolean = true;
+  @Input() customStyles: Record<string, string> = {}; // Estilos customizados via input
 
   @Output() productClick = new EventEmitter<StorefrontProduct>();
   @Output() addToCart = new EventEmitter<StorefrontProduct>();
   @Output() favoriteToggle = new EventEmitter<StorefrontProduct>();
   @Output() quickView = new EventEmitter<StorefrontProduct>();
 
+  private dynamicStylesService = inject(DynamicStylesService);
+  private subscription = new Subscription();
+  
+  // Estado dos estilos dinâmicos
+  stylesState = this.dynamicStylesService.state;
+
   get cardClasses(): string {
     const baseClasses = 'product-card';
     const layoutClass = `layout-${this.layout}`;
-    return `${baseClasses} ${layoutClass}`;
+    
+    // Adicionar classes baseadas no estado dos estilos dinâmicos
+    const dynamicClasses = this.getDynamicClasses();
+    
+    return [baseClasses, layoutClass, ...dynamicClasses].join(' ');
+  }
+
+  get cardStyles(): Record<string, string> {
+    // Combinar estilos customizados com estilos dinâmicos
+    return {
+      ...this.customStyles,
+      ...this.getDynamicStyles()
+    };
   }
 
   getStars() {
@@ -355,6 +392,59 @@ export class StorefrontItemCardComponent {
   onQuickView(event: Event): void {
     event.stopPropagation();
     this.quickView.emit(this.product);
+  }
+
+  ngOnInit(): void {
+    // Os signals já fazem o componente re-renderizar automaticamente
+    // Não é necessário observar mudanças manualmente
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private getDynamicClasses(): string[] {
+    const config = this.dynamicStylesService.getCurrentConfig();
+    const classes: string[] = [];
+    
+    if (config?.components?.productCard) {
+      // Adicionar classes baseadas na configuração
+      if (config.components.productCard.layout?.direction === 'row') {
+        classes.push('card-horizontal');
+      }
+      
+      // Adicionar outras classes baseadas na configuração
+      const cardConfig = config.components.productCard as any;
+      if (cardConfig.variant) {
+        classes.push(`card-${cardConfig.variant}`);
+      }
+    }
+    
+    return classes;
+  }
+
+  private getDynamicStyles(): Record<string, string> {
+    const config = this.dynamicStylesService.getCurrentConfig();
+    const styles: Record<string, string> = {};
+    
+    if (config?.components?.productCard) {
+      const cardConfig = config.components.productCard as any;
+      
+      // Aplicar estilos inline específicos se necessário
+      if (cardConfig.dynamicBackground) {
+        styles['background'] = cardConfig.dynamicBackground;
+      }
+      
+      if (cardConfig.dynamicBorderRadius) {
+        styles['border-radius'] = cardConfig.dynamicBorderRadius;
+      }
+      
+      if (cardConfig.dynamicShadow) {
+        styles['box-shadow'] = cardConfig.dynamicShadow;
+      }
+    }
+    
+    return styles;
   }
 
   onImageError(event: Event): void {

@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 // SEÇÕES
 import { RemoteHtmlInlineSectionComponent } from '../../sections/remote-html-inline-section.component';
@@ -103,15 +104,24 @@ export class PromotionComponent {
     }
     this.route.queryParamMap.subscribe(async (params) => {
       const raw = params.get('pageUrl');
-      console.log('[PromotionComponent] pageUrl:', raw);
-      if (!raw) {
+      const pageId = params.get('pageId');
+      console.log('[PromotionComponent] pageUrl:', raw, 'pageId:', pageId);
+
+      let finalUrl: string | null = null;
+      if (raw) {
+        finalUrl = this.normalizeAbsoluteUrl(raw);
+      } else if (pageId) {
+        const apiBase = (environment.apiUrl || '').replace(/\/$/, '');
+        finalUrl = `${apiBase}/storefront/pages/${pageId}`;
+      }
+
+      if (!finalUrl) {
         this.loading.set(false);
-        this.error.set('Parâmetro "pageUrl" não informado.');
+        this.error.set('Informe ?pageUrl= ou ?pageId= na URL.');
         return;
       }
-      
-      const url = this.normalizeAbsoluteUrl(raw);
-      await this.loadPage(url);
+
+      await this.loadPage(finalUrl);
     });
   }
 
@@ -170,13 +180,22 @@ export class PromotionComponent {
   
 
   private normalizeAbsoluteUrl(raw: string): string {
-    const s = String(raw || '').trim();
+    let s = String(raw || '').trim();
     if (!s) return s;
+    // Fix malformed like "http:localhost:8080/..." → "http://localhost:8080/..."
+    if (/^https?:[^/]/i.test(s)) {
+      s = s.replace(/^https?:/i, (m) => m + '//');
+    }
+    // If now valid absolute, return
     if (/^https?:\/\//i.test(s)) return s;
+    // If looks like hostname[:port]/path (no scheme), assume http
+    if (/^(localhost|127\.0\.0\.1|\[::1\]|[a-z0-9.-]+\.[a-z]{2,})(:\d+)?\//i.test(s)) {
+      return 'http://' + s;
+    }
     // Dev prefix: if user passes "tenants/..." or "/tenants/..." assume backend on :8080
     if (s.includes('tenants/')) {
       const path = s.startsWith('/') ? s : '/' + s;
-      return `http://localhost:8080${path}`;
+      return `${window.location.origin}${path}`;
     }
     // Fallback to same-origin
     return s.startsWith('/') ? window.location.origin + s : s;

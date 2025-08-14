@@ -42,7 +42,7 @@ export class RemoteHtmlInlineSectionComponent implements OnChanges {
     if (this._src) {
       if (this._src.includes('/tenants/')) {
         const path = this._src.startsWith('/') ? this._src : '/' + this._src;
-        this.baseUrl = `http://localhost:8080${path}`;
+        this.baseUrl = `${window.location.origin}${path}`;
       } else {
         try { this.baseUrl = new URL(this._src, window.location.href).toString(); } catch { this.baseUrl = this._src; }
       }
